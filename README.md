@@ -5,7 +5,7 @@
 --- DO NOT PUSH TO MAIN DIRECTLY, CREATE A BRANCH ---
 --- IF YOU ONLY MODIFIED A SINGLE FILE, PLEASE, ONLY ADD THAT SPECIFIC FILE WHEN PUSHING ---
                   
-- Branch Name Structure: [Username]-[Date](Month/Day/Year)-[Version]
+- Branch Name Structure: [Username]-[Date][Month/Day/Year]-[Version]
                      Ex. SetsuDesu17-10/5/2026-v1
   
 - Git push steps:
