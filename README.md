@@ -6,9 +6,9 @@
 --- IF YOU ONLY MODIFIED A SINGLE FILE, PLEASE, ONLY ADD THAT SPECIFIC FILE WHEN PUSHING ---
                   
 - Branch Name Structure: [Username]-[Date][Month/Day/Year]-[Version]
-                     Ex. SetsuDesu17-10/5/2026-v1
+                     || Ex. SetsuDesu17-10/5/2026-v1
   
-- Git push steps:
+Git push steps:
 - git pull (When accessing a new branch, else skip)
 - git checkout -b [branchName (follow the branchName Structure]
 - git add [folder_directory] || [.](STRICTLY ONLY WHEN MODIFYING MULTIPLE FOLDERS) 
