@@ -24,3 +24,5 @@ Git push steps:
 In Projects/CALPHY_FINALS
 - npm init -y
 - npm install express mysql2 cors
+- npm install cookie-parser
+  
