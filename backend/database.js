@@ -5,8 +5,8 @@ async function connectToDatabase() {
         const connection = await mysql.createConnection({
             host: 'localhost',
             user: 'root',
-            password: 'your_password', // Replace with your actual password
-            database: 'your_database'  // Replace with your actual database name
+            password: '', 
+            database: 'db_users'  
         });
         console.log('Connected to the MySQL database.');
         return connection;
@@ -16,4 +16,6 @@ async function connectToDatabase() {
     }
 }
 
-export { connectToDatabase };
+const connection = await connectToDatabase();
+
+export default connection;
