@@ -1,1 +1,16 @@
 node_modules/
+
+# local AI agent tooling and notes
+.codex/
+.claude/
+anti-slop/
+AGENTS.md
+DESIGN.md
+CLAUDE.md
+
+# editor and OS files
+.vscode/
+.DS_Store
+
+# logs
+*.log
