@@ -1,55 +1,90 @@
-// ============================================================
-// PostgreSQL connection, matches the groupmate's schema:
-//   database : db_users
-//   table    : tbl_users (id, username, password, email, user_progress JSONB)
-//   view     : getAllUsers
-// ============================================================
-import pg from "pg";
+import { pool } from './connection.js';
 
-const { Pool } = pg;
+export async function getAllUsers() {
+    return pool.asyncQuery(
+        'SELECT * FROM getAllUsers;', //Assuming view getAllUsers is initially created in the database, check documentation for more details
+        (err, res) => {
+        console.log(err, res);
+        pool.end();
+    });
+};
 
-let pool = null;
+export async function getUserById(id) {
+    return pool.asyncQuery(
+        'SELECT username, email FROM tbl_users WHERE id = ?;',
+        [id],
+        (err, res) => {
+        console.log(err, res);
+        pool.end();
+    });
+};
 
-export function getPool() {
-  if (!pool) {
-    pool = process.env.DATABASE_URL
-      ? new Pool({
-          connectionString: process.env.DATABASE_URL,
-          max: 5,
-          connectionTimeoutMillis: 4000,
-        })
-      : new Pool({
-          host: process.env.PGHOST || "localhost",
-          port: Number(process.env.PGPORT || 5432),
-          database: process.env.PGDATABASE || "db_users",
-          user: process.env.PGUSER || "postgres",
-          password: process.env.PGPASSWORD || "postgres",
-          max: 5,
-          connectionTimeoutMillis: 4000,
-        });
-    pool.on("error", (err) =>
-      console.error("[pg] idle client error:", err.message),
-    );
-  }
-  return pool;
-}
+export async function getUserByUsername(username) {
+    return pool.asyncQuery(
+        'SELECT username, email FROM tbl_users WHERE username = ?;',
+        [username],
+        (err, res) => {
+        console.log(err, res);
+        pool.end();
+    });
+};
 
-export async function query(text, params) {
-  return getPool().query(text, params);
-}
+export async function login(username, password, email) {
+    return pool.asyncQuery(
+        'SELECT username, email, user_progress FROM tbl_users WHERE (username = ? OR email = ?) AND password = ?;',
+        [username, email, password],
+        (err, res) => {
+        console.log(err, res);
+        pool.end();
+    });
+};
 
-export const DB_ERROR_MESSAGE =
-  "Database not reachable. Make sure PostgreSQL is running and the db_users database exists (see db/setup.sql).";
+export async function getUserProgress(id) {
+    return pool.asyncQuery(
+        'SELECT user_progress FROM tbl_users WHERE id = ?;',
+        [id],
+        (err, res) => {
+        console.log(err, res);
+        pool.end();
+    });
+};
 
-// Default user_progress JSONB, same shape as the documentation example
-export function defaultProgress(lessonKeys, quizIds) {
-  const Progress = {};
-  lessonKeys.forEach((k) => (Progress[k] = "NotStarted"));
-  const QuizProgress = {};
-  const QuizScores = {};
-  quizIds.forEach((q) => {
-    QuizProgress[q] = "NotStarted";
-    QuizScores[q] = 0;
-  });
-  return { Progress, QuizProgress, QuizScores };
-}
+export async function changeUsername(id, newUsername) {
+    return pool.asyncQuery(
+        'UPDATE tbl_users SET username = ? WHERE id = ?;',
+        [newUsername, id],
+        (err, res) => {
+        console.log(err, res);
+        pool.end();
+    });
+};
+
+export async function changePassword(id, newPassword) {
+    return pool.asyncQuery(
+        'UPDATE tbl_users SET password = ? WHERE id = ?;',
+        [newPassword, id],
+        (err, res) => {
+        console.log(err, res);
+        pool.end();
+    });
+};
+
+export async function changeEmail(id, newEmail) {
+    return pool.asyncQuery(
+        'UPDATE tbl_users SET email = ? WHERE id = ?;',
+        [newEmail, id],
+        (err, res) => {
+        console.log(err, res);
+        pool.end();
+    });
+};
+
+export async function updateUserProgress(id, parentProgress, childProgress, newProgress) { // See documentation for this part
+    return pool.asyncQuery(
+        'UPDATE tbl_users SET user_progress[?][?] = ?::jsonb WHERE id = ?;',
+        [parentProgress, childProgress, newProgress, id],
+        (err, res) => {
+        console.log(err, res);
+        pool.end();
+    });
+};
