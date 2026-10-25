@@ -551,6 +551,19 @@ export default function HeatingCurveSim() {
 
   return (
     <SimFrame
+      getState={() => ({
+        st: stateAt(Qref.current, ctrl.current.mass),
+        Q: Qref.current,
+        total: ctrl.current.seg.total,
+        bounds: ctrl.current.seg.bounds,
+        running: ctrl.current.running,
+        power: ctrl.current.power,
+        curveAt: (q) => stateAt(q, ctrl.current.mass),
+        Tstart: T_START,
+        Tend: T_END,
+        segColors: SEG_COLORS,
+        segNames: SEG_NAMES,
+      })}
       title="Heating Curve of Water, ice at −20 °C → steam at 120 °C"
       badge={
         <span className="chip violet">

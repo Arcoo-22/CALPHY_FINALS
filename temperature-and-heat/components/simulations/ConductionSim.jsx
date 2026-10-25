@@ -431,6 +431,13 @@ export default function ConductionSim() {
 
   return (
     <SimFrame
+      getState={() => ({
+        T: T.current,
+        hot: T_COLD + ctrl.current.dT,
+        cold: T_COLD,
+        packets: packets.current,
+        mat: ctrl.current.mat,
+      })}
       title="Conduction Rod, particle-to-particle energy transfer"
       badge={
         <span className="chip flame">

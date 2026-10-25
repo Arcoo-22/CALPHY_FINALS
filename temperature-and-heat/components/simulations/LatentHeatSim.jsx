@@ -417,6 +417,14 @@ export default function LatentHeatSim() {
 
   return (
     <SimFrame
+      getState={() => ({
+        mode: ctrl.current.mode,
+        running: ctrl.current.running,
+        mDone: st.current.mDone,
+        total: TOTAL_MASS,
+        power: ctrl.current.power,
+        Q: readout.Q,
+      })}
       title="Measuring L, the electrical method"
       badge={
         <span className="chip flame">

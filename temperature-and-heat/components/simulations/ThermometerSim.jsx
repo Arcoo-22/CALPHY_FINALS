@@ -308,6 +308,12 @@ export default function ThermometerSim() {
 
   return (
     <SimFrame
+      getState={() => ({
+        T: stateRef.current.shown,
+        min: MIN_C,
+        max: MAX_C,
+        parts: stateRef.current.particles,
+      })}
       title="Interactive Thermometer + Particle Model"
       badge={
         <span className="chip flame">

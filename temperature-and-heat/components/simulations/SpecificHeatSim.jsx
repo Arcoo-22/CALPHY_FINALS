@@ -473,6 +473,19 @@ export default function SpecificHeatSim() {
 
   return (
     <SimFrame
+      getState={() => ({
+        t: sim.current.t,
+        Ta: sim.current.Ta,
+        Tb: sim.current.Tb,
+        histA: sim.current.histA,
+        histB: sim.current.histB,
+        partsA: sim.current.partsA,
+        partsB: sim.current.partsB,
+        matA: MATERIALS[ctrl.current.matA],
+        matB: MATERIALS[ctrl.current.matB],
+        T0,
+        Tmax: T_MAX,
+      })}
       title="Specific Heat Race, same energy, different materials"
       badge={
         <span className="chip cool">

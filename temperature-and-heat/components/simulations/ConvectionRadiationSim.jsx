@@ -62,7 +62,7 @@ function bandOf(nm) {
 }
 
 /* =========================== TAB 1 · CONVECTION =========================== */
-function ConvectionCanvas({ power }) {
+function ConvectionCanvas({ power, liveRef }) {
   const canvasRef = useRef(null);
   const powerRef = useRef(power);
   useLayoutEffect(() => {
@@ -77,6 +77,8 @@ function ConvectionCanvas({ power }) {
       y: rnd(),
       t: 0.3,
     }));
+    // shared with the 3D view (read only)
+    if (liveRef) liveRef.current.conv = parts;
     let raf;
 
     const field = (x, y) => {
@@ -291,7 +293,7 @@ function ConvectionCanvas({ power }) {
     };
     raf = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [liveRef]);
 
   return (
     <canvas
@@ -303,7 +305,7 @@ function ConvectionCanvas({ power }) {
 }
 
 /* =========================== TAB 2 · RADIATION =========================== */
-function RadiationCanvas({ tempK, emissivity, surrK }) {
+function RadiationCanvas({ tempK, emissivity, surrK, liveRef }) {
   const canvasRef = useRef(null);
   const ctrl = useRef({ tempK, emissivity, surrK });
   useLayoutEffect(() => {
@@ -436,6 +438,8 @@ function RadiationCanvas({ tempK, emissivity, surrK }) {
         return true;
       });
 
+      if (liveRef) liveRef.current.rad = { photons, ex, ey, er, ax, ay, ar };
+
       // absorption flashes
       if (rnd() < clamp(P / Pmax, 0, 1) * 0.5 + 0.05) {
         drawGlow(ctx, ax - ar, ay + (rnd() - 0.5) * ar, 14, "#fbbf24", 0.35);
@@ -462,7 +466,7 @@ function RadiationCanvas({ tempK, emissivity, surrK }) {
     };
     raf = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [liveRef]);
 
   return (
     <canvas
@@ -480,6 +484,7 @@ export default function ConvectionRadiationSim() {
   const [tempK, setTempK] = useState(1200);
   const [surrK, setSurrK] = useState(293);
   const [emisIdx, setEmisIdx] = useState(0);
+  const liveRef = useRef({ conv: null, rad: null });
   const EMIS = [
     { name: "Black matte (e = 0.95)", value: 0.95 },
     { name: "Human skin (e = 0.97)", value: 0.97 },
@@ -488,6 +493,21 @@ export default function ConvectionRadiationSim() {
   const e = EMIS[emisIdx].value;
   const P = e * sigma * Math.pow(tempK, 4);
   const Pnet = e * sigma * (Math.pow(tempK, 4) - Math.pow(surrK, 4));
+  const lamNm = (wienB / tempK) * 1e9;
+  // live state for the 3D view; the 2D canvases own the motion
+  const getState = () => ({
+    tab,
+    power,
+    tempK,
+    surrK,
+    e,
+    color: wavelengthColor(lamNm),
+    lamNm,
+    band: bandOf(lamNm),
+    pFrac: clamp(P / (sigma * Math.pow(2500, 4)), 0, 1),
+    conv: liveRef.current.conv,
+    rad: liveRef.current.rad,
+  });
 
   const tabs = (
     <div className="btn-group btn-group-sm" role="group" aria-label="Mode">
@@ -509,9 +529,10 @@ export default function ConvectionRadiationSim() {
   if (tab === "convection") {
     return (
       <SimFrame
+        getState={getState}
         title="Convection Pot, the circulating loop"
         badge={tabs}
-        stage={<ConvectionCanvas power={power} />}
+        stage={<ConvectionCanvas power={power} liveRef={liveRef} />}
         controls={
           <>
             <div style={{ minWidth: 220, flex: 1 }}>
@@ -561,9 +582,17 @@ export default function ConvectionRadiationSim() {
 
   return (
     <SimFrame
+      getState={getState}
       title="Thermal Radiation, photons across a vacuum"
       badge={tabs}
-      stage={<RadiationCanvas tempK={tempK} emissivity={e} surrK={surrK} />}
+      stage={
+        <RadiationCanvas
+          tempK={tempK}
+          emissivity={e}
+          surrK={surrK}
+          liveRef={liveRef}
+        />
+      }
       controls={
         <>
           <div style={{ minWidth: 190, flex: 1 }}>

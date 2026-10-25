@@ -637,6 +637,21 @@ export default function CalorimetrySim() {
 
   return (
     <SimFrame
+      getState={() => ({
+        phase: anim.current.phase,
+        objY: anim.current.objY,
+        TobjNow: anim.current.TobjNow,
+        TwNow: anim.current.TwNow,
+        iceLeft: anim.current.iceLeft,
+        Tf: anim.current.Tf,
+        parts: anim.current.parts,
+        mat: MATS[matIdx],
+        mObj,
+        TObj,
+        TW,
+        useIce,
+        mIce,
+      })}
       title="Calorimetry, heat lost = heat gained"
       badge={
         <span className="chip violet">
