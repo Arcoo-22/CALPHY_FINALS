@@ -23,7 +23,15 @@ const SEARCH_STOP_WORDS = new Set([
 ]);
 
 function tokenize(text) {
-  return new Set(text.toLowerCase().match(/[a-z0-9]+/g) || []);
+  const normalized = text
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/celcius/g, "celsius")
+    .replace(/farenheit/g, "fahrenheit")
+    .replace(/fahrenheight/g, "fahrenheit")
+    .replace(/temprature/g, "temperature");
+  return new Set(normalized.match(/[a-z0-9]+/g) || []);
 }
 
 function getMatches(question) {
@@ -76,7 +84,7 @@ function getMatches(question) {
     ...FORMULA_SHEET.map((formula) => ({
       title: formula.name,
       href: "/formulas",
-      text: `${formula.name} ${formula.display} ${formula.useWhen}`,
+      text: `${formula.name} ${formula.display} ${formula.useWhen} ${formula.name === "Temperature" ? "Celsius Fahrenheit centigrade conversion" : ""}`,
     })),
     ...CONSTANTS_BOX.map(([title, value]) => ({
       title,
@@ -109,7 +117,12 @@ function buildGroundedFallback(matches) {
 }
 
 function localAction(question) {
-  const q = question.toLowerCase();
+  const q = question
+    .toLowerCase()
+    .replace(/celcius/g, "celsius")
+    .replace(/farenheit/g, "fahrenheit")
+    .replace(/fahrenheight/g, "fahrenheit")
+    .replace(/temprature/g, "temperature");
   if (/^(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(q)) {
     return {
       answer: "Hi! What Temperature & Heat topic can I help you with? I can explain lessons, preview course content, guide you to a page, or help with a calculation.",
@@ -180,6 +193,17 @@ function localAction(question) {
       answer:
         "Which lesson would you like to preview? There are nine lessons in the Temperature & Heat course.",
       links: [{ label: "Browse all lessons", href: "/lessons" }],
+    };
+  }
+  if (
+    /\b(formula|equation|convert|conversion)\b/.test(q) &&
+    /\b(celsius|celcius|centigrade)\b/.test(q) &&
+    /\b(fahrenheit|farenheit)\b/.test(q)
+  ) {
+    return {
+      answer:
+        "To convert Celsius to Fahrenheit, use **°F = (°C × 9/5) + 32** (equivalently, **°F = 1.8 × °C + 32**). Multiply the Celsius temperature by 1.8, then add 32. For example, 25°C = 77°F. Want to give me a temperature and I’ll convert it?",
+      links: [{ label: "Temperature formulas", href: "/formulas" }],
     };
   }
   const conversion = q.match(
@@ -318,8 +342,11 @@ export async function POST(request) {
     if (!matches.length) {
       return NextResponse.json({
         answer:
-          "I can help with the Temperature & Heat lessons, formulas, quizzes, simulations, and site navigation. I don’t have course material for that question yet.",
-        links: [{ label: "Browse lessons", href: "/lessons" }],
+          "I’m not finding a close match in the Temperature & Heat course yet. Try naming a topic, formula, lesson, or calculation, and I’ll look it up or work through it with you.",
+        links: [
+          { label: "Browse lessons", href: "/lessons" },
+          { label: "View formulas", href: "/formulas" },
+        ],
       });
     }
 

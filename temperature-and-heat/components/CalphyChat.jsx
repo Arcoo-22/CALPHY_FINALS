@@ -4,7 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 import CalphyMascot from "@/components/CalphyMascot";
+
+function normalizeMathDelimiters(text) {
+  return text
+    .replace(/\\\[([\s\S]*?)\\\]/g, (_, math) => `$$${math}$$`)
+    .replace(/\\\(([\s\S]*?)\\\)/g, (_, math) => `$${math}$`)
+    .replace(/\\[ \t]*(\r?\n)/g, "  $1")
+    .replace(/\^\\circ!?([CF])/g, "{}^\\circ\\!$1");
+}
 
 const suggestions = ["How do I go to simulations?", "Preview Lesson 5", "Convert 25°C to °F"];
 
@@ -76,7 +86,8 @@ export default function CalphyChat() {
             {message.role === "assistant" ? (
               <div className="assistant-markdown">
                 <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
+                  remarkPlugins={[remarkGfm, remarkMath]}
+                  rehypePlugins={[rehypeKatex]}
                   skipHtml
                   components={{
                     a: ({ href, children }) =>
@@ -95,7 +106,7 @@ export default function CalphyChat() {
                     ),
                   }}
                 >
-                  {message.text}
+                  {normalizeMathDelimiters(message.text)}
                 </ReactMarkdown>
               </div>
             ) : (

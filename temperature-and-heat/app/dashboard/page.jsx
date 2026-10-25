@@ -76,7 +76,8 @@ export default function DashboardPage() {
     try {
       const res = await fetch("/api/progress", { method: "DELETE" });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Could not reset database progress.");
+      if (!res.ok)
+        throw new Error(data.error || "Could not reset database progress.");
       resetLocalProgress();
       await refreshProgress();
       setDbResetMessage("Account progress reset.");
@@ -121,9 +122,7 @@ export default function DashboardPage() {
                   <span
                     className={`badge-mode ${isLoggedIn ? "user" : "guest"}`}
                   >
-                    {isLoggedIn
-                      ? "Synced account"
-                      : "guest mode, browser storage"}
+                    {isLoggedIn ? "Synced account" : "Guest mode"}
                   </span>
                   {isLoggedIn && (
                     <span
@@ -189,8 +188,7 @@ export default function DashboardPage() {
                 <Link href="/login" className="fw-bold ms-1">
                   Log in
                 </Link>{" "}
-                and it will sync to the class database (tbl_users.user_progress)
-                so it follows you anywhere.
+                to sync.
               </div>
             </Reveal>
           )}
