@@ -50,7 +50,9 @@ export default function RootLayout({ children }) {
         />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
-      <body>
+      {/* extensions such as Grammarly add attributes to <body> before React
+          hydrates; this ignores attribute mismatches on <body> only */}
+      <body suppressHydrationWarning>
         <UserProvider>
           <SiteNavbar />
           <main>{children}</main>

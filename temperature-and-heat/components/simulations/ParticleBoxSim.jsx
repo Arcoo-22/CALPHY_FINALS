@@ -406,6 +406,11 @@ export default function ParticleBoxSim() {
 
   return (
     <SimFrame
+      getState={() => ({
+        cupT: s.current.cupT,
+        poolT: s.current.poolT,
+        parts: s.current.parts,
+      })}
       title="Cup vs Pool, Temperature ≠ Thermal Energy"
       badge={
         <span className="chip cool">

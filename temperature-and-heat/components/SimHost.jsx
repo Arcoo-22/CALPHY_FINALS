@@ -1,7 +1,10 @@
 "use client";
 
 // Dynamically loads a simulation canvas component by name (client-side only).
+// Components and optional 3D scenes are declared in components/sims/registry.js.
 import dynamic from "next/dynamic";
+import { SimViewContext } from "./sims/SimViewContext";
+import { SIM_REGISTRY } from "./sims/registry";
 
 const SimLoading = () => (
   <div className="sim-shell">
@@ -24,26 +27,25 @@ const SimLoading = () => (
 
 const load = (loader) => dynamic(loader, { ssr: false, loading: SimLoading });
 
-const SIMS = {
-  ThermometerSim: load(() => import("./simulations/ThermometerSim")),
-  ParticleBoxSim: load(() => import("./simulations/ParticleBoxSim")),
-  ConductionSim: load(() => import("./simulations/ConductionSim")),
-  ConvectionRadiationSim: load(
-    () => import("./simulations/ConvectionRadiationSim"),
-  ),
-  SpecificHeatSim: load(() => import("./simulations/SpecificHeatSim")),
-  CalorimetrySim: load(() => import("./simulations/CalorimetrySim")),
-  HeatingCurveSim: load(() => import("./simulations/HeatingCurveSim")),
-  LatentHeatSim: load(() => import("./simulations/LatentHeatSim")),
-  GasLawSim: load(() => import("./simulations/GasLawSim")),
-  ModesOfHeatSim: load(() => import("./simulations/ModesOfHeatSim")),
-  UnitConverter: load(() => import("./simulations/UnitConverter")),
-};
+const SIMS = Object.fromEntries(
+  Object.entries(SIM_REGISTRY).map(([name, entry]) => [
+    name,
+    {
+      Comp: load(entry.load2d),
+      view: { name, load3d: entry.load3d, views: entry.views },
+    },
+  ]),
+);
 
 export default function SimHost({ name, ...props }) {
-  const Comp = SIMS[name];
-  if (!Comp) return null;
-  return <Comp {...props} />;
+  const sim = SIMS[name];
+  if (!sim) return null;
+  const { Comp, view } = sim;
+  return (
+    <SimViewContext.Provider value={view}>
+      <Comp {...props} />
+    </SimViewContext.Provider>
+  );
 }
 
 export const SIM_NAMES = Object.keys(SIMS);

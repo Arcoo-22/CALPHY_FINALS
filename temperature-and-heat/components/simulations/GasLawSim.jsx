@@ -437,6 +437,17 @@ export default function GasLawSim() {
 
   return (
     <SimFrame
+      getState={() => ({
+        T: st.current.T,
+        V: st.current.V,
+        parts: st.current.parts,
+        Tmin: T_MIN,
+        Tmax: T_MAX,
+        Vmin: V_MIN,
+        Vmax: V_MAX,
+        gauge: st.current.gauge,
+        P: readout.P,
+      })}
       title="Gas Laws Piston, pV = nRT with real bouncing particles"
       badge={
         <span className="chip green">

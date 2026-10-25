@@ -49,6 +49,7 @@ export default function ModesOfHeatSim() {
     radiation: true,
   });
   const showRef = useRef(show);
+  const soupRef = useRef(null);
   useLayoutEffect(() => {
     showRef.current = show;
   });
@@ -60,6 +61,7 @@ export default function ModesOfHeatSim() {
       x: rnd(),
       y: rnd(),
     }));
+    soupRef.current = soupParts;
     let raf;
 
     const flames = (ctx, x, y, scale, t) => {
@@ -432,6 +434,7 @@ export default function ModesOfHeatSim() {
 
   return (
     <SimFrame
+      getState={() => ({ show: showRef.current, soup: soupRef.current })}
       title="Heat Transfer Demo, conduction · convection · radiation"
       badge={
         <span className="chip flame">
