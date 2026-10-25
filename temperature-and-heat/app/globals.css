@@ -1544,7 +1544,9 @@ a,
   z-index: 1056;
   display: flex;
   width: min(360px, calc(100vw - 2rem));
+  height: min(560px, calc(100dvh - 2rem));
   max-height: min(560px, calc(100dvh - 2rem));
+  min-height: 0;
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -1555,6 +1557,7 @@ a,
 
 .mascot-panel-header {
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
   gap: 0.7rem;
   padding: 0.85rem 1rem;
@@ -1600,10 +1603,12 @@ a,
 
 .mascot-msgs {
   display: flex;
+  min-height: 0;
   flex: 1;
   flex-direction: column;
   gap: 0.6rem;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 0.9rem;
   background: var(--bg);
 }
@@ -1615,6 +1620,88 @@ a,
   border-radius: var(--radius-card);
   font-size: 0.88rem;
   line-height: 1.45;
+}
+
+.mascot-msg p {
+  white-space: pre-line;
+}
+
+.assistant-markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.assistant-markdown p {
+  margin: 0 0 0.55rem;
+}
+
+.assistant-markdown .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 0.4rem 0 0.65rem;
+  padding: 0.2rem 0;
+}
+
+.assistant-markdown h4 {
+  margin: 0.15rem 0 0.45rem;
+  font-size: 0.92rem;
+  letter-spacing: -0.01em;
+}
+
+.assistant-markdown blockquote {
+  margin: 0.35rem 0 0.65rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--ember);
+  color: var(--muted);
+}
+
+.assistant-markdown hr {
+  margin: 0.5rem 0;
+  border-color: var(--line);
+  opacity: 1;
+}
+
+.assistant-markdown-table {
+  margin-bottom: 0.6rem;
+  font-size: 0.78rem;
+}
+
+.assistant-markdown a {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.assistant-markdown ul,
+.assistant-markdown ol {
+  margin: 0.25rem 0 0.65rem;
+  padding-left: 1.25rem;
+}
+
+.assistant-markdown li + li {
+  margin-top: 0.2rem;
+}
+
+.assistant-markdown code {
+  padding: 0.08rem 0.25rem;
+  border-radius: 0.2rem;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: 0.84em;
+}
+
+.assistant-markdown pre {
+  overflow-x: auto;
+  margin: 0.3rem 0 0.65rem;
+  padding: 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  background: var(--surface-2);
+  white-space: pre;
+}
+
+.assistant-markdown pre code {
+  padding: 0;
+  background: transparent;
 }
 
 .mascot-msg.bot {
@@ -1630,6 +1717,77 @@ a,
   border-bottom-right-radius: 0.2rem;
   background: var(--cool-tint);
   color: var(--ink);
+}
+
+.assistant-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.6rem;
+}
+
+.assistant-links a {
+  color: var(--cool);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.assistant-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.assistant-suggestions button {
+  min-height: 40px;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.assistant-suggestions button:hover {
+  border-color: var(--ember);
+  background: var(--ember-tint);
+}
+
+.mascot-compose {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.5rem;
+  padding: 0.7rem 0.9rem;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.mascot-compose input {
+  min-width: 0;
+  min-height: 44px;
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-button);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+}
+
+.mascot-compose input:focus {
+  border-color: var(--ember);
+  outline: none;
+}
+
+.assistant-footnote {
+  flex: 0 0 auto;
+  padding: 0 0.9rem 0.65rem;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.7rem;
 }
 
 .mascot-chips {
@@ -2144,14 +2302,25 @@ a.check-dot.current:hover {
   }
 
   .mascot-panel {
+    top: max(0.5rem, env(safe-area-inset-top));
+    left: 0.5rem;
     right: 0.5rem;
     bottom: max(0.5rem, env(safe-area-inset-bottom));
-    width: calc(100vw - 1rem);
-    max-height: calc(100dvh - 1rem);
+    width: auto;
+    height: auto;
+    max-height: none;
   }
 
   .progress-thin {
     background-size: auto 8px;
+  }
+}
+
+@media (max-height: 480px) and (min-width: 576px) {
+  .mascot-panel {
+    bottom: 0.5rem;
+    height: calc(100dvh - 1rem);
+    max-height: none;
   }
 }
 
