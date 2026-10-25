@@ -16,6 +16,20 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Calphy AI assistant
+
+The assistant uses Groq for grounded course answers. Add your key to
+`temperature-and-heat/.env.local` (keep it private):
+
+```env
+GROQ_API_KEY=your_groq_api_key
+# Optional; defaults to openai/gpt-oss-20b
+GROQ_MODEL=openai/gpt-oss-20b
+```
+
+Restart the Next.js server after changing environment variables. Navigation,
+lesson previews, and supported calculations also work without a Groq key.
+
 You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
