@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { query, DB_ERROR_MESSAGE } from "@/lib/db";
+import { query, DB_ERROR_MESSAGE, defaultProgress } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { PARENTS } from "@/lib/progress";
 import { LESSONS } from "@/lib/lessons";
@@ -174,6 +174,31 @@ export async function POST(req) {
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[progress POST]", err.message);
+    return NextResponse.json({ error: DB_ERROR_MESSAGE }, { status: 503 });
+  }
+}
+
+export async function DELETE() {
+  const session = await getSession();
+  if (!session?.id)
+    return NextResponse.json({ error: "Not logged in." }, { status: 401 });
+
+  try {
+    const res = await query(
+      `UPDATE tbl_users
+       SET user_progress = $2::jsonb
+       WHERE id = $1
+       RETURNING id`,
+      [session.id, JSON.stringify(defaultProgress(
+        LESSONS.map(({ key }) => key),
+        QUIZZES.map(({ id }) => id),
+      ))],
+    );
+    if (res.rows.length === 0)
+      return NextResponse.json({ error: "User not found." }, { status: 404 });
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error("[progress DELETE]", err.message);
     return NextResponse.json({ error: DB_ERROR_MESSAGE }, { status: 503 });
   }
 }

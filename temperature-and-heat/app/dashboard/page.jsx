@@ -25,6 +25,8 @@ export default function DashboardPage() {
   const { user, isLoggedIn, authLoading, progress, logout, refreshProgress } =
     useUser();
   const [dbStatus, setDbStatus] = useState(isLoggedIn ? "checking" : "guest");
+  const [resettingDb, setResettingDb] = useState(false);
+  const [dbResetMessage, setDbResetMessage] = useState("");
 
   useEffect(() => {
     let alive = true;
@@ -59,6 +61,31 @@ export default function DashboardPage() {
       )
     : 0;
   const overall = overallPercent(progress);
+
+  const resetDatabaseProgress = async () => {
+    if (
+      !window.confirm(
+        "Reset all progress in your account database? This affects your account on all devices.",
+      )
+    ) {
+      return;
+    }
+
+    setResettingDb(true);
+    setDbResetMessage("");
+    try {
+      const res = await fetch("/api/progress", { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Could not reset database progress.");
+      resetLocalProgress();
+      await refreshProgress();
+      setDbResetMessage("Account progress reset.");
+    } catch (err) {
+      setDbResetMessage(err.message || "Could not reset database progress.");
+    } finally {
+      setResettingDb(false);
+    }
+  };
 
   return (
     <div className="page-top-space">
@@ -95,7 +122,7 @@ export default function DashboardPage() {
                     className={`badge-mode ${isLoggedIn ? "user" : "guest"}`}
                   >
                     {isLoggedIn
-                      ? "synced account"
+                      ? "Synced account"
                       : "guest mode, browser storage"}
                   </span>
                   {isLoggedIn && (
@@ -112,10 +139,10 @@ export default function DashboardPage() {
                       }
                     >
                       {dbStatus === "online"
-                        ? "PostgreSQL connected"
+                        ? "Connected to server"
                         : dbStatus === "offline"
-                          ? "PostgreSQL unreachable, using local copy"
-                          : "checking db…"}
+                          ? "Server unreachable, using local copy"
+                          : "checking connection"}
                     </span>
                   )}
                 </div>
@@ -350,6 +377,23 @@ export default function DashboardPage() {
                   })}
 
                   <div className="mt-4">
+                    {isLoggedIn && (
+                      <button
+                        className="btn btn-sm w-100 mt-2"
+                        style={{
+                          background: "rgba(239,68,68,.08)",
+                          color: "var(--bad)",
+                          border: "1px solid rgba(239,68,68,.3)",
+                        }}
+                        onClick={resetDatabaseProgress}
+                        disabled={resettingDb}
+                      >
+                        <i className="bi bi-database-x me-1" />
+                        {resettingDb
+                          ? "Resetting account progress…"
+                          : "Reset account progress"}
+                      </button>
+                    )}
                     <button
                       className="btn btn-sm w-100 mt-2"
                       style={{
@@ -369,6 +413,15 @@ export default function DashboardPage() {
                     >
                       <i className="bi bi-trash3 me-1" /> Reset local progress
                     </button>
+                    {dbResetMessage && (
+                      <div
+                        className={`small mt-2 ${dbResetMessage === "Account progress reset." ? "text-success" : "text-danger"}`}
+                        role="status"
+                        aria-live="polite"
+                      >
+                        {dbResetMessage}
+                      </div>
+                    )}
                   </div>
                 </div>
               </Reveal>
