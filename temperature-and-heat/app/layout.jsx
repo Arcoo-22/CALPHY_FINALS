@@ -1,9 +1,11 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import "katex/dist/katex.min.css";
 import "./globals.css";
 import { UserProvider } from "@/components/UserContext";
 import SiteNavbar from "@/components/SiteNavbar";
 import SiteFooter from "@/components/SiteFooter";
+import CalphyChat from "@/components/CalphyChat";
 import { returningRedirectScript } from "@/lib/visit";
 
 export const metadata = {
@@ -59,6 +61,7 @@ export default function RootLayout({ children }) {
           <SiteNavbar />
           <main>{children}</main>
           <SiteFooter />
+          <CalphyChat />
         </UserProvider>
       </body>
     </html>

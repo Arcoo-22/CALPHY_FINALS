@@ -76,7 +76,8 @@ export default function DashboardPage() {
     try {
       const res = await fetch("/api/progress", { method: "DELETE" });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Could not reset database progress.");
+      if (!res.ok)
+        throw new Error(data.error || "Could not reset database progress.");
       resetLocalProgress();
       await refreshProgress();
       setDbResetMessage("Account progress reset.");
