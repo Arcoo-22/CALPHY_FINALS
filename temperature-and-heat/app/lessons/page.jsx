@@ -18,24 +18,16 @@ export default function LessonsIndexPage() {
             <nav aria-label="breadcrumb" className="mb-3">
               <ol className="breadcrumb small mb-0">
                 <li className="breadcrumb-item">
-                  <Link href="/">Home</Link>
+                  <Link href="/learn">Home</Link>
                 </li>
                 <li className="breadcrumb-item active" aria-current="page">
                   Lessons
                 </li>
               </ol>
             </nav>
-            <span className="eyebrow">
-              <i className="bi bi-journal-bookmark" /> Curriculum
-            </span>
-            <h1 className="section-title">
-              All lessons,{" "}
-              <span className="gradient-text">Temperature &amp; Heat</span>
-            </h1>
+            <h1 className="section-title">Lessons</h1>
             <p className="section-sub mb-4">
-              Follow the units in order, or jump straight to what you need. Each
-              lesson packs an overview, key terms, worked examples, a
-              simulation, a video and an interactive check.
+              Follow the units in order, or jump to any lesson.
             </p>
           </Reveal>
         </Container>

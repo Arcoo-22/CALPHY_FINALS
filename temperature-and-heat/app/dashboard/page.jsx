@@ -115,34 +115,24 @@ export default function DashboardPage() {
                     ? "Checking session…"
                     : isLoggedIn
                       ? `Hi, ${user.username}!`
-                      : "Your progress (guest)"}
+                      : "Your progress"}
                 </h1>
                 <div className="d-flex flex-wrap gap-2">
                   <span
                     className={`badge-mode ${isLoggedIn ? "user" : "guest"}`}
                   >
-                    {isLoggedIn
-                      ? "Synced account"
-                      : "guest mode, browser storage"}
+                    {isLoggedIn ? "Saved to your account" : "Guest"}
                   </span>
-                  {isLoggedIn && (
+                  {isLoggedIn && dbStatus === "offline" && (
                     <span
-                      className={`badge-mode ${dbStatus === "online" ? "user" : dbStatus === "offline" ? "guest" : "guest"}`}
-                      style={
-                        dbStatus === "offline"
-                          ? {
-                              background: "rgba(239,68,68,.1)",
-                              color: "var(--bad)",
-                              borderColor: "rgba(239,68,68,.35)",
-                            }
-                          : undefined
-                      }
+                      className="badge-mode guest"
+                      style={{
+                        background: "var(--bad-tint)",
+                        color: "var(--bad)",
+                        borderColor: "var(--bad)",
+                      }}
                     >
-                      {dbStatus === "online"
-                        ? "Connected to server"
-                        : dbStatus === "offline"
-                          ? "Server unreachable, using local copy"
-                          : "checking connection"}
+                      Server unreachable, showing this browser&apos;s copy
                     </span>
                   )}
                 </div>
@@ -180,30 +170,21 @@ export default function DashboardPage() {
             </div>
           </Reveal>
 
-          {!isLoggedIn && (
-            <Reveal delay={40}>
-              <div className="quiz-feedback good mb-4">
-                <i className="bi bi-info-circle-fill me-2" />
-                You&apos;re exploring as a <b>guest</b>, everything you do is
-                saved in this browser.
-                <Link href="/login" className="fw-bold ms-1">
-                  Log in
-                </Link>{" "}
-                and it will sync to the class database (tbl_users.user_progress)
-                so it follows you anywhere.
-              </div>
-            </Reveal>
+          {!isLoggedIn && !authLoading && (
+            <p className="small text-muted mb-4">
+              Saved in this browser. Log in to keep it on any device.
+            </p>
           )}
 
-          {/* stat cards */}
-          <Row className="g-3 mb-4">
-            <Col md={3} xs={6}>
+          {/* stat cards: three numbers on phones, the ring joins from md up */}
+          <Row className="g-2 g-md-3 mb-4">
+            <Col md={3} xs={4}>
               <Reveal className="h-100">
                 <div className="card-soft stat-card h-100">
                   <div className="stat-num gradient-text">
                     {lessonsDone}/{LESSONS.length}
                   </div>
-                  <div className="stat-label">lessons completed</div>
+                  <div className="stat-label">lessons done</div>
                   <div className="progress-thin mt-2">
                     <div
                       className="bar"
@@ -215,13 +196,13 @@ export default function DashboardPage() {
                 </div>
               </Reveal>
             </Col>
-            <Col md={3} xs={6}>
+            <Col md={3} xs={4}>
               <Reveal delay={60} className="h-100">
                 <div className="card-soft stat-card h-100">
                   <div className="stat-num gradient-text-cool">
                     {quizzesDone}/{QUIZZES.length}
                   </div>
-                  <div className="stat-label">quizzes finished</div>
+                  <div className="stat-label">quizzes done</div>
                   <div className="progress-thin mt-2">
                     <div
                       className="bar cool"
@@ -233,13 +214,13 @@ export default function DashboardPage() {
                 </div>
               </Reveal>
             </Col>
-            <Col md={3} xs={6}>
+            <Col md={3} xs={4}>
               <Reveal delay={120} className="h-100">
                 <div className="card-soft stat-card h-100">
                   <div className="stat-num" style={{ color: "var(--good)" }}>
                     {avgScore}%
                   </div>
-                  <div className="stat-label">average quiz score</div>
+                  <div className="stat-label">avg. quiz score</div>
                   <div className="progress-thin mt-2">
                     <div
                       className="bar green"
@@ -249,7 +230,7 @@ export default function DashboardPage() {
                 </div>
               </Reveal>
             </Col>
-            <Col md={3} xs={6}>
+            <Col md={3} className="d-none d-md-block">
               <Reveal delay={180} className="h-100">
                 <div className="card-soft stat-card h-100 d-flex align-items-center justify-content-center">
                   <ProgressRing value={overall} size={104} stroke={10}>
@@ -309,19 +290,16 @@ export default function DashboardPage() {
                             href={`/lessons/${l.slug}`}
                             className="fw-semibold text-dark"
                           >
-                            Lesson {l.n}: {l.title}
+                            {l.title}
                           </Link>
-                          <div className="small text-muted">{l.tagline}</div>
                         </div>
-                        <span
-                          className={`lesson-status-tag chip ${st === "Finished" ? "green" : st === "Current" ? "flame" : ""} d-none d-sm-inline-flex`}
-                        >
-                          {st === "Finished"
-                            ? "Done"
-                            : st === "Current"
-                              ? "In progress"
-                              : "New"}
-                        </span>
+                        {st !== "NotStarted" && (
+                          <span
+                            className={`lesson-status-tag chip ${st === "Finished" ? "green" : "flame"} d-none d-sm-inline-flex`}
+                          >
+                            {st === "Finished" ? "Done" : "In progress"}
+                          </span>
+                        )}
                       </div>
                     );
                   })}
@@ -353,7 +331,7 @@ export default function DashboardPage() {
                             {quizLabel(q.id)} · {q.title}
                           </Link>
                           <span
-                            className="fw-bold small"
+                            className="fw-bold small text-nowrap ms-2"
                             style={{
                               color:
                                 sc >= 70

@@ -109,7 +109,7 @@ export default async function LessonPage({ params }) {
           <nav aria-label="breadcrumb" className="mb-3">
             <ol className="breadcrumb small mb-0">
               <li className="breadcrumb-item">
-                <Link href="/">Home</Link>
+                <Link href="/learn">Home</Link>
               </li>
               <li className="breadcrumb-item">
                 <Link href="/lessons">Lessons</Link>
@@ -122,18 +122,9 @@ export default async function LessonPage({ params }) {
 
           <Row className="g-4 align-items-end">
             <Col lg={8}>
-              <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
+              <div className="mb-3">
                 <span className="content-label">
                   <i className={`bi ${unit.icon}`} /> {unit.title}
-                </span>
-                <span className="content-label">
-                  <i className="bi bi-joystick" /> simulation
-                </span>
-                <span className="content-label">
-                  <i className="bi bi-youtube" /> video
-                </span>
-                <span className="content-label">
-                  <i className="bi bi-patch-check" /> mini-quiz
                 </span>
               </div>
               <h1
@@ -476,11 +467,7 @@ export default async function LessonPage({ params }) {
             <div className="card-soft flat p-4 mt-4">
               <div className="d-flex flex-wrap align-items-center gap-3">
                 <div className="flex-grow-1" style={{ minWidth: 240 }}>
-                  <h3 className="fw-bold h5 mb-1">Ready to prove it?</h3>
-                  <p className="small text-muted mb-0">
-                    Take the full graded quiz for this topic, scores save to
-                    your dashboard.
-                  </p>
+                  <h3 className="fw-bold h5 mb-0">Ready for the quiz?</h3>
                 </div>
                 <MarkCompleteButton lessonKey={lesson.key} />
                 <Link

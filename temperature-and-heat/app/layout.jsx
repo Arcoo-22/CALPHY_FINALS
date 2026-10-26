@@ -4,6 +4,7 @@ import "./globals.css";
 import { UserProvider } from "@/components/UserContext";
 import SiteNavbar from "@/components/SiteNavbar";
 import SiteFooter from "@/components/SiteFooter";
+import { returningRedirectScript } from "@/lib/visit";
 
 export const metadata = {
   title: {
@@ -34,6 +35,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: returningRedirectScript }} />
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link

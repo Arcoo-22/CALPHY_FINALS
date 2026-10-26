@@ -36,32 +36,23 @@ export default function QuizCards() {
                     <div>
                       <h3 className="fw-bold h5 mb-0">{q.title}</h3>
                       <div className="small text-muted">
-                        {q.questions.length} questions · auto-graded
+                        {quizLabel(q.id)} · {q.questions.length} questions
                       </div>
                     </div>
                   </div>
                   <p className="text-muted small flex-grow-1">
                     {q.description}
                   </p>
-                  <div className="d-flex align-items-center gap-2 flex-wrap">
+                  <div>
                     {status === "Finished" ? (
-                      <>
-                        <span className="chip green">
-                          <i className="bi bi-trophy" /> best: {score}%
-                        </span>
-                        <span className="chip">retake any time</span>
-                      </>
+                      <span className="chip green">
+                        <i className="bi bi-trophy" /> best: {score}%
+                      </span>
                     ) : (
                       <span className="chip flame">
                         <i className="bi bi-play-circle" /> Start quiz
                       </span>
                     )}
-                    <span
-                      className="ms-auto small fw-bold"
-                      style={{ color: "var(--ember-text)" }}
-                    >
-                      {quizLabel(q.id)} <i className="bi bi-arrow-right" />
-                    </span>
                   </div>
                 </div>
               </Link>

@@ -30,7 +30,7 @@ export default async function QuizPage({ params }) {
             <nav aria-label="breadcrumb" className="mb-3">
               <ol className="breadcrumb small mb-0">
                 <li className="breadcrumb-item">
-                  <Link href="/">Home</Link>
+                  <Link href="/learn">Home</Link>
                 </li>
                 <li className="breadcrumb-item">
                   <Link href="/quizzes">Quizzes</Link>

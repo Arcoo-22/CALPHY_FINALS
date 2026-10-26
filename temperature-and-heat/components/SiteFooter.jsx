@@ -15,13 +15,7 @@ export default function SiteFooter() {
               </span>
               CalphyLearn
             </div>
-            <p className="small mb-2" style={{ maxWidth: 340 }}>
-              An interactive Physics learning platform for{" "}
-              <b className="text-white">Temperature and Heat</b>, animated
-              tutorials, canvas simulations, quizzes and Calphy, your flame
-              mascot.
-            </p>
-            <p className="small mb-0">
+            <p className="small mb-0" style={{ maxWidth: 340 }}>
               Built with{" "}
               <b className="text-white">
                 Next.js · React · Bootstrap 5 · PostgreSQL
@@ -30,7 +24,8 @@ export default function SiteFooter() {
             </p>
           </div>
 
-          <div className="col-6 col-lg-3">
+          {/* lesson and quiz lists repeat the nav on phones, so they start at lg */}
+          <div className="col-lg-3 d-none d-lg-block">
             <h6 className="mb-3">Lessons</h6>
             <ul className="list-unstyled small mb-0 d-grid gap-2">
               {LESSONS.slice(0, 5).map((l) => (
@@ -52,7 +47,7 @@ export default function SiteFooter() {
             </ul>
           </div>
 
-          <div className="col-6 col-lg-2">
+          <div className="col-lg-2 d-none d-lg-block">
             <h6 className="mb-3">Quizzes</h6>
             <ul className="list-unstyled small mb-0 d-grid gap-2">
               {QUIZZES.map((q) => (
@@ -97,10 +92,6 @@ export default function SiteFooter() {
         <div className="d-flex flex-wrap justify-content-between gap-2 small">
           <span>
             © {new Date().getFullYear()} CalphyLearn, Temperature &amp; Heat.
-          </span>
-          <span>
-            <i className="bi bi-cloud-check me-1" /> Progress sync is available
-            when you sign in.
           </span>
         </div>
       </Container>

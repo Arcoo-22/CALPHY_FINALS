@@ -675,21 +675,6 @@ a,
   padding: 4.5rem 0 3.5rem;
 }
 
-.unit-rail-row {
-  position: relative;
-  padding-left: 2.5rem !important;
-}
-
-.unit-rail-row::before {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 2px;
-  background: var(--rail-color, var(--line));
-  content: "";
-}
-
 .unit-card {
   width: 100%;
   min-width: 0;
@@ -725,11 +710,6 @@ a,
   text-decoration: none;
 }
 
-.lesson-card-link:hover .lesson-card-arrow {
-  border-color: var(--ember);
-  color: var(--ember-hover);
-}
-
 .lesson-card-content {
   min-width: 0;
   padding-right: 2.25rem;
@@ -749,20 +729,6 @@ a,
 .lesson-card-status {
   min-height: 2rem;
   margin-top: auto !important;
-}
-
-.lesson-card-arrow {
-  display: inline-flex;
-  width: 2rem;
-  height: 2rem;
-  flex: 0 0 2rem;
-  align-items: center;
-  justify-content: center;
-  margin-left: auto;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-button);
-  color: var(--ember-text);
-  font-size: 1rem;
 }
 
 .lesson-num {
@@ -790,38 +756,422 @@ a,
   grid-template-columns: minmax(0, 1fr);
 }
 
+/* /learn rows are short, so two units fit side by side on wide screens */
+@media (min-width: 992px) {
+  .lesson-unit-grid.home {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .unit-card > .row {
   margin-right: 0;
   margin-left: 0;
 }
 
-.unit-rail-row.completed {
-  --rail-color: var(--ember);
+/* /learn unit card: the big faded number matches the lesson cards on /lessons */
+.unit-card-home {
+  position: relative;
+  overflow: hidden;
 }
 
-.unit-rail-tick {
+.unit-num-overlay {
   position: absolute;
-  top: 1.25rem;
-  left: 0;
-  width: 1.2rem;
-  border-top: 2px solid var(--ember);
+  top: 0.4rem;
+  right: 1rem;
+  color: var(--surface-2);
+  font-size: 4.5rem;
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.unit-card-home > :not(.unit-num-overlay) {
+  position: relative;
 }
 
 .unit-lesson-list {
   display: grid;
-  gap: 0.25rem;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
 }
 
 .unit-lesson-row {
   display: flex;
   min-height: 44px;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.75rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-button);
   color: var(--ink-soft);
+  text-decoration: none;
 }
 
 .unit-lesson-row:hover {
+  border-color: var(--line);
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.unit-lesson-row.is-next {
+  border-color: var(--ember);
+  background: var(--ember-tint);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.row-icon {
+  display: inline-flex;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-small);
+  background: var(--surface-2);
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+}
+
+.is-next .row-icon {
+  background: var(--ember);
+  color: #ffffff;
+}
+
+.is-done .row-icon {
+  background: var(--good-tint);
+  color: var(--good);
+}
+
+.row-num {
+  display: block;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* --muted drops under 4.5:1 on --surface-2 */
+.unit-lesson-row:hover .row-num {
+  color: var(--ink-soft);
+}
+
+.is-next .row-num,
+.unit-lesson-row.is-next:hover .row-num {
   color: var(--ember-text);
+}
+
+.row-status {
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.row-status.done {
+  color: var(--good);
+}
+
+.row-status.next {
+  color: var(--ember-text);
+}
+
+.unit-card .icon-tile,
+.lesson-icon.icon-tile {
+  background: var(--ember-tint);
+  color: var(--ember-text);
+}
+
+.unit-number {
+  color: var(--ember-text);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.lesson-card-tagline {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+/* /learn intro: replaces the landing for returning visitors, kept to one card */
+.learn-intro {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.learn-intro-copy {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.learn-intro-eyebrow {
+  font-size: 1.05rem;
+}
+
+.learn-intro-title {
+  font-size: clamp(1.4rem, 2.8vw, 1.95rem);
+}
+
+.learn-intro-sub {
+  max-width: 38rem;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.learn-intro-meta {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.learn-intro-progress {
+  display: flex;
+  max-width: 26rem;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--ink-soft);
+}
+
+.learn-intro-progress .progress-thin {
+  flex: 1 1 auto;
+}
+
+.learn-intro-mascot {
+  flex: 0 0 auto;
+  padding-right: 1rem;
+}
+
+@media (max-width: 575.98px) {
+  .learn-intro {
+    padding: 1.15rem;
+  }
+
+  .learn-intro-eyebrow {
+    font-size: 0.95rem;
+  }
+}
+
+/* /learn section opener (components/SectionHead.jsx) */
+.learn-section {
+  margin-top: 3rem;
+}
+
+.learn-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.learn-section-title {
+  margin-bottom: 0.3rem;
+  font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.learn-section-sub {
+  max-width: 40rem;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.learn-section-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Calphy + video: one row, video capped so it never dominates the page */
+.learn-media {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 992px) {
+  .learn-media {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+}
+
+.learn-mascot-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.25rem;
+}
+
+/* centered so the card reads as one block next to the taller video */
+.learn-mascot-body {
+  display: flex;
+  max-width: 22rem;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.learn-mascot-card p {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.learn-video-card {
+  padding: 1rem;
+}
+
+.learn-save-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--line);
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.learn-save-note > i {
+  color: var(--cool);
+  font-size: 1.1rem;
+  line-height: 1.3;
+}
+
+/* /learn: the one ember block on the page, so the next lesson is the focal point */
+.continue-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-color: var(--ember);
+  background: var(--ember-tint);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+a.continue-card:hover {
+  border-color: var(--ember-hover);
+  color: var(--ink);
+}
+
+.continue-label {
+  display: block;
+  color: var(--ember-text);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.continue-title {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.continue-arrow {
+  color: var(--ember-text);
+  font-size: 1.3rem;
+}
+
+.min-w-0 {
+  min-width: 0;
+}
+
+/* /learn simulation strip: scrolls sideways, cards snap to the left edge */
+.sim-strip {
+  display: grid;
+  grid-auto-columns: min(78%, 17.5rem);
+  grid-auto-flow: column;
+  gap: 1rem;
+  padding: 0.25rem 0.25rem 0.75rem;
+  margin: 0 -0.25rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-padding-inline: 0.25rem;
+  scroll-snap-type: x mandatory;
+}
+
+.sim-strip > li {
+  scroll-snap-align: start;
+}
+
+.sim-preview {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.sim-preview:hover {
+  border-color: var(--ember);
+  color: var(--ink);
+}
+
+.sim-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* the captures are about 2.3:1, so this crops almost nothing */
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+  background: var(--stage);
+}
+
+.sim-strip-nav {
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-button);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.sim-strip-nav:hover:not(:disabled) {
+  border-color: var(--ember);
+  color: var(--ember-text);
+}
+
+.sim-strip-nav:disabled {
+  opacity: 0.4;
+}
+
+.sim-preview-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.75rem 0.9rem 0.85rem;
+}
+
+.sim-preview-title {
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.sim-preview-lesson {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .sim-header .chip,
@@ -831,28 +1181,6 @@ a,
   background: transparent;
   color: var(--ink-soft);
   font-size: 0.82rem;
-}
-
-.lesson-next {
-  border-color: var(--ember);
-  background: var(--ember-tint);
-}
-
-.lesson-next.lesson-card {
-  min-height: 0;
-  gap: 0.65rem;
-}
-
-.lesson-next .lesson-card-status {
-  margin-top: 0 !important;
-}
-
-.lesson-compact {
-  padding: 0.8rem 1rem !important;
-}
-
-.lesson-compact.lesson-card {
-  min-height: 0;
 }
 
 .hero-title {
@@ -1861,15 +2189,8 @@ a,
 }
 
 .stat-card {
-  min-height: 10.5rem;
+  min-height: 8rem;
   padding: 1.15rem 1.3rem;
-}
-
-.stat-card .stat-icon {
-  margin-bottom: 0.5rem;
-  color: var(--flame-glow);
-  font-size: 1.4rem;
-  line-height: 1;
 }
 
 .stat-card .stat-num {
@@ -1884,6 +2205,21 @@ a,
   color: var(--muted);
   font-size: 0.82rem;
   font-weight: 600;
+}
+
+@media (max-width: 767.98px) {
+  .stat-card {
+    min-height: 0;
+    padding: 0.85rem 0.9rem;
+  }
+
+  .stat-card .stat-num {
+    font-size: 1.45rem;
+  }
+
+  .lesson-card {
+    min-height: 0;
+  }
 }
 
 .dashboard-actions .btn {
