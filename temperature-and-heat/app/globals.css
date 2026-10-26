@@ -86,6 +86,8 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  /* in-page anchors land below the fixed navbar */
+  scroll-padding-top: 5.5rem;
 }
 
 html,
@@ -1447,33 +1449,70 @@ a.continue-card:hover {
   color: #7dd3fc;
 }
 
+/* .page-top-space is overridden here, so clear the fixed navbar itself */
 .lesson-hero {
-  padding: 3.4rem 0 2.6rem;
+  padding: 5.6rem 0 2rem;
   border-bottom: 1px solid var(--line);
   background: var(--surface-2);
 }
 
-.trace-flow {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
+
+
+.trace-links {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.trace-step {
-  padding: 0.4rem 0.75rem;
+.trace-links a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 40px;
+  padding: 0.35rem 0.6rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-small);
   background: var(--surface);
   color: var(--ink-soft);
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 600;
+  text-decoration: none;
+  transition:
+    border-color 150ms ease,
+    color 150ms ease;
 }
 
-.trace-arrow {
+.trace-links a:hover,
+.trace-links a:focus-visible {
+  border-color: var(--ember);
+  color: var(--ink);
+}
+
+.trace-num {
+  display: inline-grid;
+  flex: none;
+  width: 1.4rem;
+  height: 1.4rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ember-tint);
   color: var(--ember-text);
+  font-size: 0.72rem;
   font-weight: 800;
 }
+
+.trace-links .bi {
+  color: var(--ember-text);
+}
+
+.btn-compact {
+  min-height: 36px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.9rem;
+}
+
 
 .keyterm-grid {
   display: grid;
@@ -1839,30 +1878,135 @@ a.continue-card:hover {
   overflow: visible;
 }
 
-.mascot-fab .speech-hint {
-  position: absolute;
-  top: 50%;
-  right: calc(100% + 0.7rem);
-  width: max-content;
-  max-width: 200px;
-  padding: 0.45rem 0.7rem;
-  transform: translateY(-50%);
-  border-radius: var(--radius-small);
-  background: var(--ink);
-  color: var(--bg);
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-align: left;
+.mascot-fab.idle {
+  animation: mascot-bob 3.2s ease-in-out infinite;
 }
 
-.mascot-fab .speech-hint::after {
+/* idle thought bubble: cloud + two trailing puffs toward Calphy */
+.thought-bubble {
   position: absolute;
   top: 50%;
-  left: 100%;
+  right: calc(100% + 1.1rem);
+  display: flex;
+  min-width: 2.9rem;
+  min-height: 2.2rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.8rem;
   transform: translateY(-50%);
-  border: 6px solid transparent;
-  border-left-color: var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  box-shadow: var(--shadow-lift);
+  color: var(--bg);
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  animation: thought-in 420ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+}
+
+.thought-bubble::before,
+.thought-bubble::after {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--ink);
   content: "";
+  animation: thought-puff 2.4s ease-in-out infinite;
+}
+
+.thought-bubble::before {
+  right: -0.55rem;
+  bottom: 0.1rem;
+  width: 0.55rem;
+  height: 0.55rem;
+}
+
+.thought-bubble::after {
+  right: -0.95rem;
+  bottom: -0.2rem;
+  width: 0.3rem;
+  height: 0.3rem;
+  animation-delay: 0.3s;
+}
+
+.thought-text {
+  animation: thought-text-in 380ms ease both;
+}
+
+.thought-dots {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.thought-dots i {
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+  background: currentColor;
+  animation: thought-dot 900ms ease-in-out infinite;
+}
+
+.thought-dots i:nth-child(2) {
+  animation-delay: 150ms;
+}
+
+.thought-dots i:nth-child(3) {
+  animation-delay: 300ms;
+}
+
+.mascot-fab:hover .thought-bubble {
+  background: var(--ember);
+  color: #ffffff;
+}
+
+.mascot-fab:hover .thought-bubble::before,
+.mascot-fab:hover .thought-bubble::after {
+  background: var(--ember);
+}
+
+@keyframes mascot-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes thought-in {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.6);
+  }
+}
+
+@keyframes thought-text-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@keyframes thought-puff {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+}
+
+@keyframes thought-dot {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
 }
 
 .mascot-panel {
@@ -1915,18 +2059,24 @@ a.continue-card:hover {
 }
 
 .mascot-panel-close {
-  width: 44px;
-  height: 44px;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: var(--radius-button);
-  background: transparent;
+  display: inline-flex;
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
   color: #ffffff;
-  font-weight: 800;
+  font-size: 0.95rem;
   line-height: 1;
+  transition: background-color 150ms ease;
 }
 
-.mascot-panel-close:hover {
-  background: rgba(255, 255, 255, 0.16);
+.mascot-panel-close:hover,
+.mascot-panel-close:focus-visible {
+  background: rgba(255, 255, 255, 0.28);
 }
 
 .mascot-msgs {
@@ -2604,6 +2754,10 @@ a.check-dot.current:hover {
     padding-top: 4.7rem;
   }
 
+  .lesson-hero {
+    padding-top: 5rem;
+  }
+
   .hero-title {
     font-size: clamp(2.1rem, 10vw, 2.65rem);
   }
@@ -2620,21 +2774,9 @@ a.check-dot.current:hover {
     height: 2.6rem;
   }
 
-  .mascot-fab .speech-hint {
-    top: auto;
-    right: auto;
-    bottom: calc(100% + 0.6rem);
-    left: 50%;
-    transform: translateX(-60%);
-  }
-
-  .mascot-fab .speech-hint::after {
-    top: 100%;
-    left: 60%;
-    transform: translateX(-50%);
-    border: 6px solid transparent;
-    border-top-color: var(--ink);
-    border-left-color: transparent;
+  .thought-bubble {
+    right: calc(100% + 0.9rem);
+    font-size: 0.74rem;
   }
 
   .mascot-panel {

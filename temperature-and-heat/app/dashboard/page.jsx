@@ -133,7 +133,7 @@ export default function DashboardPage() {
                         borderColor: "var(--bad)",
                       }}
                     >
-                      Server unreachable, showing this browser&apos;s copy
+                      Server unreachable, showing offline copy
                     </span>
                   )}
                 </div>
@@ -170,12 +170,6 @@ export default function DashboardPage() {
               </div>
             </div>
           </Reveal>
-
-          {!isLoggedIn && !authLoading && (
-            <p className="small text-muted mb-4">
-              Saved in this browser. Log in to keep it on any device.
-            </p>
-          )}
 
           {/* stat cards: three numbers on phones, the ring joins from md up */}
           <Row className="g-2 g-md-3 mb-4">
@@ -373,25 +367,23 @@ export default function DashboardPage() {
                           : "Reset account progress"}
                       </button>
                     )}
-                    <button
-                      className="btn btn-sm w-100 mt-2"
-                      style={{
-                        background: "rgba(239,68,68,.08)",
-                        color: "var(--bad)",
-                        border: "1px solid rgba(239,68,68,.3)",
-                      }}
-                      onClick={() => {
-                        if (
-                          window.confirm(
-                            "Reset all progress stored in THIS browser? (Database records are untouched.)",
-                          )
-                        ) {
-                          resetLocalProgress();
-                        }
-                      }}
-                    >
-                      <i className="bi bi-trash3 me-1" /> Reset local progress
-                    </button>
+                    {!isLoggedIn && (
+                      <button
+                        className="btn btn-sm w-100 mt-2"
+                        style={{
+                          background: "rgba(239,68,68,.08)",
+                          color: "var(--bad)",
+                          border: "1px solid rgba(239,68,68,.3)",
+                        }}
+                        onClick={() => {
+                          if (window.confirm("Reset all your progress?")) {
+                            resetLocalProgress();
+                          }
+                        }}
+                      >
+                        <i className="bi bi-trash3 me-1" /> Reset progress
+                      </button>
+                    )}
                     {dbResetMessage && (
                       <div
                         className={`small mt-2 ${dbResetMessage === "Account progress reset." ? "text-success" : "text-danger"}`}

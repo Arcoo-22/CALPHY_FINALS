@@ -189,11 +189,10 @@ export default function LearnHome() {
                 </span>
               ) : (
                 <span>
-                  Progress saves in this browser.{" "}
                   <Link href="/register" className="fw-semibold">
                     Create a free account
                   </Link>{" "}
-                  to keep it on any device.
+                  to save your progress.
                 </span>
               )}
             </div>

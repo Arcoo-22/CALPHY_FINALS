@@ -3,7 +3,7 @@
 // ============================================================
 // UserProvider, session (cookie via /api/auth/*) + progress
 // (localStorage mirror of tbl_users.user_progress, synced to
-//  PostgreSQL whenever the user is logged in).
+//  PostgreSQL whenever the user is logged in; reset on logout).
 // ============================================================
 import {
   createContext,
@@ -15,8 +15,13 @@ import {
 import {
   readLocal,
   makeDefaultProgress,
-  syncFromServer,
-  PARENTS,
+  fetchServerProgress,
+  replaceLocal,
+  resetLocalProgress,
+  hasProgress,
+  getLocalOwner,
+  setLocalOwner,
+  clearLocalOwner,
 } from "@/lib/progress";
 
 const UserCtx = createContext(null);
@@ -27,31 +32,26 @@ export function useUser() {
   return ctx;
 }
 
-// Push every non-default local value to the DB (guest → account carry-over).
-async function pushLocalToServer() {
+// Point the local copy at this account. Only unowned (guest) progress is
+// carried over; a copy left by another account is dropped, never pushed.
+async function adoptAccount(user, serverProgress) {
+  let progress = serverProgress;
   const local = readLocal();
-  const calls = [];
-  PARENTS.forEach((parent) => {
-    Object.entries(local[parent] || {}).forEach(([child, value]) => {
-      const isDefault =
-        parent === "QuizScores" ? Number(value) === 0 : value === "NotStarted";
-      if (!isDefault) {
-        calls.push(
-          fetch("/api/progress", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              parent,
-              child,
-              value,
-              numeric: parent === "QuizScores",
-            }),
-          }),
-        );
-      }
-    });
-  });
-  if (calls.length) await Promise.allSettled(calls);
+  if (getLocalOwner() === null && hasProgress(local)) {
+    try {
+      const res = await fetch("/api/progress", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ progress: local }),
+      });
+      const data = await res.json();
+      if (res.ok && data.progress) progress = data.progress;
+    } catch {
+      /* DB down, account still shows its saved progress */
+    }
+  }
+  setLocalOwner(user.id);
+  return replaceLocal(progress);
 }
 
 export function UserProvider({ children }) {
@@ -75,14 +75,22 @@ export function UserProvider({ children }) {
     (async () => {
       try {
         const res = await fetch("/api/auth/me", { cache: "no-store" });
+        if (!res.ok) return; // server/DB trouble, keep the local copy
         const data = await res.json();
         if (data.user) {
           setUser(data.user);
-          const merged = await syncFromServer();
-          if (merged) setProgress(merged);
+          setProgress(
+            getLocalOwner() === data.user.id
+              ? replaceLocal(data.progress)
+              : await adoptAccount(data.user, data.progress),
+          );
+        } else if (getLocalOwner() !== null) {
+          // session expired: the local copy belongs to an account, not a guest
+          resetLocalProgress();
+          clearLocalOwner();
         }
       } catch {
-        /* DB or server unavailable → guest mode */
+        /* offline → guest mode on the local copy */
       } finally {
         setAuthLoading(false);
       }
@@ -90,10 +98,8 @@ export function UserProvider({ children }) {
   }, []);
 
   const finishAuth = useCallback(async (data) => {
+    setProgress(await adoptAccount(data.user, data.progress));
     setUser(data.user);
-    await pushLocalToServer(); // carry guest progress into the account
-    const merged = await syncFromServer();
-    if (merged) setProgress(merged);
   }, []);
 
   const login = useCallback(
@@ -130,15 +136,18 @@ export function UserProvider({ children }) {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
     } catch {
-      /* ignore */
+      /* ignore, the local copy is cleared either way */
     }
+    resetLocalProgress();
+    clearLocalOwner();
     setUser(null);
+    setProgress(makeDefaultProgress());
   }, []);
 
   const refreshProgress = useCallback(async () => {
     if (user) {
-      const merged = await syncFromServer();
-      if (merged) setProgress(merged);
+      const server = await fetchServerProgress().catch(() => null);
+      if (server) setProgress(replaceLocal(server));
     } else {
       setProgress(readLocal());
     }

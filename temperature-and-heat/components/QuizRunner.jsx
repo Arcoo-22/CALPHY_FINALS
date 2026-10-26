@@ -2,34 +2,46 @@
 
 // ============================================================
 // QuizRunner, full quiz flow:
-//   shuffled MC options + numeric entry with tolerance,
+//   questions and MC options reshuffled on every attempt,
+//   numeric entry with tolerance,
 //   per-question feedback with explanations, score ring,
 //   saves to progress (localStorage + PostgreSQL when logged in),
 //   fires calphy:quizdone so the mascot celebrates.
 // ============================================================
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import ProgressRing from "@/components/ProgressRing";
 import { saveQuizScore, celebrate } from "@/lib/progress";
 import { useUser } from "@/components/UserContext";
 
-function shuffleWithKey(arr, key) {
-  const idx = arr.map((_, i) => i);
-  let seed = 2166136261;
-  for (const character of key) {
-    seed = Math.imul(seed ^ character.charCodeAt(0), 16777619) >>> 0;
-  }
-  for (let i = idx.length - 1; i > 0; i--) {
-    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-    const j = seed % (i + 1);
+// Fisher–Yates over indices: position → original index
+function shuffledIndices(n) {
+  const idx = Array.from({ length: n }, (_, i) => i);
+  for (let i = n - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
     [idx[i], idx[j]] = [idx[j], idx[i]];
   }
-  return idx; // position → original index
+  return idx;
+}
+
+const sameOrder = (a, b) => !!b && a.every((v, i) => v === b[i]);
+
+// A fresh attempt: random question order (never a repeat of the last one
+// when there is more than one possible order) and random MC option orders.
+function makeAttempt(quiz, prev) {
+  let questionOrder = shuffledIndices(quiz.questions.length);
+  for (let tries = 0; tries < 5 && sameOrder(questionOrder, prev?.questionOrder); tries++)
+    questionOrder = shuffledIndices(quiz.questions.length);
+  const optionOrders = quiz.questions.map((q) =>
+    q.type === "mc" ? shuffledIndices(q.options.length) : null,
+  );
+  return { questionOrder, optionOrders };
 }
 
 export default function QuizRunner({ quiz }) {
   const { isLoggedIn } = useUser();
-  const [round, setRound] = useState(0); // bump to reshuffle
+  // null until mounted: Math.random can't run during SSR without a hydration mismatch
+  const [attempt, setAttempt] = useState(null);
   const [idx, setIdx] = useState(0);
   const [selected, setSelected] = useState(null); // original option index (mc)
   const [numInput, setNumInput] = useState("");
@@ -37,18 +49,13 @@ export default function QuizRunner({ quiz }) {
   const [results, setResults] = useState([]); // {correct:boolean}
   const [finished, setFinished] = useState(false);
 
-  // per-round shuffled option order for each MC question
-  const orders = useMemo(
-    () =>
-      quiz.questions.map((q, questionIndex) =>
-        q.type === "mc"
-          ? shuffleWithKey(q.options, `${quiz.id}:${round}:${questionIndex}`)
-          : null,
-      ),
-    [quiz, round],
-  );
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setAttempt(makeAttempt(quiz));
+  }, [quiz]);
 
-  const q = quiz.questions[idx];
+  const qIndex = attempt ? attempt.questionOrder[idx] : idx;
+  const q = quiz.questions[qIndex];
   const total = quiz.questions.length;
   const score = results.filter((r) => r.correct).length;
 
@@ -88,7 +95,7 @@ export default function QuizRunner({ quiz }) {
   };
 
   const restart = () => {
-    setRound((r) => r + 1);
+    setAttempt((prev) => makeAttempt(quiz, prev));
     setIdx(0);
     setSelected(null);
     setNumInput("");
@@ -148,13 +155,12 @@ export default function QuizRunner({ quiz }) {
         <p className="text-muted mb-4">{verdict.text}</p>
 
         <div className="d-flex flex-wrap justify-content-center gap-2 mb-4">
-          <span className="chip green">
-            <i className="bi bi-database-check" />
-            {isLoggedIn
-              ? "Score saved to your account (PostgreSQL)"
-              : "Score saved in this browser (guest)"}
-          </span>
-          {!isLoggedIn && (
+          {isLoggedIn ? (
+            <span className="chip green">
+              <i className="bi bi-database-check" />
+              Score saved to your account
+            </span>
+          ) : (
             <Link
               href="/login"
               className="chip cool"
@@ -221,6 +227,18 @@ export default function QuizRunner({ quiz }) {
     );
   }
 
+  if (!attempt) {
+    return (
+      <div
+        className="card-soft flat p-4 p-md-5 text-center text-muted"
+        style={{ maxWidth: 760, margin: "0 auto" }}
+      >
+        <span className="spinner-border spinner-border-sm me-2" />
+        Shuffling questions…
+      </div>
+    );
+  }
+
   // ---------------- question screen ----------------
   const pctDone = Math.round((idx / total) * 100);
   return (
@@ -247,7 +265,7 @@ export default function QuizRunner({ quiz }) {
 
       {q.type === "mc" ? (
         <div className="d-grid gap-2">
-          {orders[idx].map((origIdx, pos) => {
+          {attempt.optionOrders[qIndex].map((origIdx, pos) => {
             let cls = "quiz-option";
             if (locked) {
               if (origIdx === q.a) cls += " correct";
