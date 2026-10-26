@@ -8,7 +8,10 @@ import { LESSONS } from "@/lib/lessons";
 import { QUIZZES } from "@/lib/quizzes";
 
 export const LS_KEY = "calphy_progress";
+// id of the account the local copy belongs to; absent means guest progress
+export const OWNER_KEY = "calphy_progress_owner";
 export const PARENTS = ["Progress", "QuizProgress", "QuizScores"];
+const STATUSES = ["NotStarted", "Current", "Finished"];
 
 export function makeDefaultProgress() {
   const p = { Progress: {}, QuizProgress: {}, QuizScores: {} };
@@ -38,6 +41,75 @@ export function writeLocal(progress) {
   } catch {
     /* storage full / private mode, ignore */
   }
+}
+
+export function getLocalOwner() {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(OWNER_KEY);
+    return raw ? Number(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setLocalOwner(id) {
+  try {
+    window.localStorage.setItem(OWNER_KEY, String(id));
+  } catch {
+    /* private mode, ignore */
+  }
+}
+
+export function clearLocalOwner() {
+  try {
+    window.localStorage.removeItem(OWNER_KEY);
+  } catch {
+    /* private mode, ignore */
+  }
+}
+
+// true when anything differs from a fresh default record
+export function hasProgress(p) {
+  return PARENTS.some((parent) =>
+    Object.values(p?.[parent] || {}).some((value) =>
+      parent === "QuizScores" ? Number(value) !== 0 : value !== "NotStarted",
+    ),
+  );
+}
+
+// Sanitise any progress-shaped object into the exact DB shape.
+export function toProgressDto(progress) {
+  const dto = makeDefaultProgress();
+  LESSONS.forEach(({ key }) => {
+    const value = progress?.Progress?.[key];
+    if (STATUSES.includes(value)) dto.Progress[key] = value;
+  });
+  QUIZZES.forEach(({ id }) => {
+    const status = progress?.QuizProgress?.[id];
+    const score = Number(progress?.QuizScores?.[id]);
+    if (STATUSES.includes(status)) dto.QuizProgress[id] = status;
+    if (Number.isFinite(score) && score >= 0 && score <= 100)
+      dto.QuizScores[id] = score;
+  });
+  return dto;
+}
+
+// Guest → account carry-over: per key the further-along value wins
+// (Finished > Current > NotStarted, highest score).
+export function mergeBest(base, incoming) {
+  const a = toProgressDto(base);
+  const b = toProgressDto(incoming);
+  ["Progress", "QuizProgress"].forEach((parent) => {
+    Object.keys(a[parent]).forEach((child) => {
+      if (STATUSES.indexOf(b[parent][child]) > STATUSES.indexOf(a[parent][child]))
+        a[parent][child] = b[parent][child];
+    });
+  });
+  Object.keys(a.QuizScores).forEach((child) => {
+    a.QuizScores[child] = Math.max(a.QuizScores[child], b.QuizScores[child]);
+  });
+  return a;
 }
 
 // incoming values override the base, missing keys keep the base
@@ -110,14 +182,12 @@ export async function fetchServerProgress() {
   return data.progress || null;
 }
 
-// Pull DB progress and merge it over the local copy (DB wins).
-export async function syncFromServer() {
-  const server = await fetchServerProgress();
-  if (!server) return readLocal();
-  const merged = mergeProgress(readLocal(), server);
-  writeLocal(merged);
-  notifyProgress(merged);
-  return merged;
+// Make the local copy an exact mirror of the given (DB) progress.
+export function replaceLocal(progress) {
+  const next = toProgressDto(progress);
+  writeLocal(next);
+  notifyProgress(next);
+  return next;
 }
 
 function notifyProgress(progress) {

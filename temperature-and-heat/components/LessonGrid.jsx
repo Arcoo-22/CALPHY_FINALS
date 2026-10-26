@@ -1,174 +1,134 @@
 "use client";
 
-// Lesson cards grid grouped by unit, with live progress dots.
+// Lessons grouped by unit. `home` renders compact lesson rows (the /learn
+// page); the default renders cards for /lessons.
 import Link from "next/link";
 import { UNITS, LESSON_BY_KEY } from "@/lib/lessons";
 import { useUser } from "@/components/UserContext";
 import { lessonStatus } from "@/lib/progress";
-import Reveal from "@/components/Reveal";
 
-export default function LessonGrid({ compact = false, home = false }) {
+function RowStatus({ status, isNext }) {
+  if (status === "Finished")
+    return (
+      <span className="row-status done">
+        <i className="bi bi-check-circle-fill" aria-hidden="true" /> Done
+      </span>
+    );
+  if (isNext) return <span className="row-status next">Up next</span>;
+  return null;
+}
+
+export default function LessonGrid({ home = false, nextKey = null }) {
   const { progress } = useUser();
-  const nextUnitIndex = UNITS.findIndex((unit) =>
-    unit.lessons.some((key) => lessonStatus(progress, key) !== "Finished"),
-  );
-  const orderedUnits =
-    home && nextUnitIndex > 0
-      ? [
-          UNITS[nextUnitIndex],
-          ...UNITS.filter((_, index) => index !== nextUnitIndex),
-        ]
-      : UNITS;
 
   return (
-    <div className="d-grid gap-4 lesson-unit-grid">
-      {orderedUnits.map((unit, ui) => {
-        const complete = unit.lessons.every(
+    <div
+      className={`d-grid gap-3 gap-md-4 lesson-unit-grid ${home ? "home" : ""}`}
+    >
+      {UNITS.map((unit, ui) => {
+        const doneCount = unit.lessons.filter(
           (key) => lessonStatus(progress, key) === "Finished",
-        );
-        const featuredLessonKey =
-          unit.lessons.find(
-            (key) => lessonStatus(progress, key) !== "Finished",
-          ) || unit.lessons[0];
-        return (
-          <Reveal key={unit.id} delay={ui * 60}>
-            <div
-              className={`card-soft flat unit-card p-4 ${home ? (ui === 0 ? "unit-featured" : `unit-rail-row ${complete ? "completed" : ""}`) : ""}`}
-            >
-              {home && ui > 0 ? (
-                <span className="unit-rail-tick" aria-hidden="true" />
-              ) : null}
-              <div className="unit-card-heading d-flex align-items-center gap-3 mb-3">
-                <span
-                  className="icon-tile"
-                  style={{
-                    background: "var(--ember-tint)",
-                    color: "var(--ember-text)",
-                  }}
-                >
-                  <i className={`bi ${unit.icon}`} />
-                </span>
-                <div>
-                  <div
-                    className="eyebrow mb-0"
-                    style={{
-                      background: "transparent",
-                      border: "none",
-                      padding: 0,
-                    }}
-                  >
-                    Unit {UNITS.indexOf(unit) + 1}
-                  </div>
-                  <h3 className="fw-bold mb-0 h5">{unit.title}</h3>
-                </div>
-                <span className="small text-muted ms-auto d-none d-sm-inline-flex">
-                  {unit.lessons.length} lessons
-                </span>
-              </div>
-              {(!home || ui === 0) && (
-                <p className="text-muted small mb-3">{unit.subtitle}</p>
-              )}
+        ).length;
 
-              {home && ui > 0 ? (
-                <div className="unit-lesson-list">
-                  {unit.lessons.map((key) => {
-                    const lesson = LESSON_BY_KEY[key];
-                    return (
-                      <Link
-                        key={key}
-                        href={`/lessons/${lesson.slug}`}
-                        className="unit-lesson-row"
-                      >
-                        <span className="lesson-num">{lesson.n}</span>
-                        <span>{lesson.title}</span>
-                      </Link>
-                    );
-                  })}
+        return (
+          <div
+            key={unit.id}
+            className={`card-soft flat unit-card ${home ? "unit-card-home p-3 p-md-4" : "p-4"}`}
+          >
+            {home ? (
+              <span className="unit-num-overlay" aria-hidden="true">
+                {ui + 1}
+              </span>
+            ) : null}
+            <div className="unit-card-heading d-flex align-items-center gap-3 mb-2">
+              <span className="icon-tile">
+                <i className={`bi ${unit.icon}`} aria-hidden="true" />
+              </span>
+              <div>
+                <div className="unit-number">
+                  Unit {ui + 1}
+                  {home ? (
+                    <span className="text-muted fw-semibold">
+                      {" "}
+                      · {doneCount}/{unit.lessons.length} done
+                    </span>
+                  ) : null}
                 </div>
-              ) : (
-                <div
-                  className={`row g-3 ${compact ? (home ? "row-cols-1" : "row-cols-1 row-cols-md-2") : "row-cols-1 row-cols-md-2 row-cols-xl-4"}`}
-                >
-                  {unit.lessons.map((key, li) => {
+                <h2 className="fw-bold mb-0 h5">{unit.title}</h2>
+              </div>
+              {home ? null : (
+                <span className="small text-muted ms-auto text-nowrap">
+                  {doneCount}/{unit.lessons.length}
+                </span>
+              )}
+            </div>
+
+            {home ? (
+              <div className="unit-lesson-list">
+                {unit.lessons.map((key) => {
+                  const lesson = LESSON_BY_KEY[key];
+                  const status = lessonStatus(progress, key);
+                  const isNext = key === nextKey;
+                  return (
+                    <Link
+                      key={key}
+                      href={`/lessons/${lesson.slug}`}
+                      className={`unit-lesson-row ${isNext ? "is-next" : ""} ${status === "Finished" ? "is-done" : ""}`}
+                      aria-current={isNext ? "step" : undefined}
+                    >
+                      <span className="row-icon" aria-hidden="true">
+                        <i className={`bi ${lesson.icon}`} />
+                      </span>
+                      <span className="flex-grow-1 min-w-0">
+                        <span className="row-num">Lesson {lesson.n}</span>
+                        <span className="d-block">{lesson.title}</span>
+                      </span>
+                      <RowStatus status={status} isNext={isNext} />
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <>
+                <p className="text-muted small mb-3">{unit.subtitle}</p>
+                <div className="row g-3 row-cols-1 row-cols-md-2 row-cols-xl-4">
+                  {unit.lessons.map((key) => {
                     const l = LESSON_BY_KEY[key];
                     const status = lessonStatus(progress, l.key);
-                    const isFeaturedLesson = l.key === featuredLessonKey;
-                    if (home && !isFeaturedLesson) {
-                      return (
-                        <div className="col" key={key}>
-                          <Link
-                            href={`/lessons/${l.slug}`}
-                            className="unit-lesson-row"
-                          >
-                            <span className="lesson-num">{l.n}</span>
-                            <span>{l.title}</span>
-                          </Link>
-                        </div>
-                      );
-                    }
                     return (
                       <div className="col" key={key}>
                         <Link
                           href={`/lessons/${l.slug}`}
                           className="lesson-card-link text-reset"
                         >
-                          <div
-                            className={`card-soft hover-card lesson-card p-3 h-100 ${home && isFeaturedLesson ? "lesson-next" : home && ui > 0 ? "lesson-compact" : ""}`}
-                          >
+                          <div className="card-soft hover-card lesson-card p-3 h-100">
                             <span className="lesson-num">{l.n}</span>
                             <div className="lesson-card-content d-flex align-items-start gap-2">
-                              <span
-                                className="lesson-icon d-inline-flex align-items-center justify-content-center rounded-3"
-                                style={{
-                                  width: 38,
-                                  height: 38,
-                                  background: "var(--ember-tint)",
-                                  color: "var(--ember-text)",
-                                  fontSize: "1.15rem",
-                                }}
-                              >
-                                <i className={`bi ${l.icon}`} />
+                              <span className="lesson-icon icon-tile">
+                                <i className={`bi ${l.icon}`} aria-hidden="true" />
                               </span>
                               <div className="lesson-card-copy">
                                 <div className="lesson-title-link">
                                   {l.title}
                                 </div>
-                                {(!home || isFeaturedLesson) && (
-                                  <div
-                                    className="small text-muted mt-1"
-                                    style={{
-                                      display: "-webkit-box",
-                                      WebkitLineClamp: 2,
-                                      WebkitBoxOrient: "vertical",
-                                      overflow: "hidden",
-                                    }}
-                                  >
-                                    {l.tagline}
-                                  </div>
-                                )}
+                                <div className="lesson-card-tagline small text-muted mt-1">
+                                  {l.tagline}
+                                </div>
                               </div>
                             </div>
-                            {(!home || isFeaturedLesson) && (
-                              <div className="lesson-card-status d-flex align-items-center gap-2 mt-3">
+                            {status !== "NotStarted" && (
+                              <div className="lesson-card-status mt-2">
                                 {status === "Finished" ? (
                                   <span className="chip green">
                                     <i className="bi bi-check-circle-fill" />{" "}
                                     completed
                                   </span>
-                                ) : status === "Current" ? (
+                                ) : (
                                   <span className="chip flame">
                                     <i className="bi bi-play-circle-fill" /> in
                                     progress
                                   </span>
-                                ) : (
-                                  <span className="chip">not started</span>
                                 )}
-                                <span
-                                  className="lesson-card-arrow"
-                                  aria-hidden="true"
-                                >
-                                  <i className="bi bi-arrow-right" />
-                                </span>
                               </div>
                             )}
                           </div>
@@ -177,9 +137,9 @@ export default function LessonGrid({ compact = false, home = false }) {
                     );
                   })}
                 </div>
-              )}
-            </div>
-          </Reveal>
+              </>
+            )}
+          </div>
         );
       })}
     </div>

@@ -7,7 +7,7 @@ import { SIM_GROUPS } from "@/lib/simulations";
 export const metadata = {
   title: "Simulation Lab",
   description:
-    "Eleven interactive canvas simulations: thermometer, conduction rod, convection pot, radiation glow, heating curve, calorimetry, gas piston and more.",
+    "Ten interactive canvas simulations: thermometer, conduction rod, convection pot, radiation glow, heating curve, calorimetry, gas piston and more.",
 };
 
 export default function SimulationsPage() {
@@ -19,7 +19,7 @@ export default function SimulationsPage() {
             <nav aria-label="breadcrumb" className="mb-3">
               <ol className="breadcrumb small mb-0">
                 <li className="breadcrumb-item">
-                  <Link href="/">Home</Link>
+                  <Link href="/learn">Home</Link>
                 </li>
                 <li className="breadcrumb-item active" aria-current="page">
                   Simulations

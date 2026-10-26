@@ -23,7 +23,7 @@ export function LessonTracker({ lessonKey }) {
   return null;
 }
 
-export function MarkCompleteButton({ lessonKey }) {
+export function MarkCompleteButton({ lessonKey, compact = false }) {
   const { progress, isLoggedIn } = useUser();
   const status = lessonStatus(progress, lessonKey);
   const [celebrating, setCelebrating] = useState(false);
@@ -58,7 +58,9 @@ export function MarkCompleteButton({ lessonKey }) {
           />
         ))}
       <button
-        className={status === "Finished" ? "btn btn-cool" : "btn btn-flame"}
+        className={`btn ${status === "Finished" ? "btn-cool" : "btn-flame"}${
+          compact ? " btn-compact" : ""
+        }`}
         onClick={onClick}
         disabled={status === "Finished"}
       >
@@ -72,9 +74,6 @@ export function MarkCompleteButton({ lessonKey }) {
           </>
         )}
       </button>
-      <span className={`badge-mode ${isLoggedIn ? "user" : "guest"}`}>
-        {isLoggedIn ? "saved to your account" : "saved in this browser (guest)"}
-      </span>
     </div>
   );
 }

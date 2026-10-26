@@ -9,6 +9,9 @@ import SimHost from "@/components/SimHost";
 import VideoEmbed from "@/components/VideoEmbed";
 import { LessonTracker, MarkCompleteButton } from "@/components/LessonProgress";
 
+// each trace step jumps to the part of the page that covers it
+const TRACE_TARGETS = ["#sim", "#content", "#formulas"];
+
 export function generateStaticParams() {
   return LESSONS.map((l) => ({ slug: l.slug }));
 }
@@ -109,7 +112,7 @@ export default async function LessonPage({ params }) {
           <nav aria-label="breadcrumb" className="mb-3">
             <ol className="breadcrumb small mb-0">
               <li className="breadcrumb-item">
-                <Link href="/">Home</Link>
+                <Link href="/learn">Home</Link>
               </li>
               <li className="breadcrumb-item">
                 <Link href="/lessons">Lessons</Link>
@@ -120,20 +123,11 @@ export default async function LessonPage({ params }) {
             </ol>
           </nav>
 
-          <Row className="g-4 align-items-end">
+          <Row className="g-4 align-items-center">
             <Col lg={8}>
-              <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
+              <div className="mb-3">
                 <span className="content-label">
                   <i className={`bi ${unit.icon}`} /> {unit.title}
-                </span>
-                <span className="content-label">
-                  <i className="bi bi-joystick" /> simulation
-                </span>
-                <span className="content-label">
-                  <i className="bi bi-youtube" /> video
-                </span>
-                <span className="content-label">
-                  <i className="bi bi-patch-check" /> mini-quiz
                 </span>
               </div>
               <h1
@@ -143,54 +137,40 @@ export default async function LessonPage({ params }) {
                 <span className="gradient-text">Lesson {lesson.n}.</span>{" "}
                 {lesson.title}
               </h1>
-              <p className="section-sub">{lesson.tagline}</p>
+              <p className="section-sub mb-3">{lesson.tagline}</p>
+              <MarkCompleteButton lessonKey={lesson.key} />
             </Col>
             <Col lg={4}>
-              <div className="card-soft flat p-3 d-flex align-items-center gap-3">
-                <span
-                  className="icon-tile"
-                  style={{
-                    background: "var(--ember-tint)",
-                    color: "var(--ember-text)",
-                    width: "3.8rem",
-                    height: "3.8rem",
-                    fontSize: "1.8rem",
-                  }}
-                >
-                  <i className={`bi ${lesson.icon}`} />
-                </span>
-                <div className="small text-muted">
-                  <b className="d-block text-dark">Trace the energy</b>
-                  <div className="trace-flow mt-1" style={{ gap: "0.3rem" }}>
-                    {lesson.energyTrace.map((t, i) => (
-                      <span
-                        key={i}
-                        className="d-flex align-items-center"
-                        style={{ gap: "0.3rem" }}
-                      >
-                        <span
-                          className="trace-step"
-                          style={{
-                            padding: "0.2rem 0.6rem",
-                            fontSize: "0.72rem",
-                          }}
-                        >
-                          {t}
-                        </span>
-                        {i < lesson.energyTrace.length - 1 && (
-                          <span className="trace-arrow">→</span>
-                        )}
-                      </span>
-                    ))}
-                  </div>
+              <nav className="card-soft flat p-3" aria-label="Trace the energy">
+                <div className="d-flex align-items-center gap-2 mb-2">
+                  <span
+                    className="icon-tile"
+                    style={{
+                      background: "var(--ember-tint)",
+                      color: "var(--ember-text)",
+                      width: "2.4rem",
+                      height: "2.4rem",
+                      fontSize: "1.15rem",
+                    }}
+                  >
+                    <i className={`bi ${lesson.icon}`} />
+                  </span>
+                  <b>Trace the energy</b>
                 </div>
-              </div>
+                <ol className="trace-links">
+                  {lesson.energyTrace.map((t, i) => (
+                    <li key={i}>
+                      <a href={TRACE_TARGETS[i] || "#content"}>
+                        <span className="trace-num">{i + 1}</span>
+                        <span className="flex-grow-1">{t}</span>
+                        <i className="bi bi-arrow-down-short" aria-hidden="true" />
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
             </Col>
           </Row>
-
-          <div className="mt-4">
-            <MarkCompleteButton lessonKey={lesson.key} />
-          </div>
         </Container>
       </header>
 
@@ -199,7 +179,7 @@ export default async function LessonPage({ params }) {
         <Container>
           <Row className="g-4">
             <Col lg={7}>
-              <Reveal>
+              <Reveal className="h-100">
                 <div className="card-soft flat p-4 h-100">
                   <h2 className="fw-bold h5 mb-3">
                     <i
@@ -218,7 +198,7 @@ export default async function LessonPage({ params }) {
               </Reveal>
             </Col>
             <Col lg={5}>
-              <Reveal delay={80}>
+              <Reveal delay={80} className="h-100">
                 <div className="card-soft flat p-4 h-100">
                   <h2 className="fw-bold h5 mb-3">
                     <i
@@ -248,7 +228,7 @@ export default async function LessonPage({ params }) {
                 <i className="bi bi-joystick" /> Try it yourself
               </span>
               <Link href="/simulations" className="small ms-auto">
-                open in the lab <i className="bi bi-box-arrow-up-right" />
+                Open in the lab <i className="bi bi-box-arrow-up-right" />
               </Link>
             </div>
           </Reveal>
@@ -292,7 +272,7 @@ export default async function LessonPage({ params }) {
       </section>
 
       {/* ================= main content ================= */}
-      <section className="section-tight">
+      <section className="section-tight" id="content">
         <Container>
           <Reveal>
             <h2 className="fw-bold h4 mb-4">
@@ -310,7 +290,7 @@ export default async function LessonPage({ params }) {
       </section>
 
       {/* ================= formulas ================= */}
-      <section className="section-tight">
+      <section className="section-tight" id="formulas">
         <Container>
           <Reveal>
             <h2 className="fw-bold h4 mb-3">
@@ -473,19 +453,15 @@ export default async function LessonPage({ params }) {
 
           {/* next steps */}
           <Reveal delay={80}>
-            <div className="card-soft flat p-4 mt-4">
-              <div className="d-flex flex-wrap align-items-center gap-3">
-                <div className="flex-grow-1" style={{ minWidth: 240 }}>
-                  <h3 className="fw-bold h5 mb-1">Ready to prove it?</h3>
-                  <p className="small text-muted mb-0">
-                    Take the full graded quiz for this topic, scores save to
-                    your dashboard.
-                  </p>
+            <div className="card-soft flat px-3 py-2 mt-4">
+              <div className="d-flex flex-wrap align-items-center gap-2">
+                <div className="flex-grow-1" style={{ minWidth: 200 }}>
+                  <h3 className="fw-bold h6 mb-0">Ready for the quiz?</h3>
                 </div>
-                <MarkCompleteButton lessonKey={lesson.key} />
+                <MarkCompleteButton lessonKey={lesson.key} compact />
                 <Link
                   href={`/quizzes/${lesson.quizSlug}`}
-                  className="btn btn-flame"
+                  className="btn btn-flame btn-compact"
                 >
                   <i className="bi bi-patch-question me-1" /> Take the quiz
                 </Link>

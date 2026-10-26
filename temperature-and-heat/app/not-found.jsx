@@ -21,7 +21,7 @@ export default function NotFound() {
           you want must be at another temperature.
         </p>
         <div className="d-flex justify-content-center gap-2 flex-wrap">
-          <Link href="/" className="btn btn-flame">
+          <Link href="/learn" className="btn btn-flame">
             <i className="bi bi-house-door me-1" /> Home
           </Link>
           <Link href="/lessons" className="btn btn-outline-ink">

@@ -20,7 +20,7 @@ export default function FormulasPage() {
             <nav aria-label="breadcrumb" className="mb-3">
               <ol className="breadcrumb small mb-0">
                 <li className="breadcrumb-item">
-                  <Link href="/">Home</Link>
+                  <Link href="/learn">Home</Link>
                 </li>
                 <li className="breadcrumb-item active" aria-current="page">
                   ∑ Formulas

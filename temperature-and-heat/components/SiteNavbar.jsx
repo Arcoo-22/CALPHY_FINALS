@@ -9,7 +9,7 @@ import CalphyMascot from "@/components/CalphyMascot";
 import SiteSearch from "@/components/SiteSearch";
 
 const LINKS = [
-  { href: "/", label: "Home", icon: "bi-house-door" },
+  { href: "/learn", label: "Home", icon: "bi-house-door" },
   { href: "/lessons", label: "Lessons", icon: "bi-journal-bookmark" },
   { href: "/simulations", label: "Simulations", icon: "bi-joystick" },
   { href: "/quizzes", label: "Quizzes", icon: "bi-patch-question" },
@@ -45,15 +45,14 @@ export default function SiteNavbar() {
     setTheme(next);
   };
 
-  const isActive = (href) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+  const isActive = (href) => pathname.startsWith(href);
   // Nav remembers the last clicked link on its own; pin it to the URL instead
   const activeHref = LINKS.find((l) => isActive(l.href))?.href ?? null;
 
   const handleLogout = async () => {
     await logout();
     setExpanded(false);
-    router.push("/");
+    router.push("/learn");
   };
 
   return (
@@ -65,7 +64,7 @@ export default function SiteNavbar() {
       onToggle={(exp) => setExpanded(exp)}
     >
       <Container>
-        <Navbar.Brand as={Link} href="/" onClick={() => setExpanded(false)}>
+        <Navbar.Brand as={Link} href="/learn" onClick={() => setExpanded(false)}>
           <CalphyMascot size={36} />
           <span>
             Calphy<span className="gradient-text">Learn</span>

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { query, DB_ERROR_MESSAGE, defaultProgress } from "@/lib/db";
 import { getSession } from "@/lib/auth";
-import { PARENTS } from "@/lib/progress";
+import { PARENTS, toProgressDto, mergeBest } from "@/lib/progress";
 import { LESSONS } from "@/lib/lessons";
 import { QUIZZES } from "@/lib/quizzes";
 
@@ -23,22 +23,6 @@ function isAllowedProgressEntry(parent, child, value, numeric) {
     Number(value) >= 0 &&
     Number(value) <= 100
   );
-}
-
-function toProgressDto(progress) {
-  const dto = { Progress: {}, QuizProgress: {}, QuizScores: {} };
-  LESSONS.forEach(({ key }) => {
-    const value = progress?.Progress?.[key];
-    dto.Progress[key] = statuses.has(value) ? value : "NotStarted";
-  });
-  QUIZZES.forEach(({ id }) => {
-    const status = progress?.QuizProgress?.[id];
-    const score = Number(progress?.QuizScores?.[id]);
-    dto.QuizProgress[id] = statuses.has(status) ? status : "NotStarted";
-    dto.QuizScores[id] =
-      Number.isFinite(score) && score >= 0 && score <= 100 ? score : 0;
-  });
-  return dto;
 }
 
 // GET /api/progress                → full user_progress (their "Get User Progress" query)
@@ -174,6 +158,49 @@ export async function POST(req) {
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[progress POST]", err.message);
+    return NextResponse.json({ error: DB_ERROR_MESSAGE }, { status: 503 });
+  }
+}
+
+// PUT /api/progress { progress } → merge a guest's local progress into the
+// account in one round trip (further-along value wins per key).
+export async function PUT(req) {
+  const session = await getSession();
+  if (!session?.id)
+    return NextResponse.json({ error: "Not logged in." }, { status: 401 });
+
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json(
+      { error: "Invalid request body." },
+      { status: 400 },
+    );
+  }
+  if (!body?.progress || typeof body.progress !== "object") {
+    return NextResponse.json(
+      { error: "progress is required." },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const current = await query(
+      `SELECT user_progress FROM tbl_users WHERE id = $1`,
+      [session.id],
+    );
+    if (current.rows.length === 0)
+      return NextResponse.json({ error: "User not found." }, { status: 404 });
+
+    const merged = mergeBest(current.rows[0].user_progress, body.progress);
+    await query(`UPDATE tbl_users SET user_progress = $2::jsonb WHERE id = $1`, [
+      session.id,
+      JSON.stringify(merged),
+    ]);
+    return NextResponse.json({ ok: true, progress: merged });
+  } catch (err) {
+    console.error("[progress PUT]", err.message);
     return NextResponse.json({ error: DB_ERROR_MESSAGE }, { status: 503 });
   }
 }

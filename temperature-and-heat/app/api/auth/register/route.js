@@ -72,7 +72,7 @@ export async function POST(req) {
 
     const id = inserted.rows[0].id;
     await setSession({ id });
-    return NextResponse.json({ ok: true, user: { id, username } });
+    return NextResponse.json({ ok: true, user: { id, username }, progress });
   } catch (err) {
     console.error("[register]", err.message);
     return NextResponse.json({ error: DB_ERROR_MESSAGE }, { status: 503 });

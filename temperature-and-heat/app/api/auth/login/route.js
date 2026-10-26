@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { query, DB_ERROR_MESSAGE } from "@/lib/db";
 import { setSession } from "@/lib/auth";
+import { toProgressDto } from "@/lib/progress";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +29,7 @@ export async function POST(req) {
     // Login Check, matches the project documentation query:
     // SELECT id FROM tbl_users WHERE (username = '?' OR email = '?') AND password = '?'
     const res = await query(
-      `SELECT id, username
+      `SELECT id, username, user_progress
        FROM tbl_users
        WHERE (username = $1 OR email = $1) AND password = $2`,
       [identifier, password],
@@ -46,6 +47,7 @@ export async function POST(req) {
     return NextResponse.json({
       ok: true,
       user: { id: row.id, username: row.username },
+      progress: toProgressDto(row.user_progress),
     });
   } catch (err) {
     console.error("[login]", err.message);
