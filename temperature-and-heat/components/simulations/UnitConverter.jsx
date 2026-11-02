@@ -75,19 +75,18 @@ export default function UnitConverter() {
       </div>
 
       {valid && !belowAbsolute && (
-        <div className="row g-2 mt-1">
+        <div className="d-grid gap-2 mt-2">
           {[
             { k: "°C", val: c, cool: false },
             { k: "°F", val: cToF(c), cool: false },
             { k: "K", val: cToK(c), cool: true },
           ].map((r) => (
-            <div className="col-4" key={r.k}>
-              <div
-                className={`readout-pill w-100 justify-content-between ${r.cool ? "cool" : ""}`}
-              >
-                <span className="opacity-75">{r.k}</span>
-                <b>{fmt(r.val, 2)}</b>
-              </div>
+            <div
+              key={r.k}
+              className={`readout-pill converter-readout ${r.cool ? "cool" : ""}`}
+            >
+              <span className="opacity-75">{r.k}</span>
+              <b>{fmt(r.val, 2)}</b>
             </div>
           ))}
         </div>

@@ -1810,6 +1810,19 @@ a.continue-card:hover {
   color: #7dd3fc;
 }
 
+/* full-width row; long values wrap inside the pill instead of overflowing */
+.converter-readout {
+  display: flex;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.converter-readout b {
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
 /* .page-top-space is overridden here, so clear the fixed navbar itself */
 .lesson-hero {
   padding: 5.6rem 0 2rem;
