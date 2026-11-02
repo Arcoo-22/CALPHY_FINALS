@@ -1,153 +1,119 @@
+"use client";
 // ============================================================
-// Calphy, the flame mascot (inline animated SVG).
+// Calphy, the flame mascot. Squashes while held, jelly-wobbles and throws
+// sparks on release.
 // moods: 'idle' | 'happy' | 'think' | 'wave'
+// only idle and wave have their own art; happy and think reuse idle
 // ============================================================
+import { useState } from "react";
+import Image from "next/image";
+
+const ART = {
+  idle: "/images/brand/mascot-idle.png",
+  wave: "/images/brand/mascot-wave.png",
+};
+
+const WOBBLE = [
+  { scale: "1.22 0.76" },
+  { scale: "0.86 1.16" },
+  { scale: "1.08 0.94" },
+  { scale: "0.97 1.03" },
+  { scale: "1 1" },
+];
+
+const SPARK_COLORS = ["#ffd23f", "#f59e0b", "#fb923c", "#fff3c4"];
+
+// sparks live on <body>, not inside the mascot, so the wobble doesn't squash
+// them and an overflow-hidden parent can't clip them
+function sparkBurst(el, size) {
+  const box = el.getBoundingClientRect();
+  const cx = box.left + box.width / 2;
+  const cy = box.top + box.height * 0.45;
+  const count = 10;
+
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * Math.PI * 2 + Math.random() * 0.4;
+    const reach = size * (0.55 + Math.random() * 0.35);
+    const dot = size * (0.06 + Math.random() * 0.04);
+    const spark = document.createElement("span");
+    spark.className = i % 3 === 0 ? "calphy-spark star" : "calphy-spark";
+    Object.assign(spark.style, {
+      left: `${cx - dot / 2}px`,
+      top: `${cy - dot / 2}px`,
+      width: `${dot}px`,
+      height: `${dot}px`,
+      background: SPARK_COLORS[i % SPARK_COLORS.length],
+    });
+    document.body.appendChild(spark);
+    spark
+      .animate(
+        [
+          { translate: "0 0", scale: 1, opacity: 1 },
+          {
+            translate: `${Math.cos(angle) * reach}px ${Math.sin(angle) * reach}px`,
+            scale: 0.2,
+            opacity: 0,
+          },
+        ],
+        { duration: 520 + Math.random() * 180, easing: "cubic-bezier(.2,.7,.3,1)" },
+      )
+      .finished.then(() => spark.remove(), () => spark.remove());
+  }
+}
+
 export default function CalphyMascot({
   size = 64,
   mood = "idle",
   className = "",
   style,
 }) {
+  const [pressed, setPressed] = useState(false);
   const happy = mood === "happy";
-  const think = mood === "think";
+
+  // capture keeps the squash going if the finger slides off; the click still
+  // reaches a parent link or button, so the navbar and chat launcher work
+  const press = (e) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setPressed(true);
+  };
+
+  const release = (e) => {
+    if (!pressed) return;
+    setPressed(false);
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    e.currentTarget.animate(WOBBLE, { duration: 650, easing: "ease-out" });
+    sparkBurst(e.currentTarget, size);
+  };
 
   return (
     <span
-      className={`d-inline-flex ${happy ? "calphy-happy" : ""} ${className}`}
+      className={`calphy-mascot d-inline-flex ${pressed ? "is-pressed" : ""} ${happy ? "calphy-happy" : ""} ${className}`}
       style={{ width: size, height: size, lineHeight: 0, ...style }}
       aria-hidden="true"
+      onPointerDown={press}
+      onPointerUp={release}
+      onPointerCancel={() => setPressed(false)}
     >
-      <svg
-        viewBox="0 0 64 64"
+      <Image
+        src={ART[mood] ?? ART.idle}
+        alt=""
         width={size}
         height={size}
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <linearGradient id="calphyBody" x1="0" y1="0" x2="0.4" y2="1">
-            <stop offset="0" stopColor="#ffd23f" />
-            <stop offset="0.45" stopColor="#f7931e" />
-            <stop offset="1" stopColor="#ff6b35" />
-          </linearGradient>
-          <linearGradient id="calphyCore" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#fff7d6" />
-            <stop offset="1" stopColor="#ffd23f" />
-          </linearGradient>
-          <radialGradient id="calphyGlow" cx="0.5" cy="0.55" r="0.6">
-            <stop offset="0" stopColor="#ff9d5c" stopOpacity="0.55" />
-            <stop offset="1" stopColor="#ff9d5c" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-
-        {/* glow */}
-        <circle cx="32" cy="36" r="30" fill="url(#calphyGlow)" />
-
-        {/* little spark above the tip */}
-        <circle cx="32" cy="4.5" r="2" fill="#ffd23f" opacity="0.9"></circle>
-
-        <g className="calphy-flame-body">
-          {/* flame body */}
-          <path
-            d="M32 7 C 33.5 15 44 19 44 32 C 44 45.5 38.5 55 32 55 C 25.5 55 20 45.5 20 32 C 20 23.5 26.5 18.5 27.5 11 C 29 15.5 30.5 16.5 32 7 Z"
-            fill="url(#calphyBody)"
-          />
-          {/* inner core */}
-          <path
-            d="M32 22 C 33 27 39 30 39 37 C 39 44.5 36 49.5 32 49.5 C 28 49.5 25 44.5 25 37 C 25 31.5 29 28.5 30 24 C 30.8 26 31.2 26.5 32 22 Z"
-            fill="url(#calphyCore)"
-            opacity="0.92"
-          />
-
-          {/* face */}
-          {happy ? (
-            <>
-              <path
-                d="M24.5 35.5 Q27 32 29.5 35.5"
-                stroke="#7c2d12"
-                strokeWidth="2.1"
-                fill="none"
-                strokeLinecap="round"
-              />
-              <path
-                d="M34.5 35.5 Q37 32 39.5 35.5"
-                stroke="#7c2d12"
-                strokeWidth="2.1"
-                fill="none"
-                strokeLinecap="round"
-              />
-            </>
-          ) : (
-            <>
-              <g className="calphy-eye">
-                <circle cx="27" cy="35.5" r="3.4" fill="#fff" />
-                <circle
-                  cx={think ? 26.2 : 27.8}
-                  cy="36.2"
-                  r="1.7"
-                  fill="#1e293b"
-                />
-                <circle
-                  cx={think ? 25.6 : 27.2}
-                  cy="35.4"
-                  r="0.6"
-                  fill="#fff"
-                />
-              </g>
-              <g className="calphy-eye">
-                <circle cx="37" cy="35.5" r="3.4" fill="#fff" />
-                <circle
-                  cx={think ? 36.2 : 37.8}
-                  cy="36.2"
-                  r="1.7"
-                  fill="#1e293b"
-                />
-                <circle
-                  cx={think ? 35.6 : 37.2}
-                  cy="35.4"
-                  r="0.6"
-                  fill="#fff"
-                />
-              </g>
-            </>
-          )}
-
-          {/* blush */}
-          <circle cx="22.8" cy="41" r="2.1" fill="#ff7a59" opacity="0.55" />
-          <circle cx="41.2" cy="41" r="2.1" fill="#ff7a59" opacity="0.55" />
-
-          {/* mouth */}
-          {happy ? (
-            <path d="M28.5 41.5 Q32 46 35.5 41.5 Z" fill="#7c2d12" />
-          ) : (
-            <path
-              d="M29 42 Q32 44.8 35 42"
-              stroke="#7c2d12"
-              strokeWidth="1.9"
-              fill="none"
-              strokeLinecap="round"
-            />
-          )}
-
-          {/* arms */}
-          <path
-            d="M20.8 40 Q15.5 41.5 14.5 46.5"
-            stroke="#ea580c"
-            strokeWidth="2.6"
-            fill="none"
-            strokeLinecap="round"
-          />
-          <g className={mood === "wave" ? "calphy-wave" : ""}>
-            <path
-              d="M43.2 40 Q48.5 41.5 49.5 36.5"
-              stroke="#ea580c"
-              strokeWidth="2.6"
-              fill="none"
-              strokeLinecap="round"
-            />
-            <circle cx="49.5" cy="36.5" r="2" fill="#ea580c" />
-          </g>
-        </g>
-      </svg>
+        draggable={false}
+        className="calphy-flame-body"
+      />
+      {/* stacked rather than swapped, so the wink is already loaded on the
+          first squish */}
+      {mood !== "wave" && (
+        <Image
+          src={ART.wave}
+          alt=""
+          width={size}
+          height={size}
+          draggable={false}
+          className="calphy-wink"
+        />
+      )}
     </span>
   );
 }

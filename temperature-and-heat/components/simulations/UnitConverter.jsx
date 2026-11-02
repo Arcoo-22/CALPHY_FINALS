@@ -52,7 +52,6 @@ export default function UnitConverter() {
           <input
             className="form-control-calphy"
             type="text"
-            inputMode="decimal"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             aria-label="Temperature value"
@@ -75,7 +74,7 @@ export default function UnitConverter() {
       </div>
 
       {valid && !belowAbsolute && (
-        <div className="row g-2 mt-1">
+        <div className="d-grid gap-2 mt-2">
           {[
             { k: "°C", val: c, cool: false },
             { k: "°F", val: cToF(c), cool: false },

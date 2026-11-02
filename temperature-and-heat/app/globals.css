@@ -249,28 +249,24 @@ a,
   box-shadow: var(--shadow-soft);
 }
 
-.icon-tile,
-.brand-flame {
+.icon-tile {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
   color: #ffffff;
   background: var(--ember);
-}
-
-.icon-tile {
   width: 3rem;
   height: 3rem;
   border-radius: var(--radius-small);
   font-size: 1.35rem;
 }
 
-.brand-flame {
+.brand-logo {
+  flex: 0 0 auto;
   width: 2.1rem;
   height: 2.1rem;
   border-radius: var(--radius-small);
-  font-size: 1.05rem;
 }
 
 .btn-flame,
@@ -877,6 +873,10 @@ a,
   color: var(--ember-text);
 }
 
+.row-status.upcoming {
+  color: var(--muted);
+}
+
 .unit-card .icon-tile,
 .lesson-icon.icon-tile {
   background: var(--ember-tint);
@@ -900,6 +900,7 @@ a,
 /* /learn intro: replaces the landing for returning visitors, kept to one card */
 .learn-intro {
   display: flex;
+  overflow: hidden;
   align-items: center;
   gap: 1.5rem;
   padding: 1.5rem;
@@ -907,7 +908,7 @@ a,
 
 .learn-intro-copy {
   min-width: 0;
-  flex: 1 1 auto;
+  flex: 0 1 40rem;
 }
 
 .learn-intro-eyebrow {
@@ -943,9 +944,152 @@ a,
   flex: 1 1 auto;
 }
 
+/* the stage takes the width the copy leaves, so Calphy sits in it instead of
+   pinned to the far edge */
 .learn-intro-mascot {
-  flex: 0 0 auto;
-  padding-right: 1rem;
+  flex: 1 1 16rem;
+  margin-block: -1rem;
+}
+
+/* components/CalphyStage.jsx */
+.calphy-stage {
+  --stage-scale: 1;
+  position: relative;
+  min-height: calc(17rem * var(--stage-scale));
+  place-items: center;
+}
+
+.calphy-stage-subject {
+  position: relative;
+  z-index: 1;
+  animation: mascot-bob 3.2s ease-in-out infinite;
+}
+
+.calphy-stage-aura {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(20rem * var(--stage-scale));
+  height: calc(20rem * var(--stage-scale));
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 56%,
+    rgb(251 146 60 / 0.28),
+    rgb(245 158 11 / 0.08) 35%,
+    rgb(245 158 11 / 0.02) 52%,
+    rgb(245 158 11 / 0) 68%
+  );
+  translate: -50% -50%;
+  animation: aura-pulse 3.2s ease-in-out infinite;
+}
+
+.calphy-stage-ember {
+  position: absolute;
+  top: 45%;
+  left: calc(50% + var(--x) * var(--stage-scale));
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: #fbbf24;
+  box-shadow: 0 0 0.5rem 0.15rem rgb(251 146 60 / 0.7);
+  opacity: 0;
+  animation: ember-rise var(--dur) ease-in var(--delay) infinite;
+}
+
+.calphy-stage-star {
+  position: absolute;
+  top: calc(50% + var(--y) * var(--stage-scale));
+  left: calc(50% + var(--x) * var(--stage-scale));
+  width: calc(var(--s) * var(--stage-scale));
+  aspect-ratio: 1;
+  background: var(--flame-glow);
+  clip-path: polygon(
+    50% 0,
+    61% 39%,
+    100% 50%,
+    61% 61%,
+    50% 100%,
+    39% 61%,
+    0 50%,
+    39% 39%
+  );
+  animation: star-twinkle 2.6s ease-in-out var(--delay) infinite;
+}
+
+:root[data-theme="dark"] .calphy-stage-star {
+  background: #fde68a;
+}
+
+@keyframes aura-pulse {
+  50% {
+    opacity: 0.7;
+    scale: 1.08;
+  }
+}
+
+@keyframes ember-rise {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+    scale: 1;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    translate: var(--drift) calc(-8rem * var(--stage-scale));
+    scale: 0.3;
+  }
+}
+
+@keyframes star-twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    scale: 0.45;
+  }
+  50% {
+    opacity: 1;
+    scale: 1;
+    rotate: 45deg;
+  }
+}
+
+/* squish sparks (components/CalphyMascot.jsx), appended to <body> */
+.calphy-spark {
+  position: fixed;
+  z-index: 2000;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgb(251 146 60 / 0.8);
+  pointer-events: none;
+}
+
+.calphy-spark.star {
+  border-radius: 0;
+  box-shadow: none;
+  clip-path: polygon(
+    50% 0,
+    61% 39%,
+    100% 50%,
+    61% 61%,
+    50% 100%,
+    39% 61%,
+    0 50%,
+    39% 39%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calphy-stage-subject,
+  .calphy-stage-aura,
+  .calphy-stage-star {
+    animation: none;
+  }
+
+  .calphy-stage-ember {
+    display: none;
+  }
 }
 
 @media (max-width: 575.98px) {
@@ -984,6 +1128,68 @@ a,
   color: var(--ink-soft);
   font-size: 0.95rem;
   line-height: 1.55;
+}
+
+/* landing "How to use" (components/HowToUse.jsx) */
+.howto-steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 576px) {
+  .howto-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 992px) {
+  .howto-steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.howto-step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.15rem;
+}
+
+.howto-step .icon-tile {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.howto-num {
+  color: var(--ember-text);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.howto-title {
+  margin: 0.1rem 0 0.3rem;
+  font-size: 1.02rem;
+  font-weight: 800;
+}
+
+.howto-text {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.howto-tips {
+  color: var(--muted);
+}
+
+.howto-tips .bi {
+  color: var(--ember-text);
 }
 
 .learn-section-actions {
@@ -1208,6 +1414,165 @@ a.continue-card:hover {
   display: block;
   width: 100%;
   height: auto;
+}
+
+/* landing hero: transparent Calphy floating on the stage (components/Landing.jsx) */
+.landing {
+  overflow-x: clip;
+}
+
+.hero-stage {
+  --stage-scale: 1.1;
+  display: grid;
+  min-height: 0;
+  aspect-ratio: 1;
+}
+
+.hero-stage .calphy-stage-subject {
+  width: 80%;
+}
+
+@media (min-width: 576px) {
+  .hero-stage {
+    --stage-scale: 1.5;
+  }
+}
+
+@media (min-width: 992px) {
+  .hero-stage {
+    --stage-scale: 2;
+  }
+}
+
+/* components/HeroCalphy.jsx: wink layer + greeting bubble */
+.hero-calphy {
+  position: relative;
+}
+
+.hero-calphy-wink {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.hero-calphy-wink.on,
+.holo-scene:hover .hero-calphy-wink {
+  opacity: 1;
+}
+
+/* sits up-left of the flame tip, puffs trailing down toward Calphy; doubled
+   class so it beats the chat bubble's rules further down */
+.thought-bubble.hero-bubble {
+  top: auto;
+  right: auto;
+  bottom: 82%;
+  left: 4%;
+  z-index: 2;
+  max-width: 44%;
+  padding: 0.45rem 0.85rem;
+  transform: none;
+  font-size: clamp(0.76rem, 1vw, 0.88rem);
+  line-height: 1.3;
+  white-space: normal;
+  transform-origin: 100% 100%;
+  animation-name: hero-bubble-in;
+}
+
+@keyframes hero-bubble-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+/* components/HoloCard.jsx: pointer tilt + hologram, from the quiet-mystic-pull
+   passport */
+.holo-scene {
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 50%;
+  --my: 50%;
+  perspective: 1400px;
+}
+
+.holo-card {
+  position: relative;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition:
+    transform 0.8s cubic-bezier(0.3, 1.3, 0.4, 1),
+    box-shadow 0.4s;
+}
+
+.holo-scene.is-tilting .holo-card {
+  box-shadow: 0 28px 60px -28px rgb(245 158 11 / 0.5);
+  transition-duration: 0.15s, 0.4s;
+}
+
+.holo-sheen,
+.holo-foil {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+.holo-sheen {
+  background: radial-gradient(
+    circle at var(--mx) var(--my),
+    rgb(255 255 255 / 0.55),
+    transparent 38%
+  );
+  mix-blend-mode: soft-light;
+}
+
+.holo-foil {
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgb(255 179 173 / 0.6) 34%,
+    rgb(255 243 168 / 0.6) 42%,
+    rgb(184 245 200 / 0.6) 50%,
+    rgb(168 220 255 / 0.6) 58%,
+    rgb(213 184 255 / 0.6) 66%,
+    transparent 80%
+  );
+  background-position: var(--mx) var(--my);
+  background-size: 220% 220%;
+  mix-blend-mode: screen;
+}
+
+.holo-scene.is-tilting .holo-sheen {
+  opacity: 1;
+}
+
+.holo-scene.is-tilting .holo-foil {
+  opacity: 0.7;
+}
+
+/* masked: sheen and foil only cover the image's opaque pixels, and the
+   shadow follows its outline instead of a box */
+.holo-card.is-masked .holo-sheen,
+.holo-card.is-masked .holo-foil {
+  mask: var(--holo-mask) center / 100% 100% no-repeat;
+}
+
+/* the mascot is already bright, so a full-strength foil washes it out */
+.holo-scene.is-tilting .holo-card.is-masked .holo-foil {
+  opacity: 0.3;
+}
+
+.holo-scene.is-tilting .holo-card.is-masked {
+  box-shadow: none;
+  filter: drop-shadow(0 24px 28px rgb(245 158 11 / 0.35));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .holo-card {
+    transition: none;
+  }
 }
 
 .tick-rule {
@@ -1447,6 +1812,19 @@ a.continue-card:hover {
 
 .readout-pill.cool b {
   color: #7dd3fc;
+}
+
+/* full-width row; long values wrap inside the pill instead of overflowing */
+.converter-readout {
+  display: flex;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.converter-readout b {
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
 }
 
 /* .page-top-space is overridden here, so clear the fixed navbar itself */
@@ -1872,7 +2250,7 @@ a.continue-card:hover {
   border-color: var(--ember);
 }
 
-.mascot-fab svg {
+.mascot-fab img {
   width: 3.1rem;
   height: 3.1rem;
   overflow: visible;
@@ -2341,28 +2719,45 @@ a.continue-card:hover {
   background: currentColor;
 }
 
-.calphy-wave {
-  transform-box: fill-box;
-  transform-origin: 0% 100%;
-  animation: calphyWave 1.4s ease-in-out 1 both;
+/* squishy: held = squashed flat from the base, wobble runs from JS */
+.calphy-mascot {
+  position: relative;
+  transform-origin: 50% 100%;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: grab;
+  user-select: none;
+  transition: scale 0.12s ease-out;
 }
 
-@keyframes calphyWave {
-  0%,
-  100% {
-    transform: rotate(0);
-  }
-  20% {
-    transform: rotate(-24deg);
-  }
-  40% {
-    transform: rotate(12deg);
-  }
-  60% {
-    transform: rotate(-18deg);
-  }
-  80% {
-    transform: rotate(0);
+a .calphy-mascot,
+button .calphy-mascot {
+  cursor: pointer;
+}
+
+.calphy-mascot:hover {
+  scale: 1.04 0.97;
+}
+
+.calphy-mascot.is-pressed {
+  cursor: grabbing;
+  scale: 1.24 0.74;
+}
+
+/* winks while squeezed */
+.calphy-wink {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.calphy-mascot.is-pressed .calphy-wink {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calphy-mascot {
+    transition: none;
   }
 }
 
@@ -2769,7 +3164,7 @@ a.check-dot.current:hover {
     height: 3.6rem;
   }
 
-  .mascot-fab svg {
+  .mascot-fab img {
     width: 2.6rem;
     height: 2.6rem;
   }

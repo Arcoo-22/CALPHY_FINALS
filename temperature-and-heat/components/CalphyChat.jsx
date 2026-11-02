@@ -34,7 +34,10 @@ export default function CalphyChat() {
   // for whoever opened it: a reload, logout or another account brings it back
   const { user } = useUser();
   // no assistant while a quiz is being taken (/quizzes/<slug>), the list page is fine
-  const onQuiz = /^\/quizzes\/[^/]+/.test(usePathname() || "");
+  const pathname = usePathname() || "";
+  const onQuiz = /^\/quizzes\/[^/]+/.test(pathname);
+  // the landing's hero Calphy already talks, so the launcher stays quiet there
+  const onLanding = pathname === "/" || pathname === "/welcome";
   const viewer = user ? `user:${user.id}` : "guest";
   const [seenBy, setSeenBy] = useState(null);
   const seen = seenBy === viewer;
@@ -47,7 +50,7 @@ export default function CalphyChat() {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, busy]);
   useEffect(() => {
-    if (open || seen || onQuiz) return;
+    if (open || seen || onQuiz || onLanding) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let thinkTimer;
     const cycle = window.setInterval(() => {
@@ -61,7 +64,7 @@ export default function CalphyChat() {
       window.clearInterval(cycle);
       window.clearTimeout(thinkTimer);
     };
-  }, [open, seen, onQuiz]);
+  }, [open, seen, onQuiz, onLanding]);
   useEffect(() => {
     if (!open) return;
     const onKey = (event) => { if (event.key === "Escape") setOpen(false); };
@@ -113,7 +116,7 @@ export default function CalphyChat() {
     <>
       {!open && <button type="button" className={`mascot-fab${seen ? "" : " idle"}`} onClick={openChat} aria-label="Open Calphy course assistant">
         <CalphyMascot size={50} mood={!seen && thinking ? "think" : "wave"} />
-        {!seen && <span className="thought-bubble" aria-hidden="true">
+        {!seen && !onLanding && <span className="thought-bubble" aria-hidden="true">
           {thinking
             ? <span className="thought-dots"><i /><i /><i /></span>
             : <span key={hint} className="thought-text">{idleHints[hint]}</span>}
