@@ -34,7 +34,8 @@ export default function AuthForm({ mode }) {
       }
       router.push("/dashboard");
     } catch (err) {
-
+      // the raw database error mentions setup files, so swap in a friendlier
+      // line; every other API message is already written for the user
       if (err.message.includes("Database not reachable")) {
         setError(
           "Sorry, the database is currently unreachable. Please try again later or contact support if the problem persists.",
@@ -44,9 +45,7 @@ export default function AuthForm({ mode }) {
           "That username or email is already taken. Please choose another one.",
         );
       } else {
-        setError(
-          "Unknown error. Please try again later or contact support if the problem persists.",
-        );
+        setError(err.message || "Something went wrong. Please try again.");
       }
 
       console.error(err);
