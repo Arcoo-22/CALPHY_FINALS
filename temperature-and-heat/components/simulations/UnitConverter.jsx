@@ -52,7 +52,6 @@ export default function UnitConverter() {
           <input
             className="form-control-calphy"
             type="text"
-            inputMode="decimal"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             aria-label="Temperature value"

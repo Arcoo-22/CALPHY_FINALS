@@ -331,8 +331,8 @@ export default function QuizRunner({ quiz, lessonKeys, nextLesson }) {
               className="form-control-calphy"
               style={{ maxWidth: 240 }}
               type="text"
-              inputMode="decimal"
               placeholder="Your answer"
+              aria-label="Your answer"
               value={numInput}
               disabled={locked}
               onChange={(e) => setNumInput(e.target.value)}
