@@ -6,12 +6,15 @@
 //   numeric entry with tolerance,
 //   per-question feedback with explanations, score ring,
 //   saves to progress (localStorage + PostgreSQL when logged in),
+//   a passing score finishes the lesson(s) and links to the next one,
 //   fires calphy:quizdone so the mascot celebrates.
 // ============================================================
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import ProgressRing from "@/components/ProgressRing";
-import { saveQuizScore, celebrate } from "@/lib/progress";
+import { saveQuizScore, completeLessons, celebrate } from "@/lib/progress";
+import { PASS_PERCENT } from "@/lib/quizzes";
+import { LESSON_BY_KEY } from "@/lib/lessons";
 import { useUser } from "@/components/UserContext";
 
 // Fisher–Yates over indices: position → original index
@@ -38,7 +41,7 @@ function makeAttempt(quiz, prev) {
   return { questionOrder, optionOrders };
 }
 
-export default function QuizRunner({ quiz }) {
+export default function QuizRunner({ quiz, lessonKeys, nextLesson }) {
   const { isLoggedIn } = useUser();
   // null until mounted: Math.random can't run during SSR without a hydration mismatch
   const [attempt, setAttempt] = useState(null);
@@ -69,6 +72,7 @@ export default function QuizRunner({ quiz }) {
       setTimeout(() => {
         setFinished(true);
         saveQuizScore(quiz.id, pct, isLoggedIn);
+        if (pct >= PASS_PERCENT) completeLessons(lessonKeys, isLoggedIn);
         celebrate(finalScore, total);
       }, 650);
     }
@@ -107,6 +111,10 @@ export default function QuizRunner({ quiz }) {
   // ---------------- finished screen ----------------
   if (finished) {
     const pct = Math.round((score / total) * 100);
+    const passed = pct >= PASS_PERCENT;
+    const lessonNames = lessonKeys
+      .map((key) => `Lesson ${LESSON_BY_KEY[key].n}`)
+      .join(" & ");
     const verdict =
       pct >= 90
         ? {
@@ -152,7 +160,19 @@ export default function QuizRunner({ quiz }) {
           />
           {quiz.title} complete!
         </h3>
-        <p className="text-muted mb-4">{verdict.text}</p>
+        <p className="text-muted mb-2">{verdict.text}</p>
+        <p className="small fw-semibold mb-4">
+          {passed ? (
+            <span style={{ color: "var(--good)" }}>
+              <i className="bi bi-check-circle-fill me-1" />
+              {lessonNames} marked complete
+            </span>
+          ) : (
+            <span className="text-muted">
+              Score {PASS_PERCENT}% or higher to complete {lessonNames}
+            </span>
+          )}
+        </p>
 
         <div className="d-flex flex-wrap justify-content-center gap-2 mb-4">
           {isLoggedIn ? (
@@ -213,15 +233,29 @@ export default function QuizRunner({ quiz }) {
         </div>
 
         <div className="d-flex flex-wrap justify-content-center gap-2">
-          <button className="btn btn-flame" onClick={restart}>
+          <Link
+            href={nextLesson ? `/lessons/${nextLesson.slug}` : "/dashboard"}
+            className={`btn ${passed ? "btn-flame" : "btn-outline-ink"}`}
+          >
+            {nextLesson
+              ? `Next: Lesson ${nextLesson.n} · ${nextLesson.title}`
+              : "Go to dashboard"}{" "}
+            <i className="bi bi-arrow-right ms-1" />
+          </Link>
+          <button
+            className={`btn ${passed ? "btn-outline-ink" : "btn-flame"}`}
+            onClick={restart}
+          >
             <i className="bi bi-arrow-counterclockwise me-1" /> Retake quiz
           </button>
           <Link href="/quizzes" className="btn btn-outline-ink">
             <i className="bi bi-grid me-1" /> All quizzes
           </Link>
-          <Link href="/dashboard" className="btn btn-ink">
-            <i className="bi bi-graph-up-arrow me-1" /> Dashboard
-          </Link>
+          {nextLesson && (
+            <Link href="/dashboard" className="btn btn-ink">
+              <i className="bi bi-graph-up-arrow me-1" /> Dashboard
+            </Link>
+          )}
         </div>
       </div>
     );

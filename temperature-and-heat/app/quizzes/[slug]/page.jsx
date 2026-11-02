@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "react-bootstrap";
 import { QUIZZES, QUIZ_BY_SLUG, quizLabel } from "@/lib/quizzes";
-import { LESSON_BY_KEY } from "@/lib/lessons";
+import { LESSONS, LESSON_BY_KEY } from "@/lib/lessons";
 import QuizRunner from "@/components/QuizRunner";
 import Reveal from "@/components/Reveal";
 
@@ -17,10 +17,25 @@ export async function generateMetadata({ params }) {
   return { title: `Quiz: ${quiz.title}`, description: quiz.description };
 }
 
-export default async function QuizPage({ params }) {
+// The lesson page links here with ?from=<lessonKey>; passing then finishes
+// that lesson and points to the one after it. Without it (opened from
+// /quizzes), the quiz stands for all of its lessons.
+function quizContext(quiz, from) {
+  const lessonKeys = quiz.lessons.includes(from) ? [from] : quiz.lessons;
+  const lastKey = lessonKeys[lessonKeys.length - 1];
+  const next = LESSONS[LESSONS.findIndex((l) => l.key === lastKey) + 1];
+  return {
+    lessonKeys,
+    nextLesson: next ? { slug: next.slug, n: next.n, title: next.title } : null,
+  };
+}
+
+export default async function QuizPage({ params, searchParams }) {
   const { slug } = await params;
   const quiz = QUIZ_BY_SLUG[slug];
   if (!quiz) notFound();
+  const { from } = await searchParams;
+  const { lessonKeys, nextLesson } = quizContext(quiz, from);
 
   return (
     <div className="page-top-space">
@@ -59,7 +74,11 @@ export default async function QuizPage({ params }) {
             </div>
           </Reveal>
           <Reveal delay={60}>
-            <QuizRunner quiz={quiz} />
+            <QuizRunner
+              quiz={quiz}
+              lessonKeys={lessonKeys}
+              nextLesson={nextLesson}
+            />
           </Reveal>
         </Container>
       </section>

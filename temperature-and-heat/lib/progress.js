@@ -164,6 +164,15 @@ export function markLesson(lessonKey, status, syncServer = false) {
   return updateProgressLocal("Progress", lessonKey, status, false, syncServer);
 }
 
+// A passed quiz finishes the lessons it was taken for.
+export async function completeLessons(lessonKeys, syncServer = false) {
+  const progress = readLocal();
+  for (const key of lessonKeys) {
+    if (lessonStatus(progress, key) !== "Finished")
+      await markLesson(key, "Finished", syncServer);
+  }
+}
+
 export function saveQuizScore(quizId, percent, syncServer = false) {
   // matches DB doc: QuizScores hold numbers, QuizProgress holds strings
   updateProgressLocal("QuizProgress", quizId, "Finished", false, syncServer);

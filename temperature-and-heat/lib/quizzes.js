@@ -7,6 +7,9 @@
 // "Quiz1" is the storage key; show it as "Quiz 1"
 export const quizLabel = (id) => id.replace(/(\d+)$/, " $1");
 
+// score (in %) that completes the lesson(s) the quiz was taken for
+export const PASS_PERCENT = 75;
+
 export const QUIZZES = [
   {
     id: "Quiz1",
