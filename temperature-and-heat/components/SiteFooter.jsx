@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Container } from "react-bootstrap";
 import { LESSONS } from "@/lib/lessons";
@@ -10,9 +11,13 @@ export default function SiteFooter() {
         <div className="row g-4">
           <div className="col-lg-4">
             <div className="footer-flame mb-2">
-              <span className="brand-flame">
-                <i className="bi bi-fire" />
-              </span>
+              <Image
+                src="/images/brand/calphy-logo.png"
+                alt=""
+                width={34}
+                height={34}
+                className="brand-logo"
+              />
               CalphyLearn
             </div>
             <p className="small mb-0" style={{ maxWidth: 340 }}>
