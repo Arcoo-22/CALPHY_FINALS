@@ -873,6 +873,10 @@ a,
   color: var(--ember-text);
 }
 
+.row-status.upcoming {
+  color: var(--muted);
+}
+
 .unit-card .icon-tile,
 .lesson-icon.icon-tile {
   background: var(--ember-tint);
