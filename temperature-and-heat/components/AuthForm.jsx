@@ -34,7 +34,22 @@ export default function AuthForm({ mode }) {
       }
       router.push("/dashboard");
     } catch (err) {
-      setError(err.message);
+
+      if (err.message.includes("Database not reachable")) {
+        setError(
+          "Sorry, the database is currently unreachable. Please try again later or contact support if the problem persists.",
+        );
+      } else if (err.message.includes("That username or email is already taken")) {
+        setError(
+          "That username or email is already taken. Please choose another one.",
+        );
+      } else {
+        setError(
+          "Unknown error. Please try again later or contact support if the problem persists.",
+        );
+      }
+
+      console.error(err);
     } finally {
       setBusy(false);
     }

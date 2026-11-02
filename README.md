@@ -21,8 +21,7 @@ Git push steps:
 - git push
 
 # Node Modules (For running backend)
-In Projects/CALPHY_FINALS
-- npm init -y
-- npm install express mysql2 cors
-- npm install cookie-parser
+In Projects/CALPHY_FINALS/temperature-and-heat
+- npm install
+
   
