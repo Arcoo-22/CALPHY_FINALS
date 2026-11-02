@@ -83,7 +83,7 @@ export default function UnitConverter() {
           ].map((r) => (
             <div className="col-4" key={r.k}>
               <div
-                className={`readout-pill w-100 justify-content-between ${r.cool ? "cool" : ""}`}
+                className={`readout-pill w-100 justify-content-between ${r.cool ? "cool" : ""}`} style={{ overflow: "hidden", textOverflow: "ellipsis" }}
               >
                 <span className="opacity-75">{r.k}</span>
                 <b>{fmt(r.val, 2)}</b>
