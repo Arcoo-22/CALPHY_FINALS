@@ -9,6 +9,7 @@ import LessonGrid from "@/components/LessonGrid";
 import SimPreviewStrip from "@/components/SimPreviewStrip";
 import QuizCards from "@/components/QuizCards";
 import CalphyMascot from "@/components/CalphyMascot";
+import CalphyStage from "@/components/CalphyStage";
 import SectionHead from "@/components/SectionHead";
 import VideoEmbed from "@/components/VideoEmbed";
 import { LESSONS, UNITS } from "@/lib/lessons";
@@ -75,9 +76,7 @@ export default function LearnHome() {
             </span>
           </div>
         </div>
-        <div className="learn-intro-mascot d-none d-md-block" aria-hidden="true">
-          <CalphyMascot size={120} />
-        </div>
+        <CalphyStage size={220} className="learn-intro-mascot d-none d-md-grid" />
       </header>
 
       {next ? (
