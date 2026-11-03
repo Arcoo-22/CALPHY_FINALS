@@ -7,18 +7,24 @@ import { UNITS, LESSON_BY_KEY } from "@/lib/lessons";
 import { useUser } from "@/components/UserContext";
 import { lessonStatus } from "@/lib/progress";
 
-function RowStatus({ status, isNext }) {
+function RowStatus({ status, isUpNext }) {
   if (status === "Finished")
     return (
       <span className="row-status done">
         <i className="bi bi-check-circle-fill" aria-hidden="true" /> Done
       </span>
     );
-  if (isNext) return <span className="row-status next">Up next</span>;
+  if (status === "Current")
+    return <span className="row-status next">In progress</span>;
+  if (isUpNext) return <span className="row-status upcoming">Up next</span>;
   return null;
 }
 
-export default function LessonGrid({ home = false, nextKey = null }) {
+export default function LessonGrid({
+  home = false,
+  currentKey = null,
+  upNextKey = null,
+}) {
   const { progress } = useUser();
 
   return (
@@ -68,13 +74,13 @@ export default function LessonGrid({ home = false, nextKey = null }) {
                 {unit.lessons.map((key) => {
                   const lesson = LESSON_BY_KEY[key];
                   const status = lessonStatus(progress, key);
-                  const isNext = key === nextKey;
+                  const isCurrent = key === currentKey;
                   return (
                     <Link
                       key={key}
                       href={`/lessons/${lesson.slug}`}
-                      className={`unit-lesson-row ${isNext ? "is-next" : ""} ${status === "Finished" ? "is-done" : ""}`}
-                      aria-current={isNext ? "step" : undefined}
+                      className={`unit-lesson-row ${isCurrent ? "is-next" : ""} ${status === "Finished" ? "is-done" : ""}`}
+                      aria-current={isCurrent ? "step" : undefined}
                     >
                       <span className="row-icon" aria-hidden="true">
                         <i className={`bi ${lesson.icon}`} />
@@ -83,7 +89,10 @@ export default function LessonGrid({ home = false, nextKey = null }) {
                         <span className="row-num">Lesson {lesson.n}</span>
                         <span className="d-block">{lesson.title}</span>
                       </span>
-                      <RowStatus status={status} isNext={isNext} />
+                      <RowStatus
+                        status={status}
+                        isUpNext={key === upNextKey}
+                      />
                     </Link>
                   );
                 })}

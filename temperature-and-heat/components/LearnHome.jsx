@@ -30,9 +30,15 @@ export default function LearnHome() {
   const done = LESSONS.filter(
     (l) => lessonStatus(progress, l.key) === "Finished",
   ).length;
-  const next =
-    LESSONS.find((l) => lessonStatus(progress, l.key) === "Current") ||
-    LESSONS.find((l) => lessonStatus(progress, l.key) !== "Finished");
+  // follow lesson order, so opening a later lesson doesn't skip one
+  const current = LESSONS.find(
+    (l) => lessonStatus(progress, l.key) !== "Finished",
+  );
+  const upNext =
+    current &&
+    LESSONS.slice(LESSONS.indexOf(current)).find(
+      (l) => lessonStatus(progress, l.key) === "NotStarted",
+    );
   const started = LESSONS.some(
     (l) => lessonStatus(progress, l.key) !== "NotStarted",
   );
@@ -79,19 +85,19 @@ export default function LearnHome() {
         <CalphyStage size={220} className="learn-intro-mascot d-none d-md-grid" />
       </header>
 
-      {next ? (
+      {current ? (
         <Link
-          href={`/lessons/${next.slug}`}
+          href={`/lessons/${current.slug}`}
           className="continue-card card-soft flat mb-4"
         >
           <span className="icon-tile" aria-hidden="true">
-            <i className={`bi ${next.icon}`} />
+            <i className={`bi ${current.icon}`} />
           </span>
           <span className="flex-grow-1 min-w-0">
             <span className="continue-label">
-              {started ? "Continue" : "Start here"} · Lesson {next.n}
+              {started ? "Continue" : "Start here"} · Lesson {current.n}
             </span>
-            <span className="continue-title">{next.title}</span>
+            <span className="continue-title">{current.title}</span>
           </span>
           <i className="bi bi-arrow-right continue-arrow" aria-hidden="true" />
         </Link>
@@ -128,7 +134,11 @@ export default function LearnHome() {
             </Link>
           }
         />
-        <LessonGrid home nextKey={next?.key} />
+        <LessonGrid
+          home
+          currentKey={current?.key}
+          upNextKey={upNext?.key}
+        />
       </section>
 
       <SimPreviewStrip />

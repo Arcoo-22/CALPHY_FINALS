@@ -8,6 +8,7 @@ import MiniQuiz from "@/components/MiniQuiz";
 import SimHost from "@/components/SimHost";
 import VideoEmbed from "@/components/VideoEmbed";
 import { LessonTracker, MarkCompleteButton } from "@/components/LessonProgress";
+import { PASS_PERCENT } from "@/lib/quizzes";
 
 // each trace step jumps to the part of the page that covers it
 const TRACE_TARGETS = ["#sim", "#content", "#formulas"];
@@ -100,7 +101,6 @@ export default async function LessonPage({ params }) {
   const unit = getUnit(lesson.unit);
   const idx = LESSONS.findIndex((l) => l.slug === lesson.slug);
   const prev = LESSONS[idx - 1];
-  const next = LESSONS[idx + 1];
 
   return (
     <>
@@ -457,10 +457,13 @@ export default async function LessonPage({ params }) {
               <div className="d-flex flex-wrap align-items-center gap-2">
                 <div className="flex-grow-1" style={{ minWidth: 200 }}>
                   <h3 className="fw-bold h6 mb-0">Ready for the quiz?</h3>
+                  <p className="small text-muted mb-0">
+                    Score {PASS_PERCENT}% or higher to complete this lesson.
+                  </p>
                 </div>
                 <MarkCompleteButton lessonKey={lesson.key} compact />
                 <Link
-                  href={`/quizzes/${lesson.quizSlug}`}
+                  href={`/quizzes/${lesson.quizSlug}?from=${lesson.key}`}
                   className="btn btn-flame btn-compact"
                 >
                   <i className="bi bi-patch-question me-1" /> Take the quiz
@@ -469,9 +472,9 @@ export default async function LessonPage({ params }) {
             </div>
           </Reveal>
 
-          {/* prev / next */}
-          <div className="d-flex justify-content-between gap-3 mt-4 flex-wrap">
-            {prev ? (
+          {/* the way forward is the quiz; its results link to the next lesson */}
+          {prev && (
+            <div className="mt-4">
               <Link
                 href={`/lessons/${prev.slug}`}
                 className="btn btn-outline-ink"
@@ -479,23 +482,8 @@ export default async function LessonPage({ params }) {
                 <i className="bi bi-arrow-left me-1" /> Lesson {prev.n}:{" "}
                 {prev.title}
               </Link>
-            ) : (
-              <span />
-            )}
-            {next ? (
-              <Link
-                href={`/lessons/${next.slug}`}
-                className="btn btn-outline-ink"
-              >
-                Lesson {next.n}: {next.title}{" "}
-                <i className="bi bi-arrow-right ms-1" />
-              </Link>
-            ) : (
-              <Link href="/quizzes" className="btn btn-cool">
-                All quizzes <i className="bi bi-arrow-right ms-1" />
-              </Link>
-            )}
-          </div>
+            </div>
+          )}
         </Container>
       </section>
     </>
