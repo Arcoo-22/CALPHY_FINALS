@@ -30,13 +30,14 @@ export default function LearnHome() {
   const done = LESSONS.filter(
     (l) => lessonStatus(progress, l.key) === "Finished",
   ).length;
-  const current =
-    LESSONS.find((l) => lessonStatus(progress, l.key) === "Current") ||
-    LESSONS.find((l) => lessonStatus(progress, l.key) !== "Finished");
+  // follow lesson order, so opening a later lesson doesn't skip one
+  const current = LESSONS.find(
+    (l) => lessonStatus(progress, l.key) !== "Finished",
+  );
   const upNext =
     current &&
-    LESSONS.slice(LESSONS.indexOf(current) + 1).find(
-      (l) => lessonStatus(progress, l.key) !== "Finished",
+    LESSONS.slice(LESSONS.indexOf(current)).find(
+      (l) => lessonStatus(progress, l.key) === "NotStarted",
     );
   const started = LESSONS.some(
     (l) => lessonStatus(progress, l.key) !== "NotStarted",
