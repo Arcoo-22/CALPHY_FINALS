@@ -348,9 +348,9 @@ export const LESSONS = [
         title: "First law of thermodynamics",
         display: "ΔU = Q − W",
         inWords:
-          "The change in thermal energy equals the heat added minus the work done by the system.",
+          "The change in internal (thermal) energy equals the heat added minus the work done by the system.",
         where:
-          "ΔU = change in thermal energy (J), Q = heat added (J), W = work done by the system (J).",
+          "ΔU = change in internal (thermal) energy (J), Q = heat added (J), W = work done by the system (J).",
       },
     ],
     constantsTable: {
@@ -574,7 +574,7 @@ export const LESSONS = [
         ["Glass", "0.8"],
         ["Brick", "0.7"],
         ["Wood", "0.12"],
-        ["Foam", "0.04"],
+        ["Wool or glass wool insulation", "0.04"],
         ["Air", "0.026"],
       ],
     },
@@ -600,14 +600,14 @@ export const LESSONS = [
       {
         title: "Example 3: Layers in series",
         steps: [
-          "Brick (L = 0.1 m, k = 0.7) and foam (L = 0.05 m, k = 0.04). A = 10 m², ΔT = 20 K.",
+          "Brick (L = 0.1 m, k = 0.7) and wool insulation (L = 0.05 m, k = 0.04). A = 10 m², ΔT = 20 K.",
           "0.1 ÷ 0.7 = 0.143",
           "0.05 ÷ 0.04 = 1.25",
           "Total = 0.143 + 1.25 = 1.393",
           "H = (10 × 20) ÷ 1.393",
         ],
         answer: "H = 144 W",
-        note: "Heat per area = 14.36 W/m². Temperature drop across brick = 14.36 × 0.143 ≈ 2.05 K. Across foam = 14.36 × 1.25 ≈ 17.95 K. The insulation takes most of the drop.",
+        note: "Heat per area = 14.36 W/m². Temperature drop across brick = 14.36 × 0.143 ≈ 2.05 K. Across wool insulation = 14.36 × 1.25 ≈ 17.95 K. The insulation takes most of the drop.",
       },
       {
         title: "Example 4: Rods in parallel",
@@ -759,6 +759,7 @@ export const LESSONS = [
           "If the absolute temperature doubles, radiated power becomes 16 times larger.",
           "Dark, matte surfaces absorb and emit well. Shiny surfaces do not.",
           "Hotter objects emit shorter wavelengths: red, then white, then blue-white.",
+          "Newton's law of cooling is an approximation. It works best when the convection coefficient h stays about constant. In natural convection, h changes with the temperature difference.",
         ],
       },
     ],
@@ -798,7 +799,7 @@ export const LESSONS = [
         title: "Radiation: net power with surroundings",
         display: "P_net = e × σ × A × (T⁴ − T_s⁴)",
         inWords:
-          "Power given out minus power taken in from the surroundings. Both temperatures must be in kelvin.",
+          "Power given out minus power taken in from the surroundings. Both temperatures must be in kelvin. A positive P_net means the object loses heat to its surroundings. (OpenStax writes the formula the other way around, so a positive value means the object gains heat.)",
         where: "T = object (K), T_s = surroundings (K).",
       },
       {
@@ -816,9 +817,9 @@ export const LESSONS = [
       rows: [
         ["Stefan-Boltzmann constant σ", "5.67 × 10⁻⁸ W/m²·K⁴"],
         ["Wien's constant b", "2.898 × 10⁻³ m·K"],
-        ["Emissivity e, black matte surface", "about 0.95 to 1"],
-        ["Emissivity e, human skin", "0.97"],
-        ["Emissivity e, polished aluminum", "about 0.05"],
+        ["Emissivity e, black matte surface (carbon black)", "about 0.95"],
+        ["Emissivity e, human skin (infrared)", "0.97"],
+        ["Emissivity e, tungsten bulb filament", "about 0.5"],
       ],
     },
     examples: [
@@ -1178,7 +1179,7 @@ export const LESSONS = [
       {
         heading: "Ice and warm water: test first",
         steps: [
-          "The water cannot warm the ice to 0 °C. Everything ends below 0 °C as ice.",
+          "Even if all the water cools to 0 °C and freezes, it cannot warm the ice to 0 °C. Everything ends below 0 °C as ice.",
           "The water can warm the ice but not melt all of it. The final temperature is exactly 0 °C with ice and water together.",
           "The water can melt all the ice. The final temperature is above 0 °C.",
         ],
@@ -1586,7 +1587,7 @@ export const LESSONS = [
         heading: "Conditions",
         bullets: [
           "Use L only when the temperature is constant.",
-          "Real heaters lose some heat, so an uncorrected measurement of L is usually too high.",
+          "Heat lost from the heater to the room makes an uncorrected L too high. Heat gained from a warm room (as when melting ice) makes it too low. The control run without the heater corrects for this.",
           "Heat is absorbed in melting and vaporizing, and released in freezing and condensing, with the same size of L.",
         ],
       },
