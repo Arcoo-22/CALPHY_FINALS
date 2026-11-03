@@ -7,14 +7,15 @@ import { UNITS, LESSON_BY_KEY } from "@/lib/lessons";
 import { useUser } from "@/components/UserContext";
 import { lessonStatus } from "@/lib/progress";
 
-function RowStatus({ status, isCurrent, isUpNext }) {
+function RowStatus({ status, isUpNext }) {
   if (status === "Finished")
     return (
       <span className="row-status done">
         <i className="bi bi-check-circle-fill" aria-hidden="true" /> Done
       </span>
     );
-  if (isCurrent) return <span className="row-status next">Current</span>;
+  if (status === "Current")
+    return <span className="row-status next">In progress</span>;
   if (isUpNext) return <span className="row-status upcoming">Up next</span>;
   return null;
 }
@@ -90,7 +91,6 @@ export default function LessonGrid({
                       </span>
                       <RowStatus
                         status={status}
-                        isCurrent={isCurrent}
                         isUpNext={key === upNextKey}
                       />
                     </Link>
