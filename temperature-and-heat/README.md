@@ -23,12 +23,16 @@ The assistant uses Groq for grounded course answers. Add your key to
 
 ```env
 GROQ_API_KEY=your_groq_api_key
-# Optional; defaults to openai/gpt-oss-20b
+# Optional model override
 GROQ_MODEL=openai/gpt-oss-20b
 ```
 
 Restart the Next.js server after changing environment variables. Navigation,
-lesson previews, and supported calculations also work without a Groq key.
+lesson previews, temperature conversions, and supported heat calculations also
+work without a Groq key. Course answers include a closest-lesson or formula
+reference. If a course topic is not covered, Calphy asks before opening an
+external Google search. When Groq is unavailable or rate-limited, it shows a
+course-grounded fallback instead.
 
 You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 

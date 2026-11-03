@@ -1,0 +1,472 @@
+import { CONSTANTS_BOX, FORMULA_SHEET, LESSONS } from "@/lib/lessons";
+import { SPECIFIC_HEAT, UNIVERSAL } from "@/lib/constants";
+
+const STOP_WORDS = new Set([
+  "about", "after", "also", "and", "are", "can", "calculate", "could",
+  "does", "explain", "find", "for", "from", "give", "how", "into", "is",
+  "lesson", "me", "more", "please", "show", "tell", "that", "the", "this",
+  "page", "to", "use", "what", "when", "where", "which", "with", "would",
+]);
+
+const COURSE_HINTS = new Set([
+  "heat", "temperature", "thermal", "energy", "particle", "particles",
+  "celsius", "fahrenheit", "kelvin", "conduction", "convection", "radiation",
+  "specific", "latent", "calorimetry", "gas", "pressure", "volume", "kinetic",
+  "melting", "boiling", "phase", "thermometer", "formula", "physics",
+]);
+
+const SITE_PAGES = [
+  { title: "Lessons", href: "/lessons" },
+  { title: "Simulations", href: "/simulations" },
+  { title: "Quizzes", href: "/quizzes" },
+  { title: "Formulas", href: "/formulas" },
+  { title: "Dashboard", href: "/dashboard" },
+];
+
+const COURSE_ENTRIES = [
+  ...LESSONS.map((lesson) => ({
+    title: `Lesson ${lesson.n}: ${lesson.title}`,
+    href: `/lessons/${lesson.slug}`,
+    text: [
+      lesson.tagline,
+      lesson.overview,
+      ...(lesson.objectives || []),
+      ...(lesson.keyTerms || []).map((term) => `${term.term}: ${term.def}`),
+      ...(lesson.sections || []).flatMap((section) => [
+        section.heading,
+        ...(section.paragraphs || []),
+        ...(section.bullets || []),
+        ...(section.steps || []),
+        ...(section.formulasInline || []),
+      ]),
+      ...(lesson.formulas || []).map(
+        (formula) =>
+          `${formula.title}: ${formula.display || `${formula.lhs} ${formula.num || ""} ÷ ${formula.den || ""}`}. ${formula.inWords || ""}. ${formula.where || ""}.`,
+      ),
+      ...(lesson.examples || []).flatMap((example) => [
+        example.title,
+        ...(example.steps || []),
+        example.answer,
+      ]),
+      ...(lesson.takeaways || []),
+    ]
+      .filter(Boolean)
+      .join("\n"),
+  })),
+  ...FORMULA_SHEET.map((formula) => ({
+    title: `${formula.name} formula`,
+    href: "/formulas",
+    text: `${formula.display}\n${formula.useWhen}`,
+  })),
+  ...CONSTANTS_BOX.map(([title, value]) => ({
+    title,
+    href: "/formulas",
+    text: `${title} ${value}`,
+  })),
+];
+
+function normalize(text) {
+  return text
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/celcius/g, "celsius")
+    .replace(/farenheit/g, "fahrenheit")
+    .replace(/fahrenheight/g, "fahrenheit")
+    .replace(/temprature/g, "temperature")
+    .replace(/\bformulas?\b/g, "formula")
+    .replace(/\bequations?\b/g, "equation");
+}
+
+function tokenize(text) {
+  return new Set(normalize(text).match(/[a-z0-9]+/g) || []);
+}
+
+export function findCourseMatches(query) {
+  const terms = [...tokenize(query)].filter(
+    (term) => term.length > 2 && !STOP_WORDS.has(term),
+  );
+  if (!terms.length) return [];
+
+  const ranked = COURSE_ENTRIES.map((entry) => {
+    const titleTerms = tokenize(entry.title);
+    const bodyTerms = tokenize(entry.text);
+    const titleMatches = terms.filter((term) => titleTerms.has(term)).length;
+    const bodyMatches = terms.filter((term) => bodyTerms.has(term)).length;
+    return { ...entry, score: titleMatches * 4 + bodyMatches };
+  })
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  if (!ranked.length) return [];
+  return ranked
+    .filter(
+      (entry, index) =>
+        entry.score >= Math.max(2, ranked[0].score * 0.45) && index < 3,
+    )
+    .map(({ title, href, text, score }) => ({ title, href, text, score }));
+}
+
+function sentenceExcerpt(text, question) {
+  const terms = [...tokenize(question)].filter(
+    (term) => term.length > 2 && !STOP_WORDS.has(term),
+  );
+  const formulaIntent = /\b(formula|equation)\b/i.test(normalize(question));
+  const sentences = text.split(/\n+|(?<=[.!?])\s+(?=[A-Z0-9])/);
+  const scored = sentences
+    .map((sentence, index) => {
+      const words = tokenize(sentence);
+      const isFormula = /(?:=|÷|×|\/)/.test(sentence);
+      return {
+        sentence: sentence.trim(),
+        index,
+        score:
+          terms.reduce((total, term) => total + Number(words.has(term)), 0) +
+          Number(formulaIntent && isFormula) * 10,
+      };
+    })
+    .filter((item) => item.sentence && item.score > 0)
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .slice(0, formulaIntent ? 6 : 4)
+    .sort((a, b) => a.index - b.index);
+
+  return scored.length
+    ? scored.map(({ sentence }) => sentence).join(" ")
+    : sentences.slice(0, 3).join(" ").trim();
+}
+
+function sourceForLesson(lesson) {
+  return { title: `Lesson ${lesson.n}: ${lesson.title}`, href: `/lessons/${lesson.slug}` };
+}
+
+export function isFrustratedReply(text) {
+  return /\b(?:are you kidding me|are you serious|you(?:'re| are) kidding|that(?:'s| is) wrong|this is wrong|you(?:'re| are) wrong|not what i asked|that makes no sense|you didn(?:'t|t) answer|you missed the point|what are you talking about)\b/i.test(
+    text,
+  );
+}
+
+function makeAnswer(answer, { links = [], sources = [] } = {}) {
+  return { answer, links, sources };
+}
+
+function findLesson(question) {
+  const q = normalize(question);
+  const number = q.match(/\blesson\s*(\d+)\b/);
+  if (number) {
+    return LESSONS.find((lesson) => lesson.n === Number(number[1]));
+  }
+  return LESSONS.find(
+    (lesson) =>
+      q.includes(lesson.slug.replace(/-/g, " ")) ||
+      q.includes(normalize(lesson.title)),
+  );
+}
+
+function getTemperature(value, unit) {
+  if (unit === "c") return value;
+  if (unit === "f") return (value - 32) / 1.8;
+  return value - 273.15;
+}
+
+function findTemperatureChange(question) {
+  const range = question.match(
+    /\bfrom\s*(-?\d+(?:\.\d+)?)\s*(?:degrees?\s*)?(?:°\s*)?(celsius|fahrenheit|kelvin|[cfk])?\s+to\s*(-?\d+(?:\.\d+)?)\s*(?:degrees?\s*)?(?:°\s*)?(celsius|fahrenheit|kelvin|[cfk])?\b/,
+  );
+  if (range) {
+    const fromUnit = (range[2] || range[4])?.[0];
+    const toUnit = (range[4] || range[2])?.[0];
+    if (fromUnit && toUnit) {
+      const initial = getTemperature(Number(range[1]), fromUnit);
+      const final = getTemperature(Number(range[3]), toUnit);
+      if (initial < -273.15 || final < -273.15) return null;
+      return final - initial;
+    }
+  }
+
+  const change = question.match(
+    /(?:delta\s*t|δt|temperature\s+(?:change|increase|rise|difference|decrease|drop)|(?:increase|raise|decrease|drop|drops|cool|cools|change)\s+(?:the temperature\s+)?by)\s*(?:of\s*)?(-?\d+(?:\.\d+)?)/i,
+  );
+  if (!change) return null;
+  const value = Number(change[1]);
+  return /\b(decrease|drop|cool)\b/.test(question)
+    ? -Math.abs(value)
+    : value;
+}
+
+function calculationAnswer(question) {
+  const q = normalize(question);
+  const calculateIntent =
+    /\b(calculate|compute|work out|solve for|how much (?:heat|energy)|find (?:the )?(?:heat|energy|q))\b/.test(q) ||
+    /\bq\s*=/.test(q);
+  const conversion = q.match(
+    /(?:convert\s+)?(-?\d+(?:\.\d+)?)\s*°?\s*(c|celsius|f|fahrenheit|k|kelvin)\s+(?:to|in)\s*°?\s*(c|celsius|f|fahrenheit|k|kelvin)\b/,
+  );
+  if (conversion) {
+    const value = Number(conversion[1]);
+    const from = conversion[2][0];
+    const to = conversion[3][0];
+    const celsius = getTemperature(value, from);
+    const result = to === "c" ? celsius : to === "f" ? celsius * 1.8 + 32 : celsius + 273.15;
+    const scale = { c: "°C", f: "°F", k: "K" };
+    const lesson = LESSONS.find((item) => item.n === 1);
+    if (celsius < -273.15) {
+      return makeAnswer(
+        "That conversion is below absolute zero (0 K), so it isn’t physically possible. Check the temperature value and try again.",
+        { sources: [sourceForLesson(lesson)] },
+      );
+    }
+    return makeAnswer(
+      `${value} ${scale[from]} = **${Number(result.toFixed(2))} ${scale[to]}**.`,
+      { sources: [sourceForLesson(lesson)] },
+    );
+  }
+
+  const specificHeatIntent =
+    calculateIntent && /\b(heat|energy|specific heat|q\s*=|mc\s*delta)\b/.test(q);
+  if (specificHeatIntent) {
+    const lesson = LESSONS.find((item) => item.n === 5);
+    const massMatch = q.match(/\b(\d+(?:\.\d+)?)\s*(kg|g)\b/);
+    const material = SPECIFIC_HEAT.find(({ name }) =>
+      new RegExp(`\\b${name.toLowerCase()}\\b`).test(q),
+    );
+    const delta = findTemperatureChange(q);
+    if (
+      !massMatch ||
+      Number(massMatch[1]) <= 0 ||
+      !material ||
+      delta === null
+    ) {
+      return makeAnswer(
+        "I can calculate this with **Q = m × c × ΔT**. Please include the mass with units (g or kg), the material, and either the temperature change or starting and ending temperatures.",
+        { sources: [sourceForLesson(lesson)] },
+      );
+    }
+    const mass = Number(massMatch[1]) * (massMatch[2] === "g" ? 0.001 : 1);
+    const energy = mass * material.value * delta;
+    return makeAnswer(
+      `Using **Q = m × c × ΔT** for ${material.name}: Q = ${mass} kg × ${material.value} J/kg·K × ${Number(delta.toFixed(2))} K = **${Number(energy.toFixed(2)).toLocaleString("en-US")} J**.`,
+      { sources: [sourceForLesson(lesson)] },
+    );
+  }
+
+  const latentIntent =
+    calculateIntent && /\b(latent|melt|melting|vapor|boil|boiling)\b/.test(q);
+  if (latentIntent) {
+    const lesson = LESSONS.find((item) => item.n === 8);
+    const massMatch = q.match(/\b(\d+(?:\.\d+)?)\s*(kg|g)\b/);
+    if (!massMatch || Number(massMatch[1]) <= 0) {
+      return makeAnswer(
+        "I can calculate latent heat with **Q = m × L**. Please provide the mass in grams or kilograms and say whether the change is melting or boiling.",
+        { sources: [sourceForLesson(lesson)] },
+      );
+    }
+    const mass = Number(massMatch[1]) * (massMatch[2] === "g" ? 0.001 : 1);
+    const vaporization = /\b(vapor|boil|boiling)\b/.test(q);
+    const latent = vaporization ? UNIVERSAL.Lv : UNIVERSAL.Lf;
+    const phase = vaporization ? "vaporization" : "fusion (melting)";
+    const result = mass * latent;
+    return makeAnswer(
+      `Using **Q = m × L** for water’s ${phase}: Q = ${mass} kg × ${latent.toLocaleString("en-US")} J/kg = **${Number(result.toFixed(2)).toLocaleString("en-US")} J**.`,
+      { sources: [sourceForLesson(lesson)] },
+    );
+  }
+
+  if (calculateIntent) {
+    const matches = findCourseMatches(question);
+    return makeAnswer(
+      "I can help calculate Temperature & Heat quantities, but I need a supported formula and its values with units. Which course formula are you using?",
+      { sources: matches.slice(0, 1).map(({ title, href }) => ({ title, href })) },
+    );
+  }
+  return null;
+}
+
+export function resolveLocalAction(question) {
+  const q = normalize(question);
+  if (
+    /^(?:thanks|thank you|thank you so much|you(?:'re| are) (?:so )?(?:good|great|awesome|amazing|the best)|good bot|nice work|well done)\b/.test(
+      q,
+    )
+  ) {
+    return makeAnswer("Thanks! I’m glad I could help. Let me know if you have another Temperature & Heat question.");
+  }
+  if (/^(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(q)) {
+    return makeAnswer(
+      "Hi! I can help with Temperature & Heat lessons, explain course topics, find a page, or work through a course calculation.",
+      { links: [{ label: "Browse lessons", href: "/lessons" }] },
+    );
+  }
+
+  const lesson = findLesson(question);
+  const navigationIntent =
+    /\b(where|find|open|go to|link|take me|access|navigate)\b/.test(q);
+  if (lesson && navigationIntent) {
+    const source = sourceForLesson(lesson);
+    return makeAnswer(`Open **${source.title}** here.`, {
+      links: [{ label: `Open ${source.title}`, href: source.href }],
+    });
+  }
+
+  if (navigationIntent) {
+    const page = SITE_PAGES.find((item) => {
+      const title = item.title.toLowerCase();
+      return q.includes(title) || q.includes(title.replace(/s$/, ""));
+    });
+    if (page) {
+      return makeAnswer(`Open **${page.title}** here.`, {
+        links: [{ label: `Open ${page.title}`, href: page.href }],
+      });
+    }
+  }
+
+  if (
+    /\b(preview|what (?:will|does) .* (?:contain|cover|include)|what content .* lesson|lesson .* (?:contain|cover|include|content)|content .* lesson)\b/.test(q)
+  ) {
+    if (!lesson) {
+      return makeAnswer(
+        "Which lesson would you like to preview? There are nine lessons in the Temperature & Heat course.",
+        { links: [{ label: "Browse all lessons", href: "/lessons" }] },
+      );
+    }
+    const source = sourceForLesson(lesson);
+    return makeAnswer(`**${source.title}** covers ${lesson.tagline.toLowerCase()}`, {
+      links: [{ label: `Preview Lesson ${lesson.n}`, href: source.href }],
+      sources: [source],
+    });
+  }
+
+  return calculationAnswer(question);
+}
+
+export function isCourseRelated(question, matches = findCourseMatches(question)) {
+  const q = normalize(question);
+  return (
+    matches.length > 0 ||
+    /\blesson\s*\d+\b/.test(q) ||
+    LESSONS.some((lesson) => q.includes(normalize(lesson.title))) ||
+    [...tokenize(question)].some((term) => COURSE_HINTS.has(term))
+  );
+}
+
+export function requestsWebSearch(question) {
+  return /\b(?:search|look up|find)\b.{0,40}\b(?:web|online|internet)\b|\b(?:web|online|internet)\b.{0,40}\b(?:search|lookup)\b/i.test(question);
+}
+
+export function buildCourseFallback(question, matches, notice) {
+  const closest = matches[0];
+  return {
+    answer: `The closest course match is **${closest.title}**. ${sentenceExcerpt(closest.text, question)}`,
+    notice,
+    links: [],
+    sources: [{ title: closest.title, href: closest.href }],
+  };
+}
+
+export function buildCourseCorrection(question, matches) {
+  const formulaIntent = /\b(formula|equation)\b/i.test(normalize(question));
+  if (formulaIntent) {
+    const terms = tokenize(question);
+    const formulaLessons = LESSONS.map((lesson) => {
+      const titleTerms = [...tokenize(lesson.title)].filter(
+        (term) => term.length >= 6 && !STOP_WORDS.has(term),
+      );
+      return {
+        lesson,
+        score: titleTerms.filter((term) => terms.has(term)).length,
+      };
+    })
+      .filter(({ lesson, score }) => score && lesson.formulas?.length)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3);
+
+    if (formulaLessons.length) {
+      const sections = formulaLessons.map(({ lesson }) => {
+        const formulaLines = lesson.formulas
+          .slice(0, 2)
+          .map((formula) => {
+            const expression =
+              formula.display ||
+              `${formula.lhs} ${formula.num || ""}${
+                formula.den ? ` ÷ ${formula.den}` : ""
+              }`;
+            return `- **${formula.title}:** ${expression}${
+              formula.where ? `\n  ${formula.where}` : ""
+            }`;
+          })
+          .join("\n");
+        return `**Lesson ${lesson.n}: ${lesson.title}**\n${formulaLines}`;
+      });
+
+      return {
+        answer: `You’re right — I missed the formulas in the course. Here they are:\n\n${sections.join("\n\n")}`,
+        links: [],
+        sources: formulaLessons.map(({ lesson }) => sourceForLesson(lesson)),
+      };
+    }
+  }
+
+  const usedMatches = matches.slice(0, 2);
+  const evidence = usedMatches
+    .map((match) => sentenceExcerpt(match.text, question))
+    .filter(Boolean)
+    .join("\n\n");
+  const sources = [...new Map(
+    usedMatches.map(({ title, href }) => [
+      href,
+      { title: href === "/formulas" ? "Formula sheet" : title, href },
+    ]),
+  ).values()];
+  return {
+    answer: `You’re right — my previous answer missed the relevant course material. Here’s the direct answer:\n\n${evidence}`,
+    links: [],
+    sources,
+  };
+}
+
+export function selectSourcesForAnswer(answer, matches, question = "") {
+  const answerTerms = [...tokenize(answer)].filter(
+    (term) => term.length > 2 && !STOP_WORDS.has(term),
+  );
+  const questionTerms = [...tokenize(question)].filter(
+    (term) => term.length > 2 && !STOP_WORDS.has(term),
+  );
+  const ranked = matches
+    .map((match) => {
+      const sourceTerms = tokenize(`${match.title} ${match.text}`);
+      const matchedTerms = answerTerms.filter((term) => sourceTerms.has(term));
+      const answeredQuestionTerms = questionTerms.filter(
+        (term) => answerTerms.includes(term) && sourceTerms.has(term),
+      );
+      const titleTerms = tokenize(match.title);
+      const titleMatches = answerTerms.filter((term) => titleTerms.has(term));
+      return {
+        title: match.title,
+        href: match.href,
+        score: matchedTerms.length,
+        titleMatches: titleMatches.length,
+        answeredQuestionTerms: answeredQuestionTerms.length,
+      };
+    })
+    .filter(
+      (source) =>
+        source.score >= 2 &&
+        (source.answeredQuestionTerms > 0 || source.titleMatches > 0),
+    )
+    .sort(
+      (a, b) =>
+        b.answeredQuestionTerms - a.answeredQuestionTerms ||
+        b.titleMatches - a.titleMatches ||
+        b.score - a.score,
+    )
+    .slice(0, 1)
+    .map(({ title, href }) => ({ title, href }));
+  return ranked;
+}
+
+export function getModelContext(matches, question) {
+  return matches.slice(0, 2).map((match) => ({
+    title: match.title,
+    href: match.href,
+    excerpt: sentenceExcerpt(match.text, question),
+  }));
+}

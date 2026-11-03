@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ReactMarkdown from "react-markdown";
@@ -96,12 +96,45 @@ export default function CalphyChat() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Please try again.");
-      setMessages((current) => [...current, { role: "assistant", text: data.answer, links: data.links || [] }]);
-    } catch (error) {
-      setMessages((current) => [...current, { role: "assistant", text: error.message || "Connection error. Please try again." }]);
+      setMessages((current) => [...current, {
+        role: "assistant",
+        text: data.answer,
+        links: data.links || [],
+        sources: data.sources || [],
+        notice: data.notice,
+        confirmation: data.confirmation,
+      }]);
+    } catch {
+      setMessages((current) => [...current, {
+        role: "assistant",
+        text: "I couldn’t reach the assistant service. Please try again in a moment.",
+        links: [{ label: "Browse lessons", href: "/lessons" }],
+        notice: "The request failed before it could be answered.",
+      }]);
     } finally {
       setBusy(false);
     }
+  }
+
+  function respondToConfirmation(index, approved) {
+    const confirmation = messages[index]?.confirmation;
+    if (!confirmation || confirmation.type !== "web-search") return;
+    const url = approved
+      ? `https://www.google.com/search?q=${encodeURIComponent(`${confirmation.query} Temperature and Heat physics`)}`
+      : null;
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
+    setMessages((current) => current.map((message, messageIndex) =>
+      messageIndex === index
+        ? {
+            ...message,
+            confirmation: null,
+            externalSearchUrl: url,
+            text: approved
+              ? "I opened an external web search. Its results are not verified by this course."
+              : "Okay, I didn’t search the web. I’ll stick to the course material.",
+          }
+        : message,
+    ));
   }
 
   function openChat() {
@@ -159,6 +192,25 @@ export default function CalphyChat() {
             ) : (
               <p className="mb-0">{message.text}</p>
             )}
+            {!!message.notice && <div className="assistant-context" role="status">{message.notice}</div>}
+            {!!message.sources?.length && <div className="assistant-citation">
+              <span>Source:</span>{" "}
+              {message.sources.map((source, sourceIndex) => (
+                <Fragment key={`${source.href}-${source.title}`}>
+                  {sourceIndex > 0 && <span> · </span>}
+                  <Link href={source.href}>{source.title}</Link>
+                </Fragment>
+              ))}
+            </div>}
+            {message.confirmation && <div className="assistant-confirmation" role="group" aria-label="Confirm external web search">
+              <strong>Search Google for “{message.confirmation.query}”?</strong>
+              <p>{message.confirmation.description}</p>
+              <div>
+                <button type="button" className="assistant-confirm-deny" onClick={() => respondToConfirmation(index, false)}>Deny</button>
+                <button type="button" className="assistant-confirm-approve" onClick={() => respondToConfirmation(index, true)}>Approve</button>
+              </div>
+            </div>}
+            {message.externalSearchUrl && <a className="assistant-external-search" href={message.externalSearchUrl} target="_blank" rel="noreferrer">Open web search<i className="bi bi-arrow-up-right ms-1" /></a>}
             {!!message.links?.length && <div className="assistant-links">{message.links.slice(0, 3).map((link) => <Link key={`${link.href}-${link.label}`} href={link.href}>{link.label}<i className="bi bi-arrow-up-right ms-1" /></Link>)}</div>}
           </div>)}
           {messages.length === 1 && <div className="assistant-suggestions">{suggestions.map((suggestion) => <button key={suggestion} type="button" onClick={() => send(suggestion)}>{suggestion}</button>)}</div>}

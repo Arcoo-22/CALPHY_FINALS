@@ -2571,6 +2571,72 @@ a.continue-card:hover {
   font-weight: 700;
 }
 
+.assistant-citation,
+.assistant-context {
+  margin-top: 0.55rem;
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.assistant-citation a,
+.assistant-external-search {
+  color: var(--cool);
+  font-weight: 700;
+}
+
+.assistant-context {
+  padding: 0.45rem 0.55rem;
+  border-radius: var(--radius-small);
+  background: var(--surface-2);
+}
+
+.assistant-confirmation {
+  margin-top: 0.65rem;
+  padding: 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  background: var(--surface-2);
+  font-size: 0.78rem;
+}
+
+.assistant-confirmation p {
+  margin: 0.25rem 0 0.55rem;
+  color: var(--muted);
+}
+
+.assistant-confirmation strong {
+  overflow-wrap: anywhere;
+}
+
+.assistant-confirmation > div {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.assistant-confirmation button {
+  min-height: 36px;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-button);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+}
+
+.assistant-confirmation .assistant-confirm-approve {
+  border-color: var(--ember);
+  background: var(--ember);
+  color: #ffffff;
+}
+
+.assistant-external-search {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+}
+
 .assistant-suggestions {
   display: flex;
   flex-wrap: wrap;
