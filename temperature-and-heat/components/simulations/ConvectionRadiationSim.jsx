@@ -488,7 +488,7 @@ export default function ConvectionRadiationSim() {
   const EMIS = [
     { name: "Black matte (e = 0.95)", value: 0.95 },
     { name: "Human skin (e = 0.97)", value: 0.97 },
-    { name: "Polished aluminum (e = 0.05)", value: 0.05 },
+    { name: "Tungsten filament (e = 0.5)", value: 0.5 },
   ];
   const e = EMIS[emisIdx].value;
   const P = e * sigma * Math.pow(tempK, 4);
@@ -668,8 +668,8 @@ export default function ConvectionRadiationSim() {
           Every object above 0 K radiates. Hotter → far more power (<b>T⁴</b>:
           press “Double T” and watch P jump ×16) and a shorter peak wavelength (
           <b>Wien&apos;s law</b>): infrared at body temperature, orange-white near
-          1500 K. Polished aluminum barely radiates, shiny surfaces are poor
-          emitters.
+          1500 K. Shiny surfaces are poor emitters; a tungsten filament (e = 0.5)
+          radiates only half as much as a blackbody.
         </>
       }
     />
