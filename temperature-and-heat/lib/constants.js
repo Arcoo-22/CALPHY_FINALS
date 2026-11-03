@@ -20,14 +20,14 @@ export const THERMAL_CONDUCTIVITY = [
   { name: "Glass", value: 0.8, unit: "W/m·K", color: "#a5f3fc" },
   { name: "Brick", value: 0.7, unit: "W/m·K", color: "#b45309" },
   { name: "Wood", value: 0.12, unit: "W/m·K", color: "#a16207" },
-  { name: "Foam", value: 0.04, unit: "W/m·K", color: "#fde68a" },
+  { name: "Wool insulation", value: 0.04, unit: "W/m·K", color: "#fde68a" },
   { name: "Air", value: 0.026, unit: "W/m·K", color: "#e2e8f0" },
 ];
 
 export const EMISSIVITY = [
-  { name: "Black matte surface", value: "0.95 – 1" },
-  { name: "Human skin", value: "0.97" },
-  { name: "Polished aluminum", value: "≈ 0.05" },
+  { name: "Black matte surface (carbon black)", value: "≈ 0.95" },
+  { name: "Human skin (infrared)", value: "0.97" },
+  { name: "Tungsten bulb filament", value: "≈ 0.5" },
 ];
 
 export const UNIVERSAL = {

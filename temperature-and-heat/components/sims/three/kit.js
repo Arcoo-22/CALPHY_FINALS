@@ -180,6 +180,7 @@ export function realMaterial(THREE, name) {
     case "Wood":
       return new THREE.MeshStandardMaterial({ map: woodTexture(THREE), roughness: 0.72 });
     case "Foam":
+    case "Wool insulation":
       return new THREE.MeshStandardMaterial({ map: foamTexture(THREE), roughness: 1 });
     case "Air":
       return glass(THREE, { opacity: 0.08, color: 0xe2e8f0 });
