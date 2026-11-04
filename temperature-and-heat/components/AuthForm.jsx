@@ -47,8 +47,6 @@ export default function AuthForm({ mode }) {
       } else {
         setError(err.message || "Something went wrong. Please try again.");
       }
-
-      console.error(err);
     } finally {
       setBusy(false);
     }
