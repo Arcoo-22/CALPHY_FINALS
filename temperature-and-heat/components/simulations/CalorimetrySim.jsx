@@ -71,16 +71,27 @@ function solve({ useIce, mObj, cObj, TObj, mW, TW, mIce, TIce }) {
   };
 }
 
+const DEFAULTS = {
+  matIdx: 0,
+  mObj: 0.1,
+  TObj: 100,
+  mW: 0.2,
+  TW: 20,
+  useIce: false,
+  mIce: 0.05,
+  TIce: -10,
+};
+
 export default function CalorimetrySim() {
   const canvasRef = useRef(null);
-  const [matIdx, setMatIdx] = useState(0);
-  const [mObj, setMObj] = useState(0.1);
-  const [TObj, setTObj] = useState(100);
-  const [mW, setMW] = useState(0.2);
-  const [TW, setTW] = useState(20);
-  const [useIce, setUseIce] = useState(false);
-  const [mIce, setMIce] = useState(0.05);
-  const [TIce, setTIce] = useState(-10);
+  const [matIdx, setMatIdx] = useState(DEFAULTS.matIdx);
+  const [mObj, setMObj] = useState(DEFAULTS.mObj);
+  const [TObj, setTObj] = useState(DEFAULTS.TObj);
+  const [mW, setMW] = useState(DEFAULTS.mW);
+  const [TW, setTW] = useState(DEFAULTS.TW);
+  const [useIce, setUseIce] = useState(DEFAULTS.useIce);
+  const [mIce, setMIce] = useState(DEFAULTS.mIce);
+  const [TIce, setTIce] = useState(DEFAULTS.TIce);
   const [phase, setPhase] = useState("idle"); // idle | dropping | mixing | done
 
   const sol = solve({
@@ -131,6 +142,19 @@ export default function CalorimetrySim() {
   const reset = () => {
     anim.current.phase = "idle";
     setPhase("idle");
+  };
+
+  // Reset button: every control back to its default, beaker emptied
+  const resetToDefaults = () => {
+    setMatIdx(DEFAULTS.matIdx);
+    setMObj(DEFAULTS.mObj);
+    setTObj(DEFAULTS.TObj);
+    setMW(DEFAULTS.mW);
+    setTW(DEFAULTS.TW);
+    setUseIce(DEFAULTS.useIce);
+    setMIce(DEFAULTS.mIce);
+    setTIce(DEFAULTS.TIce);
+    reset();
   };
 
   const ctrl = useRef({ matIdx, useIce, phase });
@@ -612,7 +636,7 @@ export default function CalorimetrySim() {
         >
           <i className="bi bi-box-arrow-in-down me-1" /> Drop it in!
         </button>
-        <button className="btn btn-sm btn-outline-ink" onClick={reset}>
+        <button className="btn btn-sm btn-outline-ink" onClick={resetToDefaults}>
           <i className="bi bi-arrow-counterclockwise me-1" />
           Reset
         </button>
