@@ -28,11 +28,13 @@ const { Lf, Lv } = UNIVERSAL;
 const TOTAL_MASS = 0.2; // kg
 const TIME_SCALE = 25; // 1 real second = 25 experiment seconds
 
+const DEFAULTS = { power: 300, eff: 100 };
+
 export default function LatentHeatSim() {
   const canvasRef = useRef(null);
   const [mode, setMode] = useState("melt"); // melt | boil
-  const [power, setPower] = useState(300);
-  const [eff, setEff] = useState(100);
+  const [power, setPower] = useState(DEFAULTS.power);
+  const [eff, setEff] = useState(DEFAULTS.eff);
   const [running, setRunning] = useState(false);
 
   const L = mode === "melt" ? Lf : Lv;
@@ -60,6 +62,13 @@ export default function LatentHeatSim() {
     st.current.mDone = 0;
     setRunning(false);
     setReadout({ t: 0, Q: 0, mDone: 0, Lmeas: 0 });
+  };
+
+  // Reset button: sliders back to defaults; the melt/boil choice is kept
+  const resetToDefaults = () => {
+    setPower(DEFAULTS.power);
+    setEff(DEFAULTS.eff);
+    reset();
   };
 
   useEffect(() => {
@@ -395,7 +404,7 @@ export default function LatentHeatSim() {
           />
           {running ? "Stop heater" : "Start heater"}
         </button>
-        <button className="btn btn-sm btn-outline-ink" onClick={reset}>
+        <button className="btn btn-sm btn-outline-ink" onClick={resetToDefaults}>
           <i className="bi bi-arrow-counterclockwise me-1" />
           Reset
         </button>
