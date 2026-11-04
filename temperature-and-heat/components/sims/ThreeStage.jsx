@@ -124,6 +124,9 @@ export default function ThreeStage({ load3d, getState, onFallback, onBack }) {
         // ---- camera + limited orbit ----
         camera.position.set(...home.position);
         const controls = new OrbitControls(camera, canvas);
+        // OrbitControls sets an inline touch-action: none, which traps page
+        // scrolling on phones. Hand control back to the stylesheet (pan-y).
+        canvas.style.removeProperty("touch-action");
         controls.target.set(...home.target);
         controls.enablePan = false;
         controls.minDistance = home.minDistance;
