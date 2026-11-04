@@ -6,6 +6,7 @@ import { UserProvider } from "@/components/UserContext";
 import SiteNavbar from "@/components/SiteNavbar";
 import SiteFooter from "@/components/SiteFooter";
 import CalphyChat from "@/components/CalphyChat";
+import SaveProgressPrompt from "@/components/SaveProgressPrompt";
 import { returningRedirectScript } from "@/lib/visit";
 
 export const metadata = {
@@ -61,6 +62,7 @@ export default function RootLayout({ children }) {
           <main>{children}</main>
           <SiteFooter />
           <CalphyChat />
+          <SaveProgressPrompt />
         </UserProvider>
       </body>
     </html>
