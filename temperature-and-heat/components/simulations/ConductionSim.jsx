@@ -23,13 +23,14 @@ import { THERMAL_CONDUCTIVITY, fmt } from "@/lib/constants";
 
 const N = 30; // nodes
 const T_COLD = 20;
+const DEFAULTS = { matIdx: 0, dT: 100, lenCm: 50, areaE4: 1 }; // copper rod
 
 export default function ConductionSim() {
   const canvasRef = useRef(null);
-  const [matIdx, setMatIdx] = useState(0); // copper default
-  const [dT, setDT] = useState(100);
-  const [lenCm, setLenCm] = useState(50); // cm
-  const [areaE4, setAreaE4] = useState(1); // ×10⁻⁴ m²
+  const [matIdx, setMatIdx] = useState(DEFAULTS.matIdx);
+  const [dT, setDT] = useState(DEFAULTS.dT);
+  const [lenCm, setLenCm] = useState(DEFAULTS.lenCm); // cm
+  const [areaE4, setAreaE4] = useState(DEFAULTS.areaE4); // ×10⁻⁴ m²
   const [running, setRunning] = useState(true);
 
   const mat = THERMAL_CONDUCTIVITY[matIdx];
@@ -48,6 +49,16 @@ export default function ConductionSim() {
     T.current = new Array(N).fill(T_COLD);
     elapsed.current = 0;
     packets.current = [];
+  };
+
+  // Reset button: controls back to their defaults, then a fresh run
+  const resetToDefaults = () => {
+    setMatIdx(DEFAULTS.matIdx);
+    setDT(DEFAULTS.dT);
+    setLenCm(DEFAULTS.lenCm);
+    setAreaE4(DEFAULTS.areaE4);
+    setRunning(true);
+    reset();
   };
 
   useEffect(() => {
@@ -409,7 +420,7 @@ export default function ConductionSim() {
           />
           {running ? "Pause" : "Run"}
         </button>
-        <button className="btn btn-sm btn-outline-ink" onClick={reset}>
+        <button className="btn btn-sm btn-outline-ink" onClick={resetToDefaults}>
           <i className="bi bi-arrow-counterclockwise me-1" />
           Reset
         </button>
