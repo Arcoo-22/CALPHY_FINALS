@@ -1,6 +1,6 @@
 "use client";
 // ============================================================
-// Calphy, the flame mascot. Squashes while held, jelly-wobbles and throws
+// Cinder, the flame mascot. Squashes while held, jelly-wobbles and throws
 // sparks on release.
 // moods: 'idle' | 'happy' | 'think' | 'wave'
 // only idle and wave have their own art; happy and think reuse idle

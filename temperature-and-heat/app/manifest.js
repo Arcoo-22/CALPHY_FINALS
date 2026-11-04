@@ -1,7 +1,7 @@
 export default function manifest() {
   return {
-    name: "CalphyLearn · Temperature and Heat",
-    short_name: "CalphyLearn",
+    name: "Ignius · Temperature and Heat",
+    short_name: "Ignius",
     description:
       "An interactive Physics learning platform covering Temperature and Heat.",
     start_url: "/",

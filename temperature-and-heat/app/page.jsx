@@ -4,7 +4,7 @@ import { getSession } from "@/lib/auth";
 import { MAIN_HREF } from "@/lib/visit";
 
 export const metadata = {
-  title: "CalphyLearn · Temperature and Heat",
+  title: "Ignius · Temperature and Heat",
   description:
     "Nine short lessons on temperature and heat, each with a simulation you can drag, plus auto-graded quizzes.",
 };

@@ -1,14 +1,14 @@
 "use client";
 // ============================================================
-// Landing hero Calphy: a thought bubble that cycles greetings with "…" beats
+// Landing hero Cinder: a thought bubble that cycles greetings with "…" beats
 // in between, and a wink each time a new line lands (and on hover).
 // ============================================================
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
 const LINES = [
-  "Hi there! I'm Calphy.",
-  "Welcome to CalphyLearn!",
+  "Hi there! I'm Cinder.",
+  "Welcome to Ignius!",
   "Let's warm up your brain.",
 ];
 
@@ -46,7 +46,7 @@ export default function HeroCalphy() {
     <div className="hero-calphy">
       <Image
         src="/images/brand/mascot-full.png"
-        alt="Calphy, the CalphyLearn flame mascot"
+        alt="Cinder, the Ignius flame mascot"
         width={1080}
         height={1080}
         sizes="(min-width: 992px) 40vw, 80vw"

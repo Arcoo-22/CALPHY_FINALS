@@ -1,6 +1,6 @@
 <div align="center">
 
-# CalphyLearn
+# Ignius
 
 **An interactive physics learning platform for Temperature and Heat.**
 
@@ -10,7 +10,7 @@
 
 ## Introduction
 
-CalphyLearn is a web app that teaches the Temperature and Heat unit of physics through short lessons, hands-on simulations, and practice quizzes. Students can go through the topics at their own pace. Calphy, the built-in study assistant, answers questions about the course content, and the app keeps track of each student's progress along the way.
+Ignius is a web app that teaches the Temperature and Heat unit of physics through short lessons, hands-on simulations, and practice quizzes. Students can go through the topics at their own pace. Cinder, the built-in study assistant, answers questions about the course content, and the app keeps track of each student's progress along the way.
 
 The course has nine lessons in four modules:
 
@@ -27,7 +27,7 @@ The course has nine lessons in four modules:
 - **Interactive simulations**: Experiments such as a thermometer, a conduction rod, a heating curve of water, calorimetry, and a gas-law piston, each viewable in 2D or 3D.
 - **Quizzes**: Five topic quizzes with instant feedback, plus quick check-in questions inside the lessons.
 - **Formula sheet**: Every formula and physical constant from the course, collected on one page.
-- **Calphy assistant**: A chat helper that answers questions using the course material, links to the relevant page, and works through supported calculations.
+- **Cinder assistant**: A chat helper that answers questions using the course material, links to the relevant page, and works through supported calculations.
 - **Progress dashboard**: Shows which lessons are finished, which are in progress, and how you did on quizzes.
 - **Accounts or guest mode**: Students can sign up so their progress is saved to their account, or use the app as a guest and keep progress in the browser.
 - **Site search**: Find any lesson, simulation, quiz, or formula from the navigation bar.
@@ -43,7 +43,7 @@ CALPHY_FINALS/
 └── temperature-and-heat/          # The web application
     ├── app/                       # Pages and API routes
     │   ├── api/                   # Server endpoints
-    │   │   ├── assistant/         #   Calphy chat assistant
+    │   │   ├── assistant/         #   Cinder chat assistant
     │   │   ├── auth/              #   Login, logout, register, session
     │   │   ├── progress/          #   Save and load student progress
     │   │   ├── search/            #   Site-wide search
@@ -105,10 +105,10 @@ CALPHY_FINALS/
    | --- | --- | --- |
    | `DATABASE_URL` or `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD` | Connects to PostgreSQL for user accounts | No |
    | `SESSION_SECRET` | Secures login sessions; set a long random value | Recommended |
-   | `GROQ_API_KEY` | Powers the Calphy assistant's written answers | No |
+   | `GROQ_API_KEY` | Powers the Cinder assistant's written answers | No |
    | `GROQ_MODEL` | Picks the assistant's model (default: `openai/gpt-oss-20b`) | No |
 
-   The app runs without any of these settings. Without a database, progress is saved in the browser. Without a Groq key, Calphy can still help with navigation, lesson previews, and supported calculations.
+   The app runs without any of these settings. Without a database, progress is saved in the browser. Without a Groq key, Cinder can still help with navigation, lesson previews, and supported calculations.
 
 4. **Set up the database (optional)**
 
@@ -168,7 +168,7 @@ git push                              # later pushes to the same branch
 
 <div align="center">
 
-**CalphyLearn**: Temperature and Heat, made interactive.
+**Ignius**: Temperature and Heat, made interactive.
 
 Built as a final project for Calculus-Based Physics.
 

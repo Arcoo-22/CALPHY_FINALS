@@ -5,7 +5,7 @@ import Reveal from "@/components/Reveal";
 export const metadata = {
   title: "Register",
   description:
-    "Create a CalphyLearn account and save your quiz scores to PostgreSQL.",
+    "Create an Ignius account and save your quiz scores to PostgreSQL.",
 };
 
 export default function RegisterPage() {

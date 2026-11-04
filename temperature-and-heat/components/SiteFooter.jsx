@@ -18,7 +18,7 @@ export default function SiteFooter() {
                 height={34}
                 className="brand-logo"
               />
-              CalphyLearn
+              Ignius
             </div>
             <p className="small mb-0" style={{ maxWidth: 340 }}>
               Built with{" "}
@@ -96,7 +96,7 @@ export default function SiteFooter() {
         <hr className="my-4" style={{ borderColor: "var(--line)" }} />
         <div className="d-flex flex-wrap justify-content-between gap-2 small">
           <span>
-            © {new Date().getFullYear()} CalphyLearn, Temperature &amp; Heat.
+            © {new Date().getFullYear()} Ignius, Temperature &amp; Heat.
           </span>
         </div>
       </Container>

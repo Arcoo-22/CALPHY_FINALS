@@ -1,7 +1,7 @@
 "use client";
 
 // Main page for returning visitors: intro, next lesson, then lessons,
-// simulations, quizzes and Calphy + video, each with a short opener.
+// simulations, quizzes and Cinder + video, each with a short opener.
 import { useEffect } from "react";
 import Link from "next/link";
 import { useUser } from "@/components/UserContext";
@@ -180,10 +180,10 @@ export default function LearnHome() {
             <div className="learn-mascot-body">
               <CalphyMascot size={104} />
               <h3 className="fw-bold h5 mb-1 mt-2">
-                Meet <span className="gradient-text">Calphy</span>
+                Meet <span className="gradient-text">Cinder</span>
               </h3>
               <p className="mb-0">
-                Your flame study buddy. Calphy shows up in lessons and quizzes
+                Your flame study buddy. Cinder shows up in lessons and quizzes
                 to cheer you on and flag the tricky parts.
               </p>
             </div>

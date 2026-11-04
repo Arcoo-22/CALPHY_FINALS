@@ -17,7 +17,7 @@ export default function NotFound() {
         </h1>
         <h2 className="fw-bold h4 mb-2">Absolute zero… nothing here!</h2>
         <p className="text-muted mb-4">
-          This page radiates no content. Calphy checked every particle, the page
+          This page radiates no content. Cinder checked every particle, the page
           you want must be at another temperature.
         </p>
         <div className="d-flex justify-content-center gap-2 flex-wrap">
