@@ -7,15 +7,17 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useUser } from "@/components/UserContext";
-import { lessonStatus, markLesson } from "@/lib/progress";
+import { lessonStatus, markLesson, readLocal } from "@/lib/progress";
 
 export function LessonTracker({ lessonKey }) {
   const did = useRef(false);
-  const { progress, isLoggedIn } = useUser();
+  const { isLoggedIn } = useUser();
   useEffect(() => {
     if (did.current) return;
     did.current = true;
-    if (lessonStatus(progress, lessonKey) === "NotStarted") {
+    // read storage directly: on a full page load this effect runs before
+    // UserProvider has loaded progress, so context would say "NotStarted"
+    if (lessonStatus(readLocal(), lessonKey) === "NotStarted") {
       markLesson(lessonKey, "Current", isLoggedIn);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
