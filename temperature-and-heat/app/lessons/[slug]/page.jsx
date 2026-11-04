@@ -29,7 +29,7 @@ export async function generateMetadata({ params }) {
 
 function SectionBlock({ s }) {
   return (
-    <Reveal className="mb-4">
+    <Reveal className="lesson-section mb-3">
       <h3 className="fw-bold h5 mb-3">
         <span className="me-2" style={{ color: "var(--ember-text)" }}>
           ▸
@@ -37,12 +37,12 @@ function SectionBlock({ s }) {
         {s.heading}
       </h3>
       {s.paragraphs?.map((p, i) => (
-        <p key={i} className="text-secondary" style={{ lineHeight: 1.75 }}>
+        <p key={i} style={{ lineHeight: 1.75 }}>
           {p}
         </p>
       ))}
       {s.bullets && (
-        <ul className="text-secondary" style={{ lineHeight: 1.9 }}>
+        <ul style={{ lineHeight: 1.9 }}>
           {s.bullets.map((b, i) => (
             <li key={i}>{b}</li>
           ))}
@@ -463,7 +463,7 @@ export default async function LessonPage({ params }) {
                 </div>
                 <MarkCompleteButton lessonKey={lesson.key} compact />
                 <Link
-                  href={`/quizzes/${lesson.quizSlug}?from=${lesson.key}`}
+                  href={`/quizzes/${lesson.quizSlug}`}
                   className="btn btn-flame btn-compact"
                 >
                   <i className="bi bi-patch-question me-1" /> Take the quiz
