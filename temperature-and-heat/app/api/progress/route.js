@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
-import { query, DB_ERROR_MESSAGE, defaultProgress } from "@/lib/db";
+import {
+  query,
+  DB_ERROR_MESSAGE,
+  defaultProgress,
+  upgradeStoredProgress,
+} from "@/lib/db";
 import { getSession } from "@/lib/auth";
-import { PARENTS, toProgressDto, mergeBest } from "@/lib/progress";
+import { PARENTS, mergeBest } from "@/lib/progress";
 import { LESSONS } from "@/lib/lessons";
 import { QUIZZES } from "@/lib/quizzes";
 
@@ -84,7 +89,7 @@ export async function GET(req) {
     if (res.rows.length === 0)
       return NextResponse.json({ error: "User not found." }, { status: 404 });
     return NextResponse.json({
-      progress: toProgressDto(res.rows[0].user_progress),
+      progress: await upgradeStoredProgress(id, res.rows[0].user_progress),
     });
   } catch (err) {
     console.error("[progress GET]", err.message);

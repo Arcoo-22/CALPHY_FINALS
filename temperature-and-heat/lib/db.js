@@ -5,6 +5,7 @@
 //   view     : getAllUsers
 // ============================================================
 import pg from "pg";
+import { toProgressDto, isLegacyQuizLayout } from "@/lib/progress";
 
 const { Pool } = pg;
 
@@ -40,6 +41,23 @@ export async function query(text, params) {
 
 export const DB_ERROR_MESSAGE =
   "Database not reachable. Make sure PostgreSQL is running and the db_users database exists (see db/setup.sql).";
+
+// Old five-quiz records are rewritten once, so later single-key updates
+// (POST /api/progress) don't land on a record that still reads as old.
+export async function upgradeStoredProgress(userId, stored) {
+  const progress = toProgressDto(stored);
+  if (isLegacyQuizLayout(stored)) {
+    try {
+      await query(
+        "UPDATE tbl_users SET user_progress = $2::jsonb WHERE id = $1",
+        [userId, JSON.stringify(progress)],
+      );
+    } catch (err) {
+      console.error("[progress upgrade]", err.message);
+    }
+  }
+  return progress;
+}
 
 // Default user_progress JSONB, same shape as the documentation example
 export function defaultProgress(lessonKeys, quizIds) {

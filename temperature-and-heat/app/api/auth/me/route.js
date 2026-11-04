@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { query } from "@/lib/db";
-import { toProgressDto } from "@/lib/progress";
+import { query, upgradeStoredProgress } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +16,7 @@ export async function GET() {
     if (!user) return NextResponse.json({ user: null });
     return NextResponse.json({
       user: { id: user.id, username: user.username },
-      progress: toProgressDto(user.user_progress),
+      progress: await upgradeStoredProgress(user.id, user.user_progress),
     });
   } catch {
     return NextResponse.json(
