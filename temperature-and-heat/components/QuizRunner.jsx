@@ -6,10 +6,10 @@
 //   numeric entry with tolerance,
 //   per-question feedback with explanations, score ring,
 //   saves to progress (localStorage + PostgreSQL when logged in),
-//   a passing score finishes the lesson(s) and links to the next one,
+//   a passing score finishes the quiz's lesson and links to the next step,
 //   fires calphy:quizdone so the mascot celebrates.
 // ============================================================
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import ProgressRing from "@/components/ProgressRing";
 import { saveQuizScore, completeLessons, celebrate } from "@/lib/progress";
@@ -41,7 +41,7 @@ function makeAttempt(quiz, prev) {
   return { questionOrder, optionOrders };
 }
 
-export default function QuizRunner({ quiz, lessonKeys, nextLesson }) {
+export default function QuizRunner({ quiz, next: nextStep }) {
   const { isLoggedIn } = useUser();
   // null until mounted: Math.random can't run during SSR without a hydration mismatch
   const [attempt, setAttempt] = useState(null);
@@ -51,31 +51,37 @@ export default function QuizRunner({ quiz, lessonKeys, nextLesson }) {
   const [locked, setLocked] = useState(false);
   const [results, setResults] = useState([]); // {correct:boolean}
   const [finished, setFinished] = useState(false);
+  const finishTimer = useRef(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setAttempt(makeAttempt(quiz));
   }, [quiz]);
+  useEffect(() => () => clearTimeout(finishTimer.current), []);
 
   const qIndex = attempt ? attempt.questionOrder[idx] : idx;
   const q = quiz.questions[qIndex];
   const total = quiz.questions.length;
   const score = results.filter((r) => r.correct).length;
 
+  // Saves the attempt and shows the results. Runs once per attempt: after a
+  // short pause on the last answer, or straight away from "See my score".
+  const finish = (finalResults) => {
+    clearTimeout(finishTimer.current);
+    const finalScore = finalResults.filter((r) => r.correct).length;
+    const pct = Math.round((finalScore / total) * 100);
+    setFinished(true);
+    saveQuizScore(quiz.id, pct, isLoggedIn);
+    if (pct >= PASS_PERCENT) completeLessons(quiz.lessons, isLoggedIn);
+    celebrate(finalScore, total);
+  };
+
   const grade = (correct) => {
     setLocked(true);
     const nextResults = [...results, { correct }];
     setResults(nextResults);
-    if (idx + 1 >= total) {
-      const finalScore = nextResults.filter((r) => r.correct).length;
-      const pct = Math.round((finalScore / total) * 100);
-      setTimeout(() => {
-        setFinished(true);
-        saveQuizScore(quiz.id, pct, isLoggedIn);
-        if (pct >= PASS_PERCENT) completeLessons(lessonKeys, isLoggedIn);
-        celebrate(finalScore, total);
-      }, 650);
-    }
+    if (idx + 1 >= total)
+      finishTimer.current = setTimeout(() => finish(nextResults), 650);
   };
 
   const chooseMc = (origIdx) => {
@@ -92,6 +98,10 @@ export default function QuizRunner({ quiz, lessonKeys, nextLesson }) {
   };
 
   const next = () => {
+    if (idx + 1 >= total) {
+      finish(results);
+      return;
+    }
     setIdx(idx + 1);
     setSelected(null);
     setNumInput("");
@@ -112,7 +122,7 @@ export default function QuizRunner({ quiz, lessonKeys, nextLesson }) {
   if (finished) {
     const pct = Math.round((score / total) * 100);
     const passed = pct >= PASS_PERCENT;
-    const lessonNames = lessonKeys
+    const lessonNames = quiz.lessons
       .map((key) => `Lesson ${LESSON_BY_KEY[key].n}`)
       .join(" & ");
     const verdict =
@@ -162,7 +172,18 @@ export default function QuizRunner({ quiz, lessonKeys, nextLesson }) {
         </h3>
         <p className="text-muted mb-2">{verdict.text}</p>
         <p className="small fw-semibold mb-4">
-          {passed ? (
+          {quiz.final ? (
+            passed ? (
+              <span style={{ color: "var(--good)" }}>
+                <i className="bi bi-check-circle-fill me-1" />
+                Final exam passed
+              </span>
+            ) : (
+              <span className="text-muted">
+                Score {PASS_PERCENT}% or higher to pass the final exam
+              </span>
+            )
+          ) : passed ? (
             <span style={{ color: "var(--good)" }}>
               <i className="bi bi-check-circle-fill me-1" />
               {lessonNames} marked complete
@@ -234,12 +255,10 @@ export default function QuizRunner({ quiz, lessonKeys, nextLesson }) {
 
         <div className="d-flex flex-wrap justify-content-center gap-2">
           <Link
-            href={nextLesson ? `/lessons/${nextLesson.slug}` : "/dashboard"}
+            href={nextStep ? nextStep.href : "/dashboard"}
             className={`btn ${passed ? "btn-flame" : "btn-outline-ink"}`}
           >
-            {nextLesson
-              ? `Next: Lesson ${nextLesson.n} · ${nextLesson.title}`
-              : "Go to dashboard"}{" "}
+            {nextStep ? nextStep.label : "Go to dashboard"}{" "}
             <i className="bi bi-arrow-right ms-1" />
           </Link>
           <button
@@ -251,7 +270,7 @@ export default function QuizRunner({ quiz, lessonKeys, nextLesson }) {
           <Link href="/quizzes" className="btn btn-outline-ink">
             <i className="bi bi-grid me-1" /> All quizzes
           </Link>
-          {nextLesson && (
+          {nextStep && (
             <Link href="/dashboard" className="btn btn-ink">
               <i className="bi bi-graph-up-arrow me-1" /> Dashboard
             </Link>
