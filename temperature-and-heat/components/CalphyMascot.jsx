@@ -88,7 +88,14 @@ export default function CalphyMascot({
   return (
     <span
       className={`calphy-mascot d-inline-flex ${pressed ? "is-pressed" : ""} ${happy ? "calphy-happy" : ""} ${className}`}
-      style={{ width: size, height: size, lineHeight: 0, ...style }}
+      // a parent can resize it from CSS with --mascot-size (e.g. the chat
+      // button on phones); the images fill the box so they stay centred
+      style={{
+        width: `var(--mascot-size, ${size}px)`,
+        height: `var(--mascot-size, ${size}px)`,
+        lineHeight: 0,
+        ...style,
+      }}
       aria-hidden="true"
       onPointerDown={press}
       onPointerUp={release}

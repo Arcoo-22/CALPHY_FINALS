@@ -228,7 +228,7 @@ export const LESSONS = [
       "K = °C + 273.15 and °F = (1.8 × °C) + 32.",
       "Use kelvin whenever T⁴ or a ratio of temperatures appears.",
     ],
-    quizSlug: "temperature-conversions",
+    quizSlug: "temperature-scales",
   },
 
   // ============================== LESSON 2 ==============================
@@ -418,7 +418,7 @@ export const LESSONS = [
       "Heat flows from hot to cold until the temperatures are equal.",
       "During a change of state, heat is added but temperature stays the same.",
     ],
-    quizSlug: "temperature-conversions",
+    quizSlug: "heat-and-temperature",
   },
 
   // ============================== LESSON 3 ==============================
@@ -647,7 +647,7 @@ export const LESSONS = [
       "Higher k, larger A, bigger ΔT, and shorter L all increase heat flow.",
       "Insulators have low k, so they slow heat flow.",
     ],
-    quizSlug: "heat-transfer-modes",
+    quizSlug: "conduction",
   },
 
   // ============================== LESSON 4 ==============================
@@ -901,7 +901,7 @@ export const LESSONS = [
       "Radiated power depends on T⁴, so small increases in temperature matter a lot.",
       "Most real situations use more than one mode of heat transfer.",
     ],
-    quizSlug: "heat-transfer-modes",
+    quizSlug: "convection-and-radiation",
   },
 
   // ============================== LESSON 5 ==============================
@@ -1116,7 +1116,7 @@ export const LESSONS = [
       "A high c means slow heating and slow cooling.",
       "If c changes with temperature, integrate.",
     ],
-    quizSlug: "specific-heat",
+    quizSlug: "specific-heat-capacity",
   },
 
   // ============================== LESSON 6 ==============================
@@ -1322,7 +1322,7 @@ export const LESSONS = [
       "The final temperature lies between the starting temperatures.",
       "With ice or steam, check for a change of state before using only m × c × ΔT.",
     ],
-    quizSlug: "specific-heat",
+    quizSlug: "calorimetry",
   },
 
   // ============================== LESSON 7 ==============================
@@ -1507,7 +1507,7 @@ export const LESSONS = [
       "Use m × c × ΔT inside one phase and m × L during a change of state.",
       "Boiling needs far more energy than melting.",
     ],
-    quizSlug: "latent-heat-states",
+    quizSlug: "changes-of-state",
   },
 
   // ============================== LESSON 8 ==============================
@@ -1692,7 +1692,7 @@ export const LESSONS = [
       "L_v is much larger than L_f.",
       "Electrical energy P × t can be used to measure L in an experiment.",
     ],
-    quizSlug: "latent-heat-states",
+    quizSlug: "specific-latent-heat",
   },
 
   // ============================== LESSON 9 ==============================
@@ -1942,7 +1942,7 @@ export const LESSONS = [
       "Pressure comes from particles hitting the walls.",
       "p × V = n × R × T connects pressure, volume, amount, and temperature.",
     ],
-    quizSlug: "gas-laws",
+    quizSlug: "gas-laws-and-temperature",
   },
 ];
 

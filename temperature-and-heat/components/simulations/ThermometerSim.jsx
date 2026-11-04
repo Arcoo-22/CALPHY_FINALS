@@ -2,7 +2,8 @@
 
 // ============================================================
 // Interactive thermometer (Lesson 1)
-// • Drag anywhere on the canvas (or use the slider) to set T
+// • Drag the thermometer tube (or use the slider) to set T. Only the
+//   tube is a drag target, so swiping elsewhere still scrolls the page
 // • Liquid column + °C scale with reference markers
 // • Particle box shows kinetic model: speed ∝ √T(kelvin)
 // ============================================================
@@ -31,8 +32,13 @@ const PRESETS = [
   { label: "Boiling · 100 °C", value: 100 },
 ];
 
+// Thermometer column in CSS px from the canvas's left edge. The drag grip
+// (see .therm-grip in globals.css) is centred on it.
+const TUBE_X = 104;
+
 export default function ThermometerSim() {
   const canvasRef = useRef(null);
+  const gripRef = useRef(null);
   const [tempC, setTempC] = useState(25);
   const stateRef = useRef({
     target: 25,
@@ -62,10 +68,11 @@ export default function ThermometerSim() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    const grip = gripRef.current;
     let raf;
     // bulb and bottom follow the canvas height (set each frame) so the
     // readout under the bulb never lands on it
-    const TUBE = { x: 104, top: 46, bottom: 302, r: 11, bulbY: 326, bulbR: 22 };
+    const TUBE = { x: TUBE_X, top: 46, bottom: 302, r: 11, bulbY: 326, bulbR: 22 };
 
     const tempAtY = (y) => {
       const t = norm(y, TUBE.bottom, TUBE.top); // 0 bottom → 1 top
@@ -81,14 +88,14 @@ export default function ThermometerSim() {
     };
     const down = (e) => {
       stateRef.current.dragging = true;
-      canvas.setPointerCapture?.(e.pointerId);
+      grip.setPointerCapture?.(e.pointerId);
       onPointer(e);
     };
     const up = () => (stateRef.current.dragging = false);
-    canvas.addEventListener("pointerdown", down);
-    canvas.addEventListener("pointermove", onPointer);
-    canvas.addEventListener("pointerup", up);
-    canvas.addEventListener("pointercancel", up);
+    grip.addEventListener("pointerdown", down);
+    grip.addEventListener("pointermove", onPointer);
+    grip.addEventListener("pointerup", up);
+    grip.addEventListener("pointercancel", up);
 
     const draw = () => {
       const { ctx, w, h } = fitCanvas(canvas);
@@ -258,10 +265,10 @@ export default function ThermometerSim() {
     raf = requestAnimationFrame(draw);
     return () => {
       cancelAnimationFrame(raf);
-      canvas.removeEventListener("pointerdown", down);
-      canvas.removeEventListener("pointermove", onPointer);
-      canvas.removeEventListener("pointerup", up);
-      canvas.removeEventListener("pointercancel", up);
+      grip.removeEventListener("pointerdown", down);
+      grip.removeEventListener("pointermove", onPointer);
+      grip.removeEventListener("pointerup", up);
+      grip.removeEventListener("pointercancel", up);
     };
   }, []);
 
@@ -317,18 +324,27 @@ export default function ThermometerSim() {
       title="Interactive Thermometer + Particle Model"
       badge={
         <span className="chip flame">
-          <i className="bi bi-hand-index" /> Drag the canvas
+          <i className="bi bi-hand-index" /> Drag the thermometer
         </span>
       }
       stage={
-        <canvas
-          ref={canvasRef}
-          style={{
-            "--sim-h": "clamp(320px, 46vw, 420px)",
-            "--sim-h-sm": "380px",
-          }}
-          aria-label="Interactive thermometer simulation"
-        />
+        <div className="therm-stage">
+          <canvas
+            ref={canvasRef}
+            style={{
+              "--sim-h": "clamp(320px, 46vw, 420px)",
+              "--sim-h-sm": "380px",
+            }}
+            aria-label="Interactive thermometer simulation"
+          />
+          {/* pointer-only drag target; keyboard users have the slider */}
+          <div
+            ref={gripRef}
+            className="therm-grip"
+            style={{ "--tube-x": `${TUBE_X}px` }}
+            aria-hidden="true"
+          />
+        </div>
       }
       controls={controls}
       note={

@@ -73,6 +73,14 @@ export default function CalphyChat() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
+  // other components (e.g. the landing "Ask Calphy" step) open the chat
+  // by dispatching this window event
+  useEffect(() => {
+    const onOpen = () => openChat();
+    window.addEventListener("calphy:open-chat", onOpen);
+    return () => window.removeEventListener("calphy:open-chat", onOpen);
+  });
+
   async function send(value = input) {
     const question = value.trim();
     if (!question || busy) return;

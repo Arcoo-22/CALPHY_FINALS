@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { query, DB_ERROR_MESSAGE } from "@/lib/db";
+import { query, DB_ERROR_MESSAGE, upgradeStoredProgress } from "@/lib/db";
 import { setSession } from "@/lib/auth";
-import { toProgressDto } from "@/lib/progress";
 
 export const dynamic = "force-dynamic";
 
@@ -47,7 +46,7 @@ export async function POST(req) {
     return NextResponse.json({
       ok: true,
       user: { id: row.id, username: row.username },
-      progress: toProgressDto(row.user_progress),
+      progress: await upgradeStoredProgress(row.id, row.user_progress),
     });
   } catch (err) {
     console.error("[login]", err.message);

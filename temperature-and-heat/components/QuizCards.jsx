@@ -16,7 +16,7 @@ export default function QuizCards() {
         const score = quizScore(progress, q.id);
         const status = quizStatus(progress, q.id);
         return (
-          <div className="col-md-6 col-xl-4" key={q.id}>
+          <div className={q.final ? "col-12" : "col-md-6 col-xl-4"} key={q.id}>
             <Reveal delay={i * 60} className="h-100">
               <Link
                 href={`/quizzes/${q.slug}`}

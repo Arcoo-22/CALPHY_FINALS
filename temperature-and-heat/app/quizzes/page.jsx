@@ -6,7 +6,7 @@ import Reveal from "@/components/Reveal";
 export const metadata = {
   title: "Quizzes",
   description:
-    "Auto-graded quizzes on temperature conversions, specific heat, heat transfer modes, latent heat and gas laws.",
+    "Auto-graded quizzes: one for each of the nine lessons, plus a final exam covering every topic.",
 };
 
 export default function QuizzesIndexPage() {
@@ -27,8 +27,8 @@ export default function QuizzesIndexPage() {
             </nav>
             <h1 className="section-title">Quizzes</h1>
             <p className="section-sub mb-4">
-              Five quizzes. You see the explanation after each answer, and your
-              best score is kept.
+              One quiz per lesson, then a final exam on everything. You see the
+              explanation after each answer, and your best score is kept.
             </p>
           </Reveal>
           <QuizCards />

@@ -1,7 +1,7 @@
 // ============================================================
 // Client-side progress store.
 // Mirrors the DB JSONB shape exactly:
-// { Progress: {Lesson1..9}, QuizProgress: {Quiz1..5}, QuizScores: {Quiz1..5} }
+// { Progress: {Lesson1..9}, QuizProgress: {Quiz1..10}, QuizScores: {Quiz1..10} }
 // Works offline (localStorage) and syncs to PostgreSQL when logged in.
 // ============================================================
 import { LESSONS } from "@/lib/lessons";
@@ -12,6 +12,23 @@ export const LS_KEY = "calphy_progress";
 export const OWNER_KEY = "calphy_progress_owner";
 export const PARENTS = ["Progress", "QuizProgress", "QuizScores"];
 const STATUSES = ["NotStarted", "Current", "Finished"];
+
+// Old five-quiz records (no key for the newest quiz) used Quiz2..5 for other
+// quizzes, so their quiz data is dropped; lesson progress is kept.
+const NEWEST_QUIZ_ID = QUIZZES[QUIZZES.length - 1].id;
+
+export function isLegacyQuizLayout(p) {
+  const quizzes = p?.QuizProgress;
+  return (
+    !!quizzes &&
+    typeof quizzes === "object" &&
+    Object.keys(quizzes).length > 0 &&
+    !(NEWEST_QUIZ_ID in quizzes)
+  );
+}
+
+const withoutLegacyQuizzes = (p) =>
+  isLegacyQuizLayout(p) ? { Progress: p.Progress } : p;
 
 export function makeDefaultProgress() {
   const p = { Progress: {}, QuizProgress: {}, QuizScores: {} };
@@ -28,7 +45,10 @@ export function readLocal() {
   try {
     const raw = window.localStorage.getItem(LS_KEY);
     if (!raw) return makeDefaultProgress();
-    return mergeProgress(makeDefaultProgress(), JSON.parse(raw));
+    return mergeProgress(
+      makeDefaultProgress(),
+      withoutLegacyQuizzes(JSON.parse(raw)),
+    );
   } catch {
     return makeDefaultProgress();
   }
@@ -79,7 +99,8 @@ export function hasProgress(p) {
 }
 
 // Sanitise any progress-shaped object into the exact DB shape.
-export function toProgressDto(progress) {
+export function toProgressDto(stored) {
+  const progress = withoutLegacyQuizzes(stored);
   const dto = makeDefaultProgress();
   LESSONS.forEach(({ key }) => {
     const value = progress?.Progress?.[key];
@@ -164,7 +185,7 @@ export function markLesson(lessonKey, status, syncServer = false) {
   return updateProgressLocal("Progress", lessonKey, status, false, syncServer);
 }
 
-// A passed quiz finishes the lessons it was taken for.
+// A passed quiz finishes its lesson (the final exam has none).
 export async function completeLessons(lessonKeys, syncServer = false) {
   const progress = readLocal();
   for (const key of lessonKeys) {

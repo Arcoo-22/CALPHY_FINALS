@@ -17,25 +17,26 @@ export async function generateMetadata({ params }) {
   return { title: `Quiz: ${quiz.title}`, description: quiz.description };
 }
 
-// The lesson page links here with ?from=<lessonKey>; passing then finishes
-// that lesson and points to the one after it. Without it (opened from
-// /quizzes), the quiz stands for all of its lessons.
-function quizContext(quiz, from) {
-  const lessonKeys = quiz.lessons.includes(from) ? [from] : quiz.lessons;
-  const lastKey = lessonKeys[lessonKeys.length - 1];
-  const next = LESSONS[LESSONS.findIndex((l) => l.key === lastKey) + 1];
-  return {
-    lessonKeys,
-    nextLesson: next ? { slug: next.slug, n: next.n, title: next.title } : null,
-  };
+// Results-screen link: the next lesson, or the final exam after Lesson 9.
+function nextStep(quiz) {
+  if (quiz.final) return null;
+  const lessonKey = quiz.lessons[quiz.lessons.length - 1];
+  const next = LESSONS[LESSONS.findIndex((l) => l.key === lessonKey) + 1];
+  if (next)
+    return {
+      href: `/lessons/${next.slug}`,
+      label: `Next: Lesson ${next.n} · ${next.title}`,
+    };
+  const finalExam = QUIZZES.find((q) => q.final);
+  return finalExam
+    ? { href: `/quizzes/${finalExam.slug}`, label: "Next: Final exam" }
+    : null;
 }
 
-export default async function QuizPage({ params, searchParams }) {
+export default async function QuizPage({ params }) {
   const { slug } = await params;
   const quiz = QUIZ_BY_SLUG[slug];
   if (!quiz) notFound();
-  const { from } = await searchParams;
-  const { lessonKeys, nextLesson } = quizContext(quiz, from);
 
   return (
     <div className="page-top-space">
@@ -59,6 +60,12 @@ export default async function QuizPage({ params, searchParams }) {
               <span className="chip flame">
                 <i className={`bi ${quiz.icon}`} /> {quizLabel(quiz.id)}
               </span>
+              {quiz.final && (
+                <span className="chip cool">
+                  <i className="bi bi-collection" /> Covers all{" "}
+                  {LESSONS.length} lessons
+                </span>
+              )}
               {quiz.lessons.map((lk) => {
                 const l = LESSON_BY_KEY[lk];
                 return (
@@ -74,11 +81,7 @@ export default async function QuizPage({ params, searchParams }) {
             </div>
           </Reveal>
           <Reveal delay={60}>
-            <QuizRunner
-              quiz={quiz}
-              lessonKeys={lessonKeys}
-              nextLesson={nextLesson}
-            />
+            <QuizRunner quiz={quiz} next={nextStep(quiz)} />
           </Reveal>
         </Container>
       </section>
