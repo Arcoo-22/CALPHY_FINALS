@@ -28,12 +28,14 @@ const MATERIALS = SPECIFIC_HEAT.filter(
 const T0 = 20;
 const T_MAX = 250;
 
+const DEFAULTS = { matA: 0, matB: 4, mass: 0.5, power: 500 }; // water vs copper
+
 export default function SpecificHeatSim() {
   const canvasRef = useRef(null);
-  const [matA, setMatA] = useState(0); // water
-  const [matB, setMatB] = useState(4); // copper
-  const [mass, setMass] = useState(0.5);
-  const [power, setPower] = useState(500);
+  const [matA, setMatA] = useState(DEFAULTS.matA);
+  const [matB, setMatB] = useState(DEFAULTS.matB);
+  const [mass, setMass] = useState(DEFAULTS.mass);
+  const [power, setPower] = useState(DEFAULTS.power);
   const [running, setRunning] = useState(false);
 
   const sim = useRef({
@@ -71,6 +73,15 @@ export default function SpecificHeatSim() {
       histB: [],
     };
     setRunning(false);
+  };
+
+  // Reset button: controls back to their defaults, pans back to T0
+  const resetToDefaults = () => {
+    setMatA(DEFAULTS.matA);
+    setMatB(DEFAULTS.matB);
+    setMass(DEFAULTS.mass);
+    setPower(DEFAULTS.power);
+    reset();
   };
 
   const ctrl = useRef({ matA, matB, mass, power, running });
@@ -449,7 +460,7 @@ export default function SpecificHeatSim() {
           />
           {running ? "Pause" : "Heat!"}
         </button>
-        <button className="btn btn-sm btn-outline-ink" onClick={reset}>
+        <button className="btn btn-sm btn-outline-ink" onClick={resetToDefaults}>
           <i className="bi bi-arrow-counterclockwise me-1" />
           Reset
         </button>
