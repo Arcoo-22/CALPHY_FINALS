@@ -2,7 +2,7 @@
 
 // "How to use" strip on the landing: four steps and a line of tips.
 // Each step is a shortcut: the first three open their page, the last one
-// opens the Calphy chat (see the calphy:open-chat listener in CalphyChat).
+// opens the Cinder chat (see the calphy:open-chat listener in CalphyChat).
 import Link from "next/link";
 import { Container } from "react-bootstrap";
 import SectionHead from "@/components/SectionHead";
@@ -28,7 +28,7 @@ const STEPS = [
   },
   {
     icon: "bi-chat-heart",
-    title: "Ask Calphy",
+    title: "Ask Cinder",
     text: "Tap the flame in the corner for conversions or to find a lesson.",
   },
 ];

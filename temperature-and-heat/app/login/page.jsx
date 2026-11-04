@@ -4,7 +4,7 @@ import Reveal from "@/components/Reveal";
 
 export const metadata = {
   title: "Log in",
-  description: "Log in to sync your CalphyLearn progress to the database.",
+  description: "Log in to sync your Ignius progress to the database.",
 };
 
 export default function LoginPage() {

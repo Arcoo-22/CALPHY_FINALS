@@ -20,15 +20,15 @@ function normalizeMathDelimiters(text) {
 
 const suggestions = ["How do I go to simulations?", "Preview Lesson 5", "Convert 25°C to °F"];
 
-// idle thought-bubble lines; "…" beats in between make Calphy look like it's thinking
-const idleHints = ["Ask Calphy", "Stuck on a formula?", "Need °C → °F fast?", "Want a lesson preview?", "Curious about heat?"];
+// idle thought-bubble lines; "…" beats in between make Cinder look like it's thinking
+const idleHints = ["Ask Cinder", "Stuck on a formula?", "Need °C → °F fast?", "Want a lesson preview?", "Curious about heat?"];
 
 export default function CalphyChat() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [messages, setMessages] = useState([
-    { role: "assistant", text: "Hi! I can guide you around CalphyLearn, preview lessons, explain course topics, and help with temperature conversions. I only answer from this site’s Temperature & Heat content." },
+    { role: "assistant", text: "Hi! I can guide you around Ignius, preview lessons, explain course topics, and help with temperature conversions. I only answer from this site’s Temperature & Heat content." },
   ]);
   // once the chat has been opened, the launcher is just the logo, but only
   // for whoever opened it: a reload, logout or another account brings it back
@@ -36,7 +36,7 @@ export default function CalphyChat() {
   // no assistant while a quiz is being taken (/quizzes/<slug>), the list page is fine
   const pathname = usePathname() || "";
   const onQuiz = /^\/quizzes\/[^/]+/.test(pathname);
-  // the landing's hero Calphy already talks, so the launcher stays quiet there
+  // the landing's hero Cinder already talks, so the launcher stays quiet there
   const onLanding = pathname === "/" || pathname === "/welcome";
   const viewer = user ? `user:${user.id}` : "guest";
   const [seenBy, setSeenBy] = useState(null);
@@ -73,7 +73,7 @@ export default function CalphyChat() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  // other components (e.g. the landing "Ask Calphy" step) open the chat
+  // other components (e.g. the landing "Ask Cinder" step) open the chat
   // by dispatching this window event
   useEffect(() => {
     const onOpen = () => openChat();
@@ -155,7 +155,7 @@ export default function CalphyChat() {
 
   return (
     <>
-      {!open && <button type="button" className={`mascot-fab${seen ? "" : " idle"}`} onClick={openChat} aria-label="Open Calphy course assistant">
+      {!open && <button type="button" className={`mascot-fab${seen ? "" : " idle"}`} onClick={openChat} aria-label="Open Cinder course assistant">
         <CalphyMascot size={50} mood={!seen && thinking ? "think" : "wave"} />
         {!seen && !onLanding && <span className="thought-bubble" aria-hidden="true">
           {thinking
@@ -163,10 +163,10 @@ export default function CalphyChat() {
             : <span key={hint} className="thought-text">{idleHints[hint]}</span>}
         </span>}
       </button>}
-      {open && <section className="mascot-panel" aria-label="Calphy course assistant" aria-live="polite">
+      {open && <section className="mascot-panel" aria-label="Cinder course assistant" aria-live="polite">
         <header className="mascot-panel-header">
           <CalphyMascot size={42} mood={busy ? "think" : "wave"} />
-          <div className="flex-grow-1"><div className="m-name">Calphy Assistant</div><div className="m-status">Course guide · site-grounded</div></div>
+          <div className="flex-grow-1"><div className="m-name">Cinder Assistant</div><div className="m-status">Course guide · site-grounded</div></div>
           <button type="button" className="mascot-panel-close" aria-label="Close assistant" onClick={() => setOpen(false)}><i className="bi bi-x-lg" /></button>
         </header>
         <div className="mascot-msgs" role="log" aria-label="Conversation">

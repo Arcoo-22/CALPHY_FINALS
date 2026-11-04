@@ -66,9 +66,7 @@ export default function SiteNavbar() {
       <Container>
         <Navbar.Brand as={Link} href="/welcome" onClick={() => setExpanded(false)}>
           <CalphyMascot size={36} />
-          <span>
-            Calphy<span className="gradient-text">Learn</span>
-          </span>
+          <span>Ignius</span>
         </Navbar.Brand>
 
         <Navbar.Toggle

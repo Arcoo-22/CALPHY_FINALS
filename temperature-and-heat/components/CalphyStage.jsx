@@ -1,12 +1,12 @@
 // ============================================================
-// A big Calphy with a warm glow, rising embers and twinkling sparkles.
+// A big Cinder with a warm glow, rising embers and twinkling sparkles.
 // Positions are fixed (not random) so server and client render the same.
 // Pass children to stage something else (the landing's hero art); scale the
 // effects with --stage-scale in CSS.
 // ============================================================
 import CalphyMascot from "@/components/CalphyMascot";
 
-// offsets are from Calphy's center, so the effects stay around him however
+// offsets are from Cinder's center, so the effects stay around him however
 // wide the stage gets
 const EMBERS = [
   { x: "-2.4rem", drift: "-1.2rem", dur: "3.4s", delay: "0s" },

@@ -7,7 +7,7 @@ const pages = [
     title: "Home",
     type: "Page",
     href: "/",
-    text: "CalphyLearn temperature heat physics learning",
+    text: "Ignius temperature heat physics learning",
   },
   {
     title: "Lessons",

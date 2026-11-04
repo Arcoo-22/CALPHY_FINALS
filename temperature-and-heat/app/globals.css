@@ -944,7 +944,7 @@ a,
   flex: 1 1 auto;
 }
 
-/* the stage takes the width the copy leaves, so Calphy sits in it instead of
+/* the stage takes the width the copy leaves, so Cinder sits in it instead of
    pinned to the far edge */
 .learn-intro-mascot {
   flex: 1 1 16rem;
@@ -1254,7 +1254,7 @@ a,
   gap: 0.5rem;
 }
 
-/* Calphy + video: one row, video capped so it never dominates the page */
+/* Cinder + video: one row, video capped so it never dominates the page */
 .learn-media {
   display: grid;
   gap: 1rem;
@@ -1471,7 +1471,7 @@ a.continue-card:hover {
   height: auto;
 }
 
-/* landing hero: transparent Calphy floating on the stage (components/Landing.jsx) */
+/* landing hero: transparent Cinder floating on the stage (components/Landing.jsx) */
 .landing {
   overflow-x: clip;
 }
@@ -1517,7 +1517,7 @@ a.continue-card:hover {
   opacity: 1;
 }
 
-/* sits up-left of the flame tip, puffs trailing down toward Calphy; doubled
+/* sits up-left of the flame tip, puffs trailing down toward Cinder; doubled
    class so it beats the chat bubble's rules further down */
 .thought-bubble.hero-bubble {
   top: auto;
@@ -2271,6 +2271,65 @@ a.continue-card:hover {
   color: var(--ink);
 }
 
+/* form-style quiz (components/QuizRunner.jsx): one card per question,
+   a coloured left edge marks right/wrong after submitting */
+.quiz-question {
+  min-width: 0;
+  margin: 0 0 0.85rem;
+  padding: 1.1rem 1.15rem;
+  border-left-width: 4px;
+}
+
+.quiz-question.is-missing {
+  border-color: var(--bad);
+}
+
+.quiz-question.is-correct {
+  border-left-color: var(--good);
+}
+
+.quiz-question.is-wrong {
+  border-left-color: var(--bad);
+}
+
+.quiz-prompt {
+  float: none;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  color: var(--ink);
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.quiz-num {
+  color: var(--ember-text);
+}
+
+.quiz-mark {
+  flex: 0 0 auto;
+  font-size: 0.85rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.quiz-mark.good {
+  color: var(--good);
+}
+
+.quiz-mark.bad {
+  color: var(--bad);
+}
+
+.form-control-calphy.is-correct {
+  border-color: var(--good);
+}
+
+.form-control-calphy.is-wrong {
+  border-color: var(--bad);
+}
+
 .progress-thin {
   position: relative;
   height: 0.75rem;
@@ -2360,7 +2419,7 @@ a.continue-card:hover {
   animation: mascot-bob 3.2s ease-in-out infinite;
 }
 
-/* idle thought bubble: cloud + two trailing puffs toward Calphy */
+/* idle thought bubble: cloud + two trailing puffs toward Cinder */
 .thought-bubble {
   position: absolute;
   top: 50%;

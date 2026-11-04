@@ -47,8 +47,6 @@ export default function AuthForm({ mode }) {
       } else {
         setError(err.message || "Something went wrong. Please try again.");
       }
-
-      console.error(err);
     } finally {
       setBusy(false);
     }
@@ -78,7 +76,7 @@ export default function AuthForm({ mode }) {
           <CalphyMascot size={64} mood="wave" />
         </div>
         <h1 className="fw-bold h4 mb-1">
-          {isLogin ? "Welcome back!" : "Join CalphyLearn"}
+          {isLogin ? "Welcome back!" : "Join Ignius"}
         </h1>
         <p className="small text-muted mb-0">
           {isLogin

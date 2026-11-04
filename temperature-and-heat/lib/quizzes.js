@@ -1147,7 +1147,7 @@ export const QUIZZES = [...LESSON_QUIZZES, FINAL_EXAM];
 export const QUIZ_BY_SLUG = Object.fromEntries(QUIZZES.map((q) => [q.slug, q]));
 export const QUIZ_BY_ID = Object.fromEntries(QUIZZES.map((q) => [q.id, q]));
 
-// Mascot "Calphy" knowledge base, keyword → answers
+// Mascot "Cinder" knowledge base, keyword → answers
 export const MASCOT_FACTS = [
   "Temperature measures the AVERAGE kinetic energy of particles, heat is energy in TRANSIT. They're not the same thing!",
   "Fun fact: −40 °C is exactly −40 °F. The scales cross there!",
@@ -1232,8 +1232,9 @@ export const MASCOT_QA = [
       "who are you",
       "your name",
       "calphy",
+      "cinder",
     ],
-    a: "Hi! I'm Calphy 🔥, your physics buddy. Ask me about temperature, heat transfer, formulas, or quizzes. Or just click me for a fun fact!",
+    a: "Hi! I'm Cinder 🔥, your physics buddy. Ask me about temperature, heat transfer, formulas, or quizzes. Or just click me for a fun fact!",
   },
   {
     keywords: ["help", "start", "how do i", "lost"],

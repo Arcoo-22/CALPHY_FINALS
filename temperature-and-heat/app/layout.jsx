@@ -11,8 +11,8 @@ import { returningRedirectScript } from "@/lib/visit";
 
 export const metadata = {
   title: {
-    default: "CalphyLearn · Temperature and Heat",
-    template: "%s · CalphyLearn",
+    default: "Ignius · Temperature and Heat",
+    template: "%s · Ignius",
   },
   description:
     "An interactive Physics learning platform: animated tutorials, canvas simulations, quizzes and a friendly mascot, covering Temperature and Heat.",
