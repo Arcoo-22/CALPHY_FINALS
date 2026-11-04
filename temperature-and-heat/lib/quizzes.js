@@ -4,24 +4,28 @@
 // type 'numeric' → typed answer, accepted if |x − answer| ≤ tol
 // ============================================================
 
-// "Quiz1" is the storage key; show it as "Quiz 1"
-export const quizLabel = (id) => id.replace(/(\d+)$/, " $1");
+// "Quiz1" is the storage key; show it as "Quiz 1" (the final exam by name)
+export const quizLabel = (id) =>
+  QUIZ_BY_ID[id]?.final ? "Final exam" : id.replace(/(\d+)$/, " $1");
 
-// score (in %) that completes the lesson(s) the quiz was taken for
+// score (in %) that completes the lesson a quiz belongs to
 export const PASS_PERCENT = 75;
 
-export const QUIZZES = [
+// One quiz per lesson: passing Quiz N finishes Lesson N only.
+// Questions flagged `inFinal` are reused in the final exam below.
+const LESSON_QUIZZES = [
   {
     id: "Quiz1",
-    slug: "temperature-conversions",
-    title: "Temperature Conversions",
-    icon: "bi-arrow-left-right",
+    slug: "temperature-scales",
+    title: "Temperature Scales",
+    icon: "bi-thermometer-half",
     accent: "#ff6b35",
     description:
       "Convert between °C, °F and K, compare temperatures, and pick the right scale for a formula.",
-    lessons: ["Lesson1", "Lesson2"],
+    lessons: ["Lesson1"],
     questions: [
       {
+        inFinal: true,
         type: "mc",
         prompt: "Convert 25 °C to °F.",
         options: ["77 °F", "57 °F", "45 °F", "298 °F"],
@@ -44,6 +48,7 @@ export const QUIZZES = [
         explain: "K = °C + 273.15, so 0 °C = 273.15 K.",
       },
       {
+        inFinal: true,
         type: "numeric",
         prompt:
           "There is one temperature where °C and °F read the same number. What is it?",
@@ -97,6 +102,7 @@ export const QUIZZES = [
         explain: "°C = (98.6 − 32) ÷ 1.8 = 66.6 ÷ 1.8 = 37.0 °C.",
       },
       {
+        inFinal: true,
         type: "mc",
         prompt: "Which situation REQUIRES the kelvin scale?",
         options: [
@@ -130,15 +136,393 @@ export const QUIZZES = [
   },
   {
     id: "Quiz2",
-    slug: "specific-heat",
-    title: "Specific Heat Calculations",
-    icon: "bi-cup-hot",
-    accent: "#0ea5e9",
+    slug: "heat-and-temperature",
+    title: "Heat and Temperature",
+    icon: "bi-arrow-left-right",
+    accent: "#f97316",
     description:
-      "Use Q = m × c × ΔT, heat capacity, and material comparisons, plus calorimetry heat balance.",
-    lessons: ["Lesson5", "Lesson6"],
+      "Tell temperature, thermal energy and heat apart, predict heat flow, and use energy units.",
+    lessons: ["Lesson2"],
     questions: [
       {
+        inFinal: true,
+        type: "mc",
+        prompt: "Which quantity depends on the amount of matter in an object?",
+        options: [
+          "Thermal energy",
+          "Temperature",
+          "Average kinetic energy per particle",
+          "Melting point",
+        ],
+        a: 0,
+        explain: "Thermal energy is the total energy of all the particles, so more matter means more of it. Temperature is an average per particle.",
+      },
+      {
+        inFinal: true,
+        type: "mc",
+        prompt: "Tea at 80 °C is poured into a cup at 25 °C. Which way does heat flow?",
+        options: [
+          "From the tea to the cup",
+          "From the cup to the tea",
+          "Both ways equally, so nothing changes",
+          "No heat flows until the tea is stirred",
+        ],
+        a: 0,
+        explain: "Heat flows from the hotter object to the colder one: the tea cools and the cup warms.",
+      },
+      {
+        type: "mc",
+        prompt: "Heat stops flowing between two objects in contact when …",
+        options: [
+          "they reach the same temperature",
+          "they have the same thermal energy",
+          "the colder one has no energy left",
+          "they have the same mass",
+        ],
+        a: 0,
+        explain: "Flow stops at thermal equilibrium, when both objects have the same temperature.",
+      },
+      {
+        type: "mc",
+        prompt: "A 0.2 kg cup of water at 90 °C sits next to a 50 kg pool at 30 °C. Which holds more thermal energy?",
+        options: [
+          "The pool",
+          "The cup",
+          "They hold the same",
+          "Neither has thermal energy",
+        ],
+        a: 0,
+        explain: "The cup is hotter, but the pool has far more particles, so it holds far more thermal energy.",
+      },
+      {
+        type: "numeric",
+        prompt: "How much energy raises 50 kg of pool water by 1 K? (c = 4186 J/kg·K)",
+        answer: 209300,
+        tol: 1,
+        unit: "J",
+        explain: "Q = m × c × ΔT = 50 × 4186 × 1 = 209,300 J.",
+      },
+      {
+        type: "numeric",
+        prompt: "Convert 500 cal to joules. (1 cal = 4.186 J)",
+        answer: 2093,
+        tol: 1,
+        unit: "J",
+        explain: "500 × 4.186 = 2,093 J.",
+      },
+      {
+        type: "numeric",
+        prompt: "A snack has 250 food Calories (kcal). How many kilojoules is that? (1 kcal = 4186 J, 1 decimal place)",
+        answer: 1046.5,
+        tol: 0.5,
+        unit: "kJ",
+        explain: "250 × 4186 = 1,046,500 J = 1,046.5 kJ.",
+      },
+      {
+        type: "mc",
+        prompt: "Rubbing your hands together warms them. This shows that …",
+        options: [
+          "temperature can rise through work, without heat flowing in",
+          "heat flows from cold to hot",
+          "friction lowers thermal energy",
+          "temperature and heat are the same thing",
+        ],
+        a: 0,
+        explain: "Work done on your hands raises their thermal energy. No heat from a hotter object is needed.",
+      },
+      {
+        type: "mc",
+        prompt: "An object releases 500 J of heat. Using the sign rule, Q is …",
+        options: [
+          "−500 J",
+          "+500 J",
+          "0 J",
+          "500 K",
+        ],
+        a: 0,
+        explain: "Q is negative when an object releases heat and positive when it absorbs heat.",
+      },
+      {
+        inFinal: true,
+        type: "numeric",
+        prompt: "First law: a gas absorbs 800 J of heat and does 300 J of work. Find ΔU.",
+        answer: 500,
+        tol: 1,
+        unit: "J",
+        explain: "ΔU = Q − W = 800 − 300 = 500 J.",
+      },
+      {
+        type: "mc",
+        prompt: "The average kinetic energy of a gas particle is directly proportional to …",
+        options: [
+          "the absolute temperature in kelvin",
+          "the temperature in °C",
+          "the temperature in °F",
+          "the size of the container",
+        ],
+        a: 0,
+        explain: "KE_avg = (3/2) × k_B × T, with T in kelvin. That is why energy formulas need kelvin.",
+      },
+    ],
+  },
+  {
+    id: "Quiz3",
+    slug: "conduction",
+    title: "Conduction",
+    icon: "bi-rulers",
+    accent: "#ef4444",
+    description:
+      "Explain conduction at the particle level and calculate heat flow through one layer, layers in series, and layers in parallel.",
+    lessons: ["Lesson3"],
+    questions: [
+      {
+        type: "mc",
+        prompt: "A metal spoon in hot soup gets hot at the handle. Which mode?",
+        options: ["Conduction", "Convection", "Radiation", "Evaporation"],
+        a: 0,
+        explain:
+          "Energy passes particle-to-particle through the solid, conduction.",
+      },
+      {
+        inFinal: true,
+        type: "numeric",
+        prompt:
+          "Copper rod: k = 401 W/m·K, A = 1 × 10⁻⁴ m², L = 0.5 m, ΔT = 100 K. Find H (2 decimals).",
+        answer: 8.02,
+        tol: 0.05,
+        unit: "W",
+        explain: "H = 401 × 1×10⁻⁴ × 100 ÷ 0.5 = 8.02 W.",
+      },
+      {
+        type: "mc",
+        prompt: "A rod's length is doubled (same k, A, ΔT). What happens to H?",
+        options: [
+          "It is cut in half",
+          "It doubles",
+          "It stays the same",
+          "It becomes one quarter",
+        ],
+        a: 0,
+        explain: "H = kAΔT/L, H is inversely proportional to L.",
+      },
+      {
+        inFinal: true,
+        type: "mc",
+        prompt:
+          "At the same room temperature, why does metal feel colder than wood?",
+        options: [
+          "Metal has a higher k and pulls heat from your hand faster",
+          "Metal is actually colder",
+          "Wood generates heat",
+          "Metal reflects your body heat",
+        ],
+        a: 0,
+        explain:
+          "Both are at room temperature; the conductor drains heat from your skin faster.",
+      },
+      {
+        type: "mc",
+        prompt:
+          "Why is trapped air (foam, blankets, double glazing) a good insulator?",
+        options: [
+          "Gas particles are far apart, so collisions, and conduction, are rare",
+          "Air is a perfect reflector",
+          "Air contains no energy",
+          "Air blocks radiation completely",
+        ],
+        a: 0,
+        explain:
+          "Air's k is only 0.026 W/m·K; trapping it stops convection too.",
+      },
+      {
+        type: "mc",
+        prompt: "Why do metals conduct heat much better than most other solids?",
+        options: [
+          "Free electrons carry energy through them quickly",
+          "Their particles travel from the hot end to the cold end",
+          "They contain fewer particles",
+          "They are always hotter than other solids",
+        ],
+        a: 0,
+        explain: "Metals have free electrons that move energy along quickly. The particles themselves stay in place.",
+      },
+      {
+        type: "numeric",
+        prompt: "Thermal resistance: a wool layer has L = 0.05 m, k = 0.04 W/m·K and A = 1 m². Find R.",
+        answer: 1.25,
+        tol: 0.01,
+        unit: "K/W",
+        explain: "R = L ÷ (k × A) = 0.05 ÷ (0.04 × 1) = 1.25 K/W.",
+      },
+      {
+        inFinal: true,
+        type: "numeric",
+        prompt: "A wall has brick (L = 0.1 m, k = 0.7) and wool insulation (L = 0.05 m, k = 0.04) in series. A = 10 m², ΔT = 30 K. Find H (nearest watt).",
+        answer: 215,
+        tol: 1.5,
+        unit: "W",
+        explain: "Sum of L/k = 0.143 + 1.25 = 1.393. H = (10 × 30) ÷ 1.393 = 215 W.",
+      },
+      {
+        type: "numeric",
+        prompt: "A rod carries H = 8.02 W. How much energy passes through it in 10 minutes? (nearest joule)",
+        answer: 4812,
+        tol: 1,
+        unit: "J",
+        explain: "Q = H × t = 8.02 × 600 s = 4,812 J.",
+      },
+      {
+        type: "mc",
+        prompt: "A copper rod and a steel rod sit side by side between the same hot and cold walls. To find the total heat flow you …",
+        options: [
+          "add the two heat currents",
+          "add the two thermal resistances",
+          "use only the better conductor",
+          "multiply the two heat currents",
+        ],
+        a: 0,
+        explain: "Layers side by side share the same ΔT, so H_total = H₁ + H₂.",
+      },
+    ],
+  },
+  {
+    id: "Quiz4",
+    slug: "convection-and-radiation",
+    title: "Convection and Radiation",
+    icon: "bi-broadcast",
+    accent: "#f59e0b",
+    description:
+      "Identify convection and radiation, and calculate convective heat flow, cooling over time, radiated power and peak wavelength.",
+    lessons: ["Lesson4"],
+    questions: [
+      {
+        inFinal: true,
+        type: "mc",
+        prompt: "How does the Sun's heat reach Earth?",
+        options: [
+          "Radiation, space is a vacuum",
+          "Convection",
+          "Conduction",
+          "It is carried by solar wind",
+        ],
+        a: 0,
+        explain: "Radiation is the only mode that needs no material.",
+      },
+      {
+        type: "mc",
+        prompt: "Warm air rises above a stove. Which mode?",
+        options: ["Convection", "Conduction", "Radiation", "Insulation"],
+        a: 0,
+        explain: "A moving fluid carries the heat, convection.",
+      },
+      {
+        type: "numeric",
+        prompt:
+          "Radiated power of a blackbody (e = 1) with A = 1 m² at 300 K? (σ = 5.67 × 10⁻⁸)",
+        answer: 459,
+        tol: 5,
+        unit: "W",
+        explain: "P = 1 × 5.67×10⁻⁸ × 1 × 300⁴ = 459 W.",
+      },
+      {
+        inFinal: true,
+        type: "mc",
+        prompt:
+          "The absolute temperature of an object doubles. Its radiated power becomes …",
+        options: [
+          "16 times larger",
+          "2 times larger",
+          "4 times larger",
+          "8 times larger",
+        ],
+        a: 0,
+        explain: "P ∝ T⁴ → 2⁴ = 16.",
+      },
+      {
+        type: "numeric",
+        prompt:
+          "Wien's law: peak wavelength of the Sun's surface (5,800 K) in nm? (b = 2.898 × 10⁻³ m·K)",
+        answer: 500,
+        tol: 5,
+        unit: "nm",
+        explain:
+          "λ = 2.898×10⁻³ ÷ 5800 = 5.0 × 10⁻⁷ m = 500 nm (visible light).",
+      },
+      {
+        inFinal: true,
+        type: "numeric",
+        prompt: "Convection: h = 25 W/m²·K, A = 2 m², ΔT = 10 K. Find H.",
+        answer: 500,
+        tol: 1,
+        unit: "W",
+        explain: "H = h × A × ΔT = 25 × 2 × 10 = 500 W.",
+      },
+      {
+        type: "mc",
+        prompt:
+          "Coffee: T₀ = 90 °C, room T_s = 20 °C, k = 0.05/min. Temperature after 10 min? T = 20 + 70·e^(−0.5)",
+        options: ["≈ 62.5 °C", "≈ 55 °C", "≈ 70 °C", "≈ 45 °C"],
+        a: 0,
+        explain: "e^(−0.5) ≈ 0.6065 → T = 20 + 70 × 0.6065 = 62.5 °C.",
+      },
+      {
+        type: "mc",
+        prompt: "Which surface radiates heat best at the same temperature?",
+        options: [
+          "Dull black (matte)",
+          "Shiny silver",
+          "Polished aluminum",
+          "Mirror-finish chrome",
+        ],
+        a: 0,
+        explain: "Dark, matte surfaces have a high emissivity, so they absorb and emit well. Shiny surfaces do not.",
+      },
+      {
+        type: "mc",
+        prompt: "Natural convection almost stops in weightlessness because …",
+        options: [
+          "it needs gravity to make denser fluid sink",
+          "fluids cannot be heated in space",
+          "radiation blocks it",
+          "there is no air in a spacecraft",
+        ],
+        a: 0,
+        explain: "Warm fluid rises only because gravity pulls the cooler, denser fluid down to take its place.",
+      },
+      {
+        type: "mc",
+        prompt: "To heat a pot of water evenly by convection, the heat source should be …",
+        options: [
+          "at the bottom",
+          "at the top",
+          "at one side near the surface",
+          "anywhere, it makes no difference",
+        ],
+        a: 0,
+        explain: "Heating from below makes strong circulation. Heating from above makes very little.",
+      },
+      {
+        type: "numeric",
+        prompt: "Coffee at 90 °C cools in a 20 °C room with k = 0.05 per minute. How long until it reaches 40 °C? (minutes, 1 decimal place)",
+        answer: 25.1,
+        tol: 0.2,
+        unit: "min",
+        explain: "ratio = (90 − 20) ÷ (40 − 20) = 3.5. t = ln(3.5) ÷ 0.05 = 1.2528 ÷ 0.05 = 25.1 min.",
+      },
+    ],
+  },
+  {
+    id: "Quiz5",
+    slug: "specific-heat-capacity",
+    title: "Specific Heat Capacity",
+    icon: "bi-cup-hot",
+    accent: "#e11d48",
+    description:
+      "Use Q = m × c × ΔT, compare materials, and find heat capacity.",
+    lessons: ["Lesson5"],
+    questions: [
+      {
+        inFinal: true,
         type: "numeric",
         prompt:
           "How much heat warms 0.5 kg of water from 20 °C to 100 °C? (c = 4186 J/kg·K)",
@@ -169,6 +553,7 @@ export const QUIZZES = [
         explain: "ΔT = 12,000 ÷ (0.4 × 385) = 12,000 ÷ 154 = 77.9 K.",
       },
       {
+        inFinal: true,
         type: "mc",
         prompt:
           "The same amount of heat is added to equal masses of water, aluminum, copper and lead. Which gets hottest?",
@@ -228,6 +613,43 @@ export const QUIZZES = [
       {
         type: "numeric",
         prompt:
+          "0.2 kg of aluminum is heated from 25 °C to 75 °C (c = 900 J/kg·K). How much heat?",
+        answer: 9000,
+        tol: 50,
+        unit: "J",
+        explain: "Q = 0.2 × 900 × 50 = 9,000 J.",
+      },
+      {
+        inFinal: true,
+        type: "mc",
+        prompt:
+          "Why does the sea stay cool while the sand burns your feet on a sunny day?",
+        options: [
+          "Water has a much higher specific heat than sand",
+          "Sand is darker",
+          "The sea is deeper",
+          "Water reflects all sunlight",
+        ],
+        a: 0,
+        explain:
+          "Water's high c (4186 J/kg·K) means the same sunlight produces a much smaller temperature rise.",
+      },
+    ],
+  },
+  {
+    id: "Quiz6",
+    slug: "calorimetry",
+    title: "Calorimetry",
+    icon: "bi-beaker",
+    accent: "#db2777",
+    description:
+      "Set up heat balance equations, find final temperatures and unknown specific heats, and handle ice in warm water.",
+    lessons: ["Lesson6"],
+    questions: [
+      {
+        inFinal: true,
+        type: "numeric",
+        prompt:
           "Calorimetry: 0.1 kg copper at 100 °C (c = 385) drops into 0.2 kg water at 20 °C (c = 4186). Final temperature? (1 decimal)",
         answer: 23.5,
         tol: 0.4,
@@ -250,186 +672,101 @@ export const QUIZZES = [
           "Energy conservation: Q_lost = Q_gained, or ΣQ = 0 with (T_f − T_i) signs.",
       },
       {
+        inFinal: true,
         type: "numeric",
-        prompt:
-          "0.2 kg of aluminum is heated from 25 °C to 75 °C (c = 900 J/kg·K). How much heat?",
-        answer: 9000,
-        tol: 50,
+        prompt: "0.1 kg of water at 70 °C is mixed with 0.3 kg of water at 10 °C. Find the final temperature.",
+        answer: 25,
+        tol: 0.2,
+        unit: "°C",
+        explain: "Same substance, so c cancels: T_f = (0.1 × 70 + 0.3 × 10) ÷ 0.4 = 10 ÷ 0.4 = 25 °C.",
+      },
+      {
+        type: "numeric",
+        prompt: "0.2 kg of metal at 90 °C goes into 0.25 kg of water at 20 °C. The final temperature is 24 °C. Find c of the metal (nearest whole number).",
+        answer: 317,
+        tol: 2,
+        unit: "J/kg·K",
+        explain: "Water gains 0.25 × 4186 × 4 = 4,186 J. Metal loses 0.2 × c × 66 = 13.2c. c = 4,186 ÷ 13.2 = 317 J/kg·K.",
+      },
+      {
+        type: "mc",
+        prompt: "Your answer for the final temperature of a mixture is higher than both starting temperatures. This means …",
+        options: [
+          "there is a mistake, because T_f must lie between the starting temperatures",
+          "the water boiled",
+          "heat flowed from cold to hot",
+          "the calorimeter added energy",
+        ],
+        a: 0,
+        explain: "In an isolated system the final temperature must lie between the lowest and highest starting temperatures.",
+      },
+      {
+        type: "mc",
+        prompt: "In a calorimetry problem, the calorimeter constant is …",
+        options: [
+          "the heat capacity of the cup itself",
+          "the specific heat of water",
+          "the final temperature",
+          "the mass of water used",
+        ],
+        a: 0,
+        explain: "The cup also absorbs heat. Its heat capacity is the calorimeter constant.",
+      },
+      {
+        type: "numeric",
+        prompt: "Heat needed to warm 0.05 kg of ice from −10 °C to 0 °C and melt it all? (c_ice = 2090 J/kg·K, L_f = 3.34 × 10⁵ J/kg; nearest joule)",
+        answer: 17745,
+        tol: 2,
         unit: "J",
-        explain: "Q = 0.2 × 900 × 50 = 9,000 J.",
+        explain: "Q = 0.05 × 2090 × 10 + 0.05 × 334,000 = 1,045 + 16,700 = 17,745 J.",
+      },
+      {
+        inFinal: true,
+        type: "numeric",
+        prompt: "0.2 kg of ice at 0 °C goes into 0.1 kg of water at 20 °C. How many grams of ice melt? (c = 4186 J/kg·K, L_f = 3.34 × 10⁵ J/kg; nearest gram)",
+        answer: 25,
+        tol: 0.6,
+        unit: "g",
+        explain: "Q_available = 0.1 × 4186 × 20 = 8,372 J. Mass melted = 8,372 ÷ 334,000 = 0.025 kg = 25 g.",
       },
       {
         type: "mc",
-        prompt:
-          "Why does the sea stay cool while the sand burns your feet on a sunny day?",
+        prompt: "In that same mix (0.2 kg of ice at 0 °C and 0.1 kg of water at 20 °C), the final temperature is …",
         options: [
-          "Water has a much higher specific heat than sand",
-          "Sand is darker",
-          "The sea is deeper",
-          "Water reflects all sunlight",
+          "exactly 0 °C, with ice and water together",
+          "above 0 °C",
+          "below 0 °C",
+          "20 °C",
         ],
         a: 0,
-        explain:
-          "Water's high c (4186 J/kg·K) means the same sunlight produces a much smaller temperature rise.",
+        explain: "The water can only melt 25 g of the 200 g of ice, so ice and water end together at 0 °C.",
+      },
+      {
+        type: "mc",
+        prompt: "Why test three cases before mixing ice with warm water?",
+        options: [
+          "Melting needs a lot of energy, so the ice may not all melt",
+          "Ice can only be mixed with water at 0 °C",
+          "Water always freezes first",
+          "Specific heat changes during mixing",
+        ],
+        a: 0,
+        explain: "L_f is large (3.34 × 10⁵ J/kg), so the outcome depends on how much heat the water can give.",
       },
     ],
   },
   {
-    id: "Quiz3",
-    slug: "heat-transfer-modes",
-    title: "Heat Transfer Modes",
-    icon: "bi-fire",
-    accent: "#ef4444",
-    description:
-      "Identify conduction, convection and radiation, and calculate H = kAΔT/L, H = hAΔT, P = eσAT⁴ and Wien's law.",
-    lessons: ["Lesson3", "Lesson4"],
-    questions: [
-      {
-        type: "mc",
-        prompt: "How does the Sun's heat reach Earth?",
-        options: [
-          "Radiation, space is a vacuum",
-          "Convection",
-          "Conduction",
-          "It is carried by solar wind",
-        ],
-        a: 0,
-        explain: "Radiation is the only mode that needs no material.",
-      },
-      {
-        type: "mc",
-        prompt: "A metal spoon in hot soup gets hot at the handle. Which mode?",
-        options: ["Conduction", "Convection", "Radiation", "Evaporation"],
-        a: 0,
-        explain:
-          "Energy passes particle-to-particle through the solid, conduction.",
-      },
-      {
-        type: "mc",
-        prompt: "Warm air rises above a stove. Which mode?",
-        options: ["Convection", "Conduction", "Radiation", "Insulation"],
-        a: 0,
-        explain: "A moving fluid carries the heat, convection.",
-      },
-      {
-        type: "numeric",
-        prompt:
-          "Copper rod: k = 401 W/m·K, A = 1 × 10⁻⁴ m², L = 0.5 m, ΔT = 100 K. Find H (2 decimals).",
-        answer: 8.02,
-        tol: 0.05,
-        unit: "W",
-        explain: "H = 401 × 1×10⁻⁴ × 100 ÷ 0.5 = 8.02 W.",
-      },
-      {
-        type: "mc",
-        prompt: "A rod's length is doubled (same k, A, ΔT). What happens to H?",
-        options: [
-          "It is cut in half",
-          "It doubles",
-          "It stays the same",
-          "It becomes one quarter",
-        ],
-        a: 0,
-        explain: "H = kAΔT/L, H is inversely proportional to L.",
-      },
-      {
-        type: "mc",
-        prompt:
-          "At the same room temperature, why does metal feel colder than wood?",
-        options: [
-          "Metal has a higher k and pulls heat from your hand faster",
-          "Metal is actually colder",
-          "Wood generates heat",
-          "Metal reflects your body heat",
-        ],
-        a: 0,
-        explain:
-          "Both are at room temperature; the conductor drains heat from your skin faster.",
-      },
-      {
-        type: "numeric",
-        prompt:
-          "Radiated power of a blackbody (e = 1) with A = 1 m² at 300 K? (σ = 5.67 × 10⁻⁸)",
-        answer: 459,
-        tol: 5,
-        unit: "W",
-        explain: "P = 1 × 5.67×10⁻⁸ × 1 × 300⁴ = 459 W.",
-      },
-      {
-        type: "mc",
-        prompt:
-          "The absolute temperature of an object doubles. Its radiated power becomes …",
-        options: [
-          "16 times larger",
-          "2 times larger",
-          "4 times larger",
-          "8 times larger",
-        ],
-        a: 0,
-        explain: "P ∝ T⁴ → 2⁴ = 16.",
-      },
-      {
-        type: "numeric",
-        prompt:
-          "Wien's law: peak wavelength of the Sun's surface (5,800 K) in nm? (b = 2.898 × 10⁻³ m·K)",
-        answer: 500,
-        tol: 5,
-        unit: "nm",
-        explain:
-          "λ = 2.898×10⁻³ ÷ 5800 = 5.0 × 10⁻⁷ m = 500 nm (visible light).",
-      },
-      {
-        type: "mc",
-        prompt:
-          "Why is trapped air (foam, blankets, double glazing) a good insulator?",
-        options: [
-          "Gas particles are far apart, so collisions, and conduction, are rare",
-          "Air is a perfect reflector",
-          "Air contains no energy",
-          "Air blocks radiation completely",
-        ],
-        a: 0,
-        explain:
-          "Air's k is only 0.026 W/m·K; trapping it stops convection too.",
-      },
-      {
-        type: "numeric",
-        prompt: "Convection: h = 25 W/m²·K, A = 2 m², ΔT = 10 K. Find H.",
-        answer: 500,
-        tol: 1,
-        unit: "W",
-        explain: "H = h × A × ΔT = 25 × 2 × 10 = 500 W.",
-      },
-      {
-        type: "mc",
-        prompt:
-          "Coffee: T₀ = 90 °C, room T_s = 20 °C, k = 0.05/min. Temperature after 10 min? T = 20 + 70·e^(−0.5)",
-        options: ["≈ 62.5 °C", "≈ 55 °C", "≈ 70 °C", "≈ 45 °C"],
-        a: 0,
-        explain: "e^(−0.5) ≈ 0.6065 → T = 20 + 70 × 0.6065 = 62.5 °C.",
-      },
-    ],
-  },
-  {
-    id: "Quiz4",
-    slug: "latent-heat-states",
-    title: "Latent Heat & Changes of State",
+    id: "Quiz7",
+    slug: "changes-of-state",
+    title: "Changes of State",
     icon: "bi-snow",
-    accent: "#8b5cf6",
+    accent: "#0ea5e9",
     description:
-      "Heating curves, Q = m × L, fusion vs vaporization, and the electrical method of measuring L.",
-    lessons: ["Lesson7", "Lesson8"],
+      "Name each change of state, read a heating curve, and choose between Q = m × c × ΔT and Q = m × L.",
+    lessons: ["Lesson7"],
     questions: [
       {
-        type: "numeric",
-        prompt:
-          "How much heat melts 0.3 kg of ice at 0 °C? (L_f = 3.34 × 10⁵ J/kg)",
-        answer: 100200,
-        tol: 300,
-        unit: "J",
-        explain: "Q = m × L = 0.3 × 334,000 = 100,200 J.",
-      },
-      {
+        inFinal: true,
         type: "mc",
         prompt: "While water boils at 100 °C, its temperature …",
         options: [
@@ -443,6 +780,141 @@ export const QUIZZES = [
           "Added energy becomes latent heat, not kinetic energy, so T stays at 100 °C.",
       },
       {
+        type: "mc",
+        prompt: "Dry ice turns directly from solid to gas. This is called …",
+        options: ["Sublimation", "Vaporization", "Melting", "Condensation"],
+        a: 0,
+        explain:
+          "Solid → gas without becoming liquid: sublimation (about −78.5 °C at 1 atm).",
+      },
+      {
+        type: "mc",
+        prompt: "On a mountain, the boiling point of water is …",
+        options: [
+          "lower, because pressure is lower",
+          "higher, because it is colder",
+          "always 100 °C",
+          "unpredictable",
+        ],
+        a: 0,
+        explain:
+          "Boiling point depends on pressure, lower pressure, lower boiling point (a pressure cooker does the opposite).",
+      },
+      {
+        type: "mc",
+        prompt:
+          "Why does steam at 100 °C burn much worse than boiling water at 100 °C?",
+        options: [
+          "Condensing releases an extra 2.26 × 10⁶ J/kg before it even cools",
+          "Steam is hotter than 100 °C",
+          "Steam has more mass",
+          "Water cannot burn skin",
+        ],
+        a: 0,
+        explain:
+          "10 g of steam delivers ≈ 25,112 J vs 2,512 J for boiling water, about 10× more.",
+      },
+      {
+        inFinal: true,
+        type: "mc",
+        prompt: "On a heating curve of water, the flat sections show …",
+        options: [
+          "changes of state at constant temperature",
+          "the heater switched off",
+          "the water cooling down",
+          "measurement errors",
+        ],
+        a: 0,
+        explain: "While melting or boiling, the energy breaks bonds, so the temperature stays the same.",
+      },
+      {
+        inFinal: true,
+        type: "mc",
+        prompt: "Water warms from 20 °C to 80 °C. Which formula gives the heat?",
+        options: [
+          "Q = m × c × ΔT",
+          "Q = m × L_f",
+          "Q = m × L_v",
+          "Q = P ÷ t",
+        ],
+        a: 0,
+        explain: "The water stays liquid and its temperature changes, so use Q = m × c × ΔT.",
+      },
+      {
+        type: "mc",
+        prompt: "Why does the temperature stay at 0 °C while ice melts?",
+        options: [
+          "The energy breaks bonds instead of speeding up the particles",
+          "The heater stops working",
+          "Ice reflects the heat",
+          "Water cannot go above 0 °C",
+        ],
+        a: 0,
+        explain: "Average kinetic energy does not change during the state change, so the temperature does not change.",
+      },
+      {
+        type: "mc",
+        prompt: "When steam condenses into water, heat is …",
+        options: [
+          "released, with no temperature change",
+          "absorbed, raising the temperature",
+          "absorbed, with no temperature change",
+          "neither absorbed nor released",
+        ],
+        a: 0,
+        explain: "Condensing and freezing release heat. Melting and vaporizing absorb it.",
+      },
+      {
+        type: "mc",
+        prompt: "Evaporation is different from boiling because evaporation …",
+        options: [
+          "happens only at the surface, at any temperature",
+          "happens only at 100 °C",
+          "happens throughout the liquid",
+          "needs no energy",
+        ],
+        a: 0,
+        explain: "Boiling happens throughout the liquid at the boiling point. Evaporation happens at the surface at any temperature.",
+      },
+      {
+        type: "numeric",
+        prompt: "Heat to warm 0.1 kg of ice from −10 °C to 0 °C? (c_ice = 2090 J/kg·K)",
+        answer: 2090,
+        tol: 1,
+        unit: "J",
+        explain: "Q = m × c × ΔT = 0.1 × 2090 × 10 = 2,090 J.",
+      },
+      {
+        type: "numeric",
+        prompt: "Heat to turn 0.1 kg of ice at 0 °C into water at 100 °C? (L_f = 3.34 × 10⁵ J/kg, c = 4186 J/kg·K; nearest joule)",
+        answer: 75260,
+        tol: 5,
+        unit: "J",
+        explain: "Melt: 0.1 × 334,000 = 33,400 J. Warm: 0.1 × 4186 × 100 = 41,860 J. Total = 75,260 J.",
+      },
+    ],
+  },
+  {
+    id: "Quiz8",
+    slug: "specific-latent-heat",
+    title: "Specific Latent Heat",
+    icon: "bi-lightning-charge",
+    accent: "#8b5cf6",
+    description:
+      "Use Q = m × L with Q = P × t, find L, mass or time, and explain how L is measured.",
+    lessons: ["Lesson8"],
+    questions: [
+      {
+        inFinal: true,
+        type: "numeric",
+        prompt:
+          "How much heat melts 0.3 kg of ice at 0 °C? (L_f = 3.34 × 10⁵ J/kg)",
+        answer: 100200,
+        tol: 300,
+        unit: "J",
+        explain: "Q = m × L = 0.3 × 334,000 = 100,200 J.",
+      },
+      {
         type: "numeric",
         prompt:
           "How much heat boils 0.5 kg of water at 100 °C? (L_v = 2.26 × 10⁶ J/kg)",
@@ -452,6 +924,7 @@ export const QUIZZES = [
         explain: "Q = 0.5 × 2,260,000 = 1,130,000 J.",
       },
       {
+        inFinal: true,
         type: "mc",
         prompt: "Why is L_v (2.26 × 10⁶) much bigger than L_f (3.34 × 10⁵)?",
         options: [
@@ -465,14 +938,7 @@ export const QUIZZES = [
           "Vaporization breaks essentially all bonds and does expansion work.",
       },
       {
-        type: "mc",
-        prompt: "Dry ice turns directly from solid to gas. This is called …",
-        options: ["Sublimation", "Vaporization", "Melting", "Condensation"],
-        a: 0,
-        explain:
-          "Solid → gas without becoming liquid: sublimation (about −78.5 °C at 1 atm).",
-      },
-      {
+        inFinal: true,
         type: "numeric",
         prompt:
           "A 500 W heater boils 0.2 kg of water already at 100 °C. How long? (seconds, whole number)",
@@ -504,42 +970,51 @@ export const QUIZZES = [
         explain: "Q = 30,000 J; L = 30,000 ÷ 0.09 = 3.33 × 10⁵ J/kg.",
       },
       {
-        type: "mc",
-        prompt: "On a mountain, the boiling point of water is …",
-        options: [
-          "lower, because pressure is lower",
-          "higher, because it is colder",
-          "always 100 °C",
-          "unpredictable",
-        ],
-        a: 0,
-        explain:
-          "Boiling point depends on pressure, lower pressure, lower boiling point (a pressure cooker does the opposite).",
+        type: "numeric",
+        prompt: "How much water at 100 °C can 678,000 J boil away? (L_v = 2.26 × 10⁶ J/kg; kg, 2 decimal places)",
+        answer: 0.3,
+        tol: 0.005,
+        unit: "kg",
+        explain: "m = Q ÷ L = 678,000 ÷ 2,260,000 = 0.30 kg.",
+      },
+      {
+        type: "numeric",
+        prompt: "A heater runs at 12 V and 5 A for 200 s. How much energy does it supply?",
+        answer: 12000,
+        tol: 1,
+        unit: "J",
+        explain: "Q = V × I × t = 12 × 5 × 200 = 12,000 J.",
+      },
+      {
+        type: "numeric",
+        prompt: "A heater supplies 50,000 J, but only 40,000 J reaches the ice. What is the efficiency?",
+        answer: 80,
+        tol: 0.5,
+        unit: "%",
+        explain: "Efficiency = useful energy ÷ energy supplied × 100% = 40,000 ÷ 50,000 × 100% = 80%.",
       },
       {
         type: "mc",
-        prompt:
-          "Why does steam at 100 °C burn much worse than boiling water at 100 °C?",
+        prompt: "While measuring L_v, heat escapes from the heater to the room and is not corrected for. The calculated L will be …",
         options: [
-          "Condensing releases an extra 2.26 × 10⁶ J/kg before it even cools",
-          "Steam is hotter than 100 °C",
-          "Steam has more mass",
-          "Water cannot burn skin",
+          "too high",
+          "too low",
+          "exactly right",
+          "zero",
         ],
         a: 0,
-        explain:
-          "10 g of steam delivers ≈ 25,112 J vs 2,512 J for boiling water, about 10× more.",
+        explain: "Some of the energy counted as Q never reached the water, so Q ÷ m comes out too large. A control run without the heater corrects for this.",
       },
     ],
   },
   {
-    id: "Quiz5",
-    slug: "gas-laws",
-    title: "Gas Laws & Kinetic Model",
+    id: "Quiz9",
+    slug: "gas-laws-and-temperature",
+    title: "Gas Laws and Temperature",
     icon: "bi-balloon",
-    accent: "#10b981",
+    accent: "#6366f1",
     description:
-      "Boyle's, Charles's, Gay-Lussac's, the ideal gas law, and what particles are doing.",
+      "Apply Boyle's, Charles's and the ideal gas law, and link particle speed to temperature.",
     lessons: ["Lesson9"],
     questions: [
       {
@@ -550,6 +1025,7 @@ export const QUIZZES = [
         explain: "Boyle: P₁V₁ = P₂V₂ at constant T.",
       },
       {
+        inFinal: true,
         type: "numeric",
         prompt:
           "1.5 L of gas at 1 atm is squeezed to 0.5 L at constant temperature. New pressure?",
@@ -567,6 +1043,7 @@ export const QUIZZES = [
         explain: "Gay-Lussac: P ∝ T (kelvin) at constant volume.",
       },
       {
+        inFinal: true,
         type: "numeric",
         prompt:
           "Charles's law: 2.0 L at 27 °C is heated to 87 °C at constant pressure. New volume? (2 decimals)",
@@ -600,6 +1077,7 @@ export const QUIZZES = [
           "ratio = 3 × 8.314 × 300 ÷ 0.028 = 267,236 → v_rms = √267,236 ≈ 517 m/s.",
       },
       {
+        inFinal: true,
         type: "mc",
         prompt: "Gas pressure is caused by …",
         options: [
@@ -649,6 +1127,22 @@ export const QUIZZES = [
     ],
   },
 ];
+
+// Final exam across all nine lessons; passing it finishes no lesson.
+const FINAL_EXAM = {
+  id: "Quiz10",
+  slug: "final-exam",
+  title: "Temperature and Heat: All Topics",
+  icon: "bi-mortarboard",
+  accent: "#c2410c",
+  description:
+    "A long quiz covering every lesson, from temperature scales to gas laws. Best taken after finishing all nine lessons.",
+  final: true,
+  lessons: [],
+  questions: LESSON_QUIZZES.flatMap((q) => q.questions.filter((x) => x.inFinal)),
+};
+
+export const QUIZZES = [...LESSON_QUIZZES, FINAL_EXAM];
 
 export const QUIZ_BY_SLUG = Object.fromEntries(QUIZZES.map((q) => [q.slug, q]));
 export const QUIZ_BY_ID = Object.fromEntries(QUIZZES.map((q) => [q.id, q]));
