@@ -683,7 +683,7 @@ export const MASCOT_QA = [
   },
   {
     keywords: ["conduction"],
-    a: "Conduction = heat through direct contact. H = kAΔT/L. Copper (k = 401) beats foam (k = 0.04) by ~10,000×! Play with the rod simulation in Lesson 3.",
+    a: "Conduction = heat through direct contact. H = kAΔT/L. Copper (k = 401) beats wool insulation (k = 0.04) by ~10,000×! Play with the rod simulation in Lesson 3.",
   },
   {
     keywords: ["convection"],
