@@ -1152,11 +1152,42 @@ a,
   }
 }
 
+.howto-steps > li {
+  display: flex;
+}
+
 .howto-step {
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: flex-start;
   padding: 1.15rem;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+}
+
+.howto-step:hover,
+.howto-step:focus-visible {
+  border-color: var(--ember);
+  color: inherit;
+}
+
+.howto-step:focus-visible {
+  outline: 3px solid var(--ember-tint);
+  outline-offset: 2px;
+}
+
+.howto-arrow {
+  margin-left: 0.15rem;
+  color: var(--ember-text);
+  transition: transform 150ms ease;
+}
+
+.howto-step:hover .howto-arrow,
+.howto-step:focus-visible .howto-arrow {
+  transform: translateX(3px);
 }
 
 .howto-step .icon-tile {
@@ -1173,7 +1204,10 @@ a,
 }
 
 .howto-title {
+  display: flex;
+  align-items: center;
   margin: 0.1rem 0 0.3rem;
+  color: var(--ink);
   font-size: 1.02rem;
   font-weight: 800;
 }
@@ -1182,6 +1216,27 @@ a,
   color: var(--ink-soft);
   font-size: 0.9rem;
   line-height: 1.5;
+}
+
+/* save-progress prompt (components/SaveProgressPrompt.jsx) */
+.save-prompt {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  color: var(--ink-soft);
+}
+
+.save-prompt .modal-header,
+.save-prompt .modal-footer {
+  border-color: var(--line);
+}
+
+.save-prompt .modal-title {
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .save-prompt .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
 }
 
 .howto-tips {
@@ -1657,6 +1712,22 @@ a.continue-card:hover {
   height: var(--sim-h, 360px);
   max-width: 100%;
   border-radius: var(--radius-small);
+}
+
+/* Thermometer: only the glass tube is draggable. The grip blocks
+   touch scrolling inside itself; the rest of the canvas scrolls. */
+.therm-stage {
+  position: relative;
+}
+
+.therm-grip {
+  position: absolute;
+  top: 1.5rem;
+  bottom: 1.75rem;
+  left: calc(var(--tube-x) - 2.5rem);
+  width: 5rem;
+  border-radius: var(--radius-small);
+  cursor: ns-resize;
   touch-action: none;
 }
 
@@ -1691,11 +1762,12 @@ a.continue-card:hover {
   inset: 0;
 }
 
+/* vertical swipes scroll the page; horizontal swipes and pinch orbit */
 .sim-stage .three-canvas {
   display: block;
   width: 100%;
   height: 100%;
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 /* keyboard orbit target: visible ring inside the stage edge */
@@ -1958,15 +2030,16 @@ a.continue-card:hover {
 .formula-card {
   height: 100%;
   padding: 1.15rem 1.3rem;
-  border: 1px solid #2e3441;
+  border: 1px solid var(--line);
   border-radius: var(--radius-card);
-  background: var(--stage);
-  color: #d1d5db;
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  color: var(--ink-soft);
 }
 
 .formula-card .formula-name {
   margin-bottom: 0.6rem;
-  color: #fb923c;
+  color: var(--ember-text);
   font-size: 0.8rem;
   font-weight: 700;
 }
@@ -1977,7 +2050,7 @@ a.continue-card:hover {
   align-items: center;
   gap: 0.35rem;
   margin-bottom: 0.6rem;
-  color: #f3efe8;
+  color: var(--ink);
   font-family: "Cambria Math", "STIX Two Math", Georgia, serif;
   font-size: clamp(1.05rem, 2.2vw, 1.35rem);
   font-weight: 700;
@@ -1993,7 +2066,7 @@ a.continue-card:hover {
 
 .frac .num {
   padding: 0 0.45rem 0.12rem;
-  border-bottom: 2px solid rgba(243, 239, 232, 0.65);
+  border-bottom: 2px solid currentColor;
 }
 
 .frac .den {
@@ -2001,16 +2074,35 @@ a.continue-card:hover {
 }
 
 .formula-inwords {
-  color: #d1d5db;
+  color: var(--ink-soft);
   font-size: 0.88rem;
 }
 
 .formula-where {
   margin-top: 0.35rem;
   padding-top: 0.5rem;
-  border-top: 1px dashed #2e3441;
-  color: #9ca3af;
+  border-top: 1px dashed var(--line);
+  color: var(--muted);
   font-size: 0.82rem;
+}
+
+/* lesson "Main content" sections: one card each so body text sits on a
+   surface instead of the page background */
+.lesson-section {
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.lesson-section p,
+.lesson-section ul {
+  color: var(--ink-soft);
+}
+
+.lesson-section > :last-child {
+  margin-bottom: 0;
 }
 
 .table-pretty {
@@ -2030,6 +2122,12 @@ a.continue-card:hover {
 .table-pretty td {
   color: var(--ink-soft);
   vertical-align: middle;
+}
+
+.table-pretty th,
+.table-pretty td {
+  padding: 0.55rem 0.75rem;
+  line-height: 1.45;
 }
 
 .example-card {
@@ -2250,9 +2348,11 @@ a.continue-card:hover {
   border-color: var(--ember);
 }
 
+.mascot-fab {
+  --mascot-size: 3.1rem;
+}
+
 .mascot-fab img {
-  width: 3.1rem;
-  height: 3.1rem;
   overflow: visible;
 }
 
@@ -2811,6 +2911,11 @@ button .calphy-mascot {
 }
 
 /* winks while squeezed */
+.calphy-mascot > img {
+  width: 100%;
+  height: 100%;
+}
+
 .calphy-wink {
   position: absolute;
   inset: 0;
@@ -3230,9 +3335,19 @@ a.check-dot.current:hover {
     height: 3.6rem;
   }
 
-  .mascot-fab img {
-    width: 2.6rem;
-    height: 2.6rem;
+  .mascot-fab {
+    --mascot-size: 2.6rem;
+  }
+
+  /* phones: roomier rows; columns stay on screen and wrap their text */
+  .table-pretty th,
+  .table-pretty td {
+    padding: 0.6rem 0.6rem;
+    font-size: 0.875rem;
+  }
+
+  .lesson-section {
+    padding: 1rem;
   }
 
   .thought-bubble {
