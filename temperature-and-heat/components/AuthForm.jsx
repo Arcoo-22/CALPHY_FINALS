@@ -40,7 +40,9 @@ export default function AuthForm({ mode }) {
         setError(
           "Sorry, the database is currently unreachable. Please try again later or contact support if the problem persists.",
         );
-      } else if (err.message.includes("That username or email is already taken")) {
+      } else if (
+        err.message.includes("That username or email is already taken")
+      ) {
         setError(
           "That username or email is already taken. Please choose another one.",
         );
@@ -134,7 +136,7 @@ export default function AuthForm({ mode }) {
               className="form-control-calphy"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
-              placeholder="e.g. AJ POSADAS"
+              placeholder="e.g. John Doe"
               required
             />
           </div>
