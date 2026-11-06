@@ -1,8 +1,20 @@
 <div align="center">
 
+<img src="temperature-and-heat/public/images/brand/calphy-logo.png" alt="Ignius logo" width="140" />
+
 # Ignius
 
 **An interactive physics learning platform for Temperature and Heat.**
+
+[![Live site](https://img.shields.io/badge/Live_site-ignius.onrender.com-ea580c?style=for-the-badge&logo=render&logoColor=white)](https://ignius.onrender.com)
+
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3?style=flat-square&logo=bootstrap&logoColor=white)
+![Three.js](https://img.shields.io/badge/Three.js-3D-000000?style=flat-square&logo=threedotjs)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-optional-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+
+[Introduction](#introduction) · [Features](#features) · [Installation](#installation) · [Commands](#commands) · [Contributing](#contributing) · [Tech Stack](#tech-stack)
 
 </div>
 
@@ -167,6 +179,8 @@ git push                              # later pushes to the same branch
 ---
 
 <div align="center">
+
+<img src="temperature-and-heat/public/images/brand/mascot-wave.png" alt="Cinder waving" width="90" />
 
 **Ignius**: Temperature and Heat, made interactive.
 
