@@ -9,7 +9,7 @@ export default function SiteFooter() {
     <footer className="calphy-footer">
       <Container className="py-5">
         <div className="row g-4">
-          <div className="col-lg-4">
+          <div className="col-lg-3">
             <div className="footer-flame mb-2">
               <Image
                 src="/images/brand/calphy-logo.png"
@@ -20,12 +20,9 @@ export default function SiteFooter() {
               />
               Ignius
             </div>
-            <p className="small mb-0" style={{ maxWidth: 340 }}>
-              Built with{" "}
-              <b className="text-white">
-                Next.js · React · Bootstrap 5 · PostgreSQL
-              </b>
-              . Content adapted from the CALPHY Finals module.
+            <p className="small mb-0" style={{ maxWidth: 300 }}>
+              Lessons, simulations, and quizzes for the Temperature and Heat
+              unit. Content adapted from the CALPHY Finals module.
             </p>
           </div>
 
@@ -33,26 +30,17 @@ export default function SiteFooter() {
           <div className="col-lg-3 d-none d-lg-block">
             <h6 className="mb-3">Lessons</h6>
             <ul className="list-unstyled small mb-0 d-grid gap-2">
-              {LESSONS.slice(0, 5).map((l) => (
+              {LESSONS.map((l) => (
                 <li key={l.key}>
                   <Link href={`/lessons/${l.slug}`}>
                     {l.n}. {l.title}
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link
-                  href="/lessons"
-                  className="fw-bold"
-                  style={{ color: "var(--ember-text)" }}
-                >
-                  All 9 lessons →
-                </Link>
-              </li>
             </ul>
           </div>
 
-          <div className="col-lg-2 d-none d-lg-block">
+          <div className="col-lg-3 d-none d-lg-block">
             <h6 className="mb-3">Quizzes</h6>
             <ul className="list-unstyled small mb-0 d-grid gap-2">
               {QUIZZES.map((q) => (
