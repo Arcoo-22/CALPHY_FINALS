@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { query, DB_ERROR_MESSAGE, defaultProgress } from "@/lib/db";
 import { setSession } from "@/lib/auth";
+import { hashPassword } from "@/lib/passwords";
 import { LESSONS } from "@/lib/lessons";
 import { QUIZZES } from "@/lib/quizzes";
 
@@ -63,11 +64,13 @@ export async function POST(req) {
       QUIZZES.map((q) => q.id),
     );
 
+    const hashedPassword = hashPassword(password);
+
     const inserted = await query(
       `INSERT INTO tbl_users (username, password, email, user_progress)
        VALUES ($1, $2, $3, $4::jsonb)
        RETURNING id`,
-      [username, password, email, JSON.stringify(progress)],
+      [username, hashedPassword, email, JSON.stringify(progress)],
     );
 
     const id = inserted.rows[0].id;
