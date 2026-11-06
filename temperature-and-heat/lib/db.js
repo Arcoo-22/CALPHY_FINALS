@@ -6,18 +6,25 @@
 // ============================================================
 import pg from "pg";
 import { toProgressDto, isLegacyQuizLayout } from "@/lib/progress";
+import { hashPassword, verifyPassword } from "@/lib/passwords";
 
 const { Pool } = pg;
 
-let pool = null;
+let pool = globalThis.pgPool || null;
 
 export function getPool() {
   if (!pool) {
+    const isCloud =
+      process.env.DATABASE_URL?.includes("neon.tech") ||
+      process.env.DATABASE_URL?.includes("sslmode=require") ||
+      process.env.NODE_ENV === "production";
+
     pool = process.env.DATABASE_URL
       ? new Pool({
           connectionString: process.env.DATABASE_URL,
+          ssl: isCloud ? { rejectUnauthorized: false } : undefined,
           max: 5,
-          connectionTimeoutMillis: 4000,
+          connectionTimeoutMillis: 5000,
         })
       : new Pool({
           host: process.env.PGHOST || "localhost",
@@ -31,6 +38,10 @@ export function getPool() {
     pool.on("error", (err) =>
       console.error("[pg] idle client error:", err.message),
     );
+
+    if (process.env.NODE_ENV !== "production") {
+      globalThis.pgPool = pool;
+    }
   }
   return pool;
 }
@@ -102,10 +113,13 @@ export async function getUserByUsername(username) {
 
 export async function login(username, password, email) {
   const res = await query(
-    "SELECT username, email, user_progress FROM tbl_users WHERE (username = $1 OR email = $2) AND password = $3;",
-    [username, email, password],
+    "SELECT username, email, password, user_progress FROM tbl_users WHERE (username = $1 OR email = $2);",
+    [username, email],
   );
-  return res.rows;
+  if (res.rows.length === 0) return [];
+  const row = res.rows[0];
+  if (!verifyPassword(password, row.password)) return [];
+  return [{ username: row.username, email: row.email, user_progress: row.user_progress }];
 }
 
 export async function getUserProgress(id) {
@@ -125,9 +139,10 @@ export async function changeUsername(id, newUsername) {
 }
 
 export async function changePassword(id, newPassword) {
+  const hashedPassword = hashPassword(newPassword);
   const res = await query(
     "UPDATE tbl_users SET password = $1 WHERE id = $2;",
-    [newPassword, id],
+    [hashedPassword, id],
   );
   return res.rows;
 }

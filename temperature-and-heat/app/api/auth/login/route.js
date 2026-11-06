@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { query, DB_ERROR_MESSAGE, upgradeStoredProgress } from "@/lib/db";
 import { setSession } from "@/lib/auth";
+import { hashPassword, verifyPassword, isLegacyPlaintext } from "@/lib/passwords";
 
 export const dynamic = "force-dynamic";
 
@@ -25,13 +26,11 @@ export async function POST(req) {
   }
 
   try {
-    // Login Check, matches the project documentation query:
-    // SELECT id FROM tbl_users WHERE (username = '?' OR email = '?') AND password = '?'
     const res = await query(
-      `SELECT id, username, user_progress
+      `SELECT id, username, password, user_progress
        FROM tbl_users
-       WHERE (username = $1 OR email = $1) AND password = $2`,
-      [identifier, password],
+       WHERE username = $1 OR email = $1`,
+      [identifier],
     );
 
     if (res.rows.length === 0) {
@@ -42,6 +41,28 @@ export async function POST(req) {
     }
 
     const row = res.rows[0];
+    const passwordValid = verifyPassword(password, row.password);
+
+    if (!passwordValid) {
+      return NextResponse.json(
+        { error: "Invalid username/email or password." },
+        { status: 401 },
+      );
+    }
+
+    // Seamless auto-upgrade: if this was an existing account with plaintext, upgrade to hash
+    if (isLegacyPlaintext(row.password)) {
+      try {
+        const upgradedHash = hashPassword(password);
+        await query("UPDATE tbl_users SET password = $1 WHERE id = $2", [
+          upgradedHash,
+          row.id,
+        ]);
+      } catch (upgradeErr) {
+        console.error("[password upgrade]", upgradeErr.message);
+      }
+    }
+
     await setSession({ id: row.id });
     return NextResponse.json({
       ok: true,
