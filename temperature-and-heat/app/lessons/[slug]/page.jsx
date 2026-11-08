@@ -138,7 +138,7 @@ export default async function LessonPage({ params }) {
                 {lesson.title}
               </h1>
               <p className="section-sub mb-3">{lesson.tagline}</p>
-              <MarkCompleteButton lessonKey={lesson.key} />
+              <MarkCompleteButton lessonKey={lesson.key} compact />
             </Col>
             <Col lg={4}>
               <nav className="card-soft flat p-3" aria-label="Trace the energy">

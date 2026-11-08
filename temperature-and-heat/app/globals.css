@@ -73,8 +73,8 @@
   --ink: #f8fafc;
   --ink-soft: #cbd5e1;
   --muted: #94a3b8;
-  --ember: #f97316;
-  --ember-hover: #fb923c;
+  --ember: #ea580c;
+  --ember-hover: #c2410c;
   --ember-text: #fb923c;
   --ember-tint: rgba(249, 115, 22, 0.15);
   --flame-glow: #f59e0b;
@@ -377,16 +377,6 @@ a,
   color: #ffffff;
   transform: translateY(1px) scale(0.98);
   box-shadow: none;
-}
-
-:root[data-theme="dark"] .btn-flame {
-  color: #0b0f17;
-  font-weight: 800;
-}
-
-:root[data-theme="dark"] .btn-flame:hover,
-:root[data-theme="dark"] .btn-flame:active {
-  color: #0b0f17;
 }
 
 .btn-ink {
@@ -2222,8 +2212,9 @@ a.continue-card:hover {
 
 .btn-compact {
   min-height: 36px;
-  padding: 0.3rem 0.85rem;
-  font-size: 0.9rem;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 700;
 }
 
 
