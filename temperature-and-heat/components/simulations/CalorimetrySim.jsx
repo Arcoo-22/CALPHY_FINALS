@@ -506,7 +506,8 @@ export default function CalorimetrySim() {
       </div>
       <div style={{ minWidth: 120, flex: 1 }}>
         <label className="form-label" htmlFor="cal-mo">
-          m object · <b>{fmt(mObj, 2)} kg</b>
+          <span>Object mass</span>
+          <b>{fmt(mObj, 2)} kg</b>
         </label>
         <input
           id="cal-mo"
@@ -524,7 +525,8 @@ export default function CalorimetrySim() {
       </div>
       <div style={{ minWidth: 120, flex: 1 }}>
         <label className="form-label" htmlFor="cal-to">
-          T object · <b style={{ color: "#c2410c" }}>{fmt(TObj, 0)} °C</b>
+          <span>Object temp</span>
+          <b style={{ color: "#c2410c" }}>{fmt(TObj, 0)} °C</b>
         </label>
         <input
           id="cal-to"
@@ -541,7 +543,8 @@ export default function CalorimetrySim() {
       </div>
       <div style={{ minWidth: 120, flex: 1 }}>
         <label className="form-label" htmlFor="cal-mw">
-          m water · <b>{fmt(mW, 2)} kg</b>
+          <span>Water mass</span>
+          <b>{fmt(mW, 2)} kg</b>
         </label>
         <input
           id="cal-mw"
@@ -559,7 +562,8 @@ export default function CalorimetrySim() {
       </div>
       <div style={{ minWidth: 120, flex: 1 }}>
         <label className="form-label" htmlFor="cal-tw">
-          T water · <b style={{ color: "#0369a1" }}>{fmt(TW, 0)} °C</b>
+          <span>Water temp</span>
+          <b style={{ color: "#0369a1" }}>{fmt(TW, 0)} °C</b>
         </label>
         <input
           id="cal-tw"
@@ -593,7 +597,8 @@ export default function CalorimetrySim() {
         <>
           <div style={{ minWidth: 110, flex: 1 }}>
             <label className="form-label" htmlFor="cal-mi">
-              m ice · <b>{fmt(mIce, 2)} kg</b>
+              <span>Ice mass</span>
+              <b>{fmt(mIce, 2)} kg</b>
             </label>
             <input
               id="cal-mi"
@@ -611,7 +616,8 @@ export default function CalorimetrySim() {
           </div>
           <div style={{ minWidth: 110, flex: 1 }}>
             <label className="form-label" htmlFor="cal-ti">
-              T ice · <b>{fmt(TIce, 0)} °C</b>
+              <span>Ice temp</span>
+              <b>{fmt(TIce, 0)} °C</b>
             </label>
             <input
               id="cal-ti"

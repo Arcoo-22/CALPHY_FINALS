@@ -336,7 +336,7 @@ export default function ParticleBoxSim() {
     <>
       <div style={{ minWidth: 190, flex: 1 }}>
         <label className="form-label" htmlFor="cup-t">
-          Cup temperature ·{" "}
+          <span>Cup temperature</span>
           <b style={{ color: "#c2410c" }}>{fmt(cupT, 1)} °C</b>
         </label>
         <input
@@ -353,7 +353,7 @@ export default function ParticleBoxSim() {
       </div>
       <div style={{ minWidth: 190, flex: 1 }}>
         <label className="form-label" htmlFor="pool-t">
-          Pool temperature ·{" "}
+          <span>Pool temperature</span>
           <b style={{ color: "#0369a1" }}>{fmt(poolT, 1)} °C</b>
         </label>
         <input

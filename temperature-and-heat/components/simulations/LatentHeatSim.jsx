@@ -366,7 +366,8 @@ export default function LatentHeatSim() {
       </div>
       <div style={{ minWidth: 140, flex: 1 }}>
         <label className="form-label" htmlFor="lh-p">
-          Heater power · <b style={{ color: "#c2410c" }}>{power} W</b>
+          <span>Heater power</span>
+          <b style={{ color: "#c2410c" }}>{power} W</b>
         </label>
         <input
           id="lh-p"
@@ -381,7 +382,8 @@ export default function LatentHeatSim() {
       </div>
       <div style={{ minWidth: 140, flex: 1 }}>
         <label className="form-label" htmlFor="lh-e">
-          Efficiency · <b>{eff}%</b>
+          <span>Efficiency</span>
+          <b>{eff}%</b>
         </label>
         <input
           id="lh-e"

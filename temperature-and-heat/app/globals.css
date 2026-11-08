@@ -2072,17 +2072,51 @@ a.continue-card:hover {
 
 /* sim buttons share one size so they line up with the readout pills */
 .sim-controls .btn-sm {
+  min-height: 42px;
   padding: 0 1rem;
   font-size: 0.875rem;
+  font-weight: 600;
   white-space: nowrap;
 }
 
 .sim-controls .form-label {
-  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 0.45rem;
   color: var(--ink-soft);
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.01em;
+  user-select: none;
+}
+
+.sim-controls .form-label b {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-jakarta), var(--bs-font-sans-serif);
+  font-weight: 700;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  padding: 0.12rem 0.5rem;
+  min-width: 4.4rem;
+  text-align: right;
+  white-space: nowrap;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+:root[data-theme="dark"] .sim-controls .form-label b {
+  background: #0d131f;
+  border-color: #242f42;
+  color: #f1f5f9;
 }
 
 .sim-note {
@@ -2095,26 +2129,31 @@ a.continue-card:hover {
 .sim-readout {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  padding-top: 0.25rem;
 }
 
 .readout-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  min-height: 44px;
+  justify-content: space-between;
+  gap: 0.65rem;
+  min-height: 42px;
+  min-width: 9.5rem;
   padding: 0.45rem 0.85rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-small);
   background: var(--surface-2);
-  color: var(--ink);
+  color: var(--ink-soft);
   font-size: 0.84rem;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  contain: layout;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
   transition:
     background-color 160ms ease,
-    border-color 160ms ease,
-    transform 140ms var(--ease-out);
+    border-color 160ms ease;
 }
 
 .readout-pill:hover {
@@ -2125,6 +2164,11 @@ a.continue-card:hover {
   color: var(--ember-text);
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+  font-family: var(--font-jakarta), var(--bs-font-sans-serif);
+  white-space: nowrap;
+  display: inline-block;
+  text-align: right;
+  min-width: 4.5rem;
 }
 
 .readout-pill.cool b {
@@ -2132,18 +2176,92 @@ a.continue-card:hover {
 }
 
 :root[data-theme="dark"] .readout-pill {
-  border-color: #2e3441;
-  background: #0f141e;
-  color: #f3efe8;
+  border-color: #242f42;
+  background: #0d131f;
+  color: #94a3b8;
   box-shadow: none;
 }
 
 :root[data-theme="dark"] .readout-pill b {
-  color: #fb923c;
+  color: #f97316;
 }
 
 :root[data-theme="dark"] .readout-pill.cool b {
-  color: #7dd3fc;
+  color: #38bdf8;
+}
+
+/* ---- Simulation Lab Toolbar & Filter Tabs ---- */
+.sim-lab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+}
+
+.sim-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.sim-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 38px;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-button);
+  background: var(--surface-2);
+  color: var(--ink-soft);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease,
+    transform 120ms ease;
+}
+
+.sim-filter-btn:hover {
+  color: var(--ink);
+  border-color: var(--ember);
+  transform: translateY(-1px);
+}
+
+.sim-filter-btn.active {
+  background: var(--ember);
+  border-color: var(--ember);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.sim-filter-btn .badge-count {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.sim-filter-btn.active .badge-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.sim-jump-select {
+  min-width: 200px;
+  max-width: 280px;
+  font-size: 0.84rem;
+  height: 38px;
 }
 
 /* full-width row; long values wrap inside the pill instead of overflowing */

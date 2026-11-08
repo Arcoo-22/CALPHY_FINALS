@@ -380,7 +380,7 @@ export default function GasLawSim() {
       </div>
       <div style={{ minWidth: 150, flex: 1 }}>
         <label className="form-label" htmlFor="gas-t">
-          Temperature ·{" "}
+          <span>Temperature (T)</span>
           <b style={{ color: "#c2410c" }}>
             {tDisabled ? "300 K (fixed)" : `${tempK} K`}
           </b>
@@ -399,7 +399,7 @@ export default function GasLawSim() {
       </div>
       <div style={{ minWidth: 150, flex: 1 }}>
         <label className="form-label" htmlFor="gas-v">
-          Volume ·{" "}
+          <span>Volume (V)</span>
           <b style={{ color: "#0369a1" }}>
             {vDisabled
               ? `${fmt(readout.V, 2)} L (derived)`
