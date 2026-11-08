@@ -11,6 +11,7 @@ import QuizCards from "@/components/QuizCards";
 import CalphyMascot from "@/components/CalphyMascot";
 import CalphyStage from "@/components/CalphyStage";
 import SectionHead from "@/components/SectionHead";
+import ScrollFloat from "@/components/ScrollFloat";
 import VideoEmbed from "@/components/VideoEmbed";
 import { LESSONS, UNITS } from "@/lib/lessons";
 import { QUIZZES } from "@/lib/quizzes";
@@ -123,10 +124,14 @@ export default function LearnHome() {
           icon="bi-signpost-split"
           tag="Browse by unit"
           title={
-            <>
-              {UNITS.length} units.{" "}
-              <span className="text-flame">One warm story.</span>
-            </>
+            <ScrollFloat
+              as="span"
+              effect="float"
+              distance={40}
+              animationDuration={0.8}
+            >
+              4 units. One warm story.
+            </ScrollFloat>
           }
           sub="Each unit builds on the last: what temperature is, how heat moves, how to count it, and what gases do when they get hot."
           actions={
@@ -150,9 +155,14 @@ export default function LearnHome() {
           icon="bi-patch-question"
           tag="Check yourself"
           title={
-            <>
-              Quizzes that <span className="text-cool">save your score</span>
-            </>
+            <ScrollFloat
+              as="span"
+              effect="float"
+              distance={40}
+              animationDuration={0.8}
+            >
+              Quizzes that save your score
+            </ScrollFloat>
           }
           sub="See the explanation after every answer. Your best score per quiz is kept on your dashboard."
           actions={

@@ -58,12 +58,12 @@ const ScrollFloat = ({
   fromColor = 'currentColor',
   animationDuration = 1,
   ease = 'back.inOut(2)',
-  scrollStart = 'center bottom+=50%',
-  scrollEnd = 'bottom bottom-=40%',
-  stagger = 0.03,
-  distance = 120,
-  stretch = 2.3,
-  smoothing = 0,
+  scrollStart = 'top bottom-=10%',
+  scrollEnd = 'bottom center+=15%',
+  stagger = 0.025,
+  distance = 70,
+  stretch = 2,
+  smoothing = 0.5,
 }) => {
   const containerRef = useRef(null);
   const textRef = useRef(null);
@@ -88,9 +88,9 @@ const ScrollFloat = ({
       word.trim() === '' ? (
         word
       ) : (
-        <span className="scroll-float-word" key={wordIndex}>
+        <span className="scroll-float-word d-inline-block text-nowrap" key={wordIndex}>
           {Array.from(word).map((char, charIndex) => (
-            <span className="scroll-float-char" key={charIndex} style={shiftStyle}>
+            <span className="scroll-float-char d-inline-block" key={charIndex} style={shiftStyle}>
               {char}
             </span>
           ))}
@@ -215,7 +215,7 @@ const ScrollFloat = ({
       }
 
       if (shiftColor) {
-        add({ '--scroll-float-mix': 1 }, { ease: (p) => smoothstep(0.5, 1, timing(p)), '--scroll-float-mix': 0 });
+        add({ '--scroll-float-mix': 1 }, { ease: p => smoothstep(0.5, 1, timing(p)), '--scroll-float-mix': 0 });
       }
     });
 
@@ -244,10 +244,10 @@ const ScrollFloat = ({
       ref={containerRef}
       className={`scroll-float ${effect === 'float' ? '' : 'scroll-float--open'} ${containerClassName}`}
     >
-      {text !== null && <span className="scroll-float-sr">{text}</span>}
+      {text !== null && <span className="visually-hidden">{text}</span>}
       <span
         ref={textRef}
-        className={`scroll-float-text ${textClassName}`}
+        className={`scroll-float-text d-inline-block ${textClassName}`}
         style={text === null ? shiftStyle : undefined}
         aria-hidden={text !== null ? true : undefined}
       >

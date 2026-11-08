@@ -1,7 +1,9 @@
+/* ScrollFloat - Bootstrap 5 integration */
 .scroll-float {
   display: block;
   margin: 0;
   overflow: hidden;
+  font-family: var(--bs-body-font-family, inherit);
 }
 
 .scroll-float--open {
@@ -15,6 +17,7 @@
   font-weight: inherit;
   line-height: inherit;
   text-align: inherit;
+  color: inherit;
 }
 
 .scroll-float-word {
@@ -24,16 +27,5 @@
 
 .scroll-float-char {
   display: inline-block;
-}
-
-.scroll-float-sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  will-change: transform, opacity;
 }
