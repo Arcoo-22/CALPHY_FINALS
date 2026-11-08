@@ -6,6 +6,7 @@ const STOP_WORDS = new Set([
   "does", "explain", "find", "for", "from", "give", "how", "into", "is",
   "lesson", "me", "more", "please", "show", "tell", "that", "the", "this",
   "page", "to", "use", "what", "when", "where", "which", "with", "would",
+  "cinder", "calphy",
 ]);
 
 const COURSE_HINTS = new Set([
@@ -281,23 +282,138 @@ function calculationAnswer(question) {
   return null;
 }
 
+const CORE_CONCEPTS = [
+  {
+    regex: /\b(?:what is|what are|define|meaning of|explain)\s+(?:the\s+)?heat\b/i,
+    answer:
+      "**Heat ($Q$)** is thermal energy in transit — the energy that flows naturally from a hotter object to a colder one because of a temperature difference.\n\n" +
+      "• **Unit:** Joules (J).\n" +
+      "• **Key distinction:** Heat is *energy being transferred*. Temperature measures average particle kinetic energy, while thermal energy is the total internal energy of the system.",
+    source: { title: "Lesson 2: Heat and Temperature", href: "/lessons/heat-and-temperature" },
+  },
+  {
+    regex: /\b(?:what is|what are|define|meaning of|explain)\s+(?:the\s+)?temperature\b/i,
+    answer:
+      "**Temperature** is a physical quantity that measures the average kinetic energy of the particles in a substance. When particles move or vibrate faster, the temperature is higher.\n\n" +
+      "• **Scales:** Celsius (°C), Fahrenheit (°F), and Kelvin (K, the SI absolute scale where $0\\text{ K} = -273.15\\text{ }^\\circ\\text{C}$ is absolute zero).",
+    source: { title: "Lesson 1: Temperature and Thermometers", href: "/lessons/temperature-scales" },
+  },
+  {
+    regex: /\b(?:what is|what are|define|meaning of|explain)\s+(?:the\s+)?thermal energy\b/i,
+    answer:
+      "**Thermal energy** is the total internal energy of all the particles within an object (both kinetic and potential). Unlike temperature (which is an average), thermal energy scales with both temperature and the total mass.",
+    source: { title: "Lesson 2: Heat and Temperature", href: "/lessons/heat-and-temperature" },
+  },
+  {
+    regex: /\b(?:what is|what are|define|meaning of|explain)\s+(?:the\s+)?conduction\b/i,
+    answer:
+      "**Conduction** is the transfer of heat through direct contact between adjacent particles in a material without any bulk movement of the substance itself.\n\n" +
+      "• **Mechanism:** Fast-vibrating hot particles collide with neighboring slower particles, passing kinetic energy along the line.\n" +
+      "• **Rate equation:** $H = \\frac{kA\\Delta T}{L}$, where $k$ is thermal conductivity, $A$ is cross-sectional area, and $L$ is length.",
+    source: { title: "Lesson 3: Thermal Conduction", href: "/lessons/conduction" },
+  },
+  {
+    regex: /\b(?:what is|what are|define|meaning of|explain)\s+(?:the\s+)?convection\b/i,
+    answer:
+      "**Convection** is the transfer of heat by the bulk movement of a fluid (liquid or gas).\n\n" +
+      "• **Mechanism:** Heated fluid expands, becomes less dense, and rises. Cooler, denser fluid sinks to replace it, creating continuous **convection currents**.",
+    source: { title: "Lesson 4: Convection and Radiation", href: "/lessons/convection-and-radiation" },
+  },
+  {
+    regex: /\b(?:what is|what are|define|meaning of|explain)\s+(?:the\s+)?(?:thermal\s+)?radiation\b/i,
+    answer:
+      "**Thermal radiation** is the transfer of heat by electromagnetic waves (primarily infrared photons). Unlike conduction and convection, radiation requires no matter or medium — it travels across a vacuum at the speed of light.",
+    source: { title: "Lesson 4: Convection and Radiation", href: "/lessons/convection-and-radiation" },
+  },
+  {
+    regex: /\b(?:what is|what are|define|meaning of|explain)\s+(?:the\s+)?(?:specific\s+)?heat capacity\b|\b(?:what is|what are|define|meaning of|explain)\s+(?:the\s+)?specific heat\b/i,
+    answer:
+      "**Specific heat capacity ($c$)** is the amount of heat energy required to raise the temperature of 1 kilogram of a substance by 1 Kelvin (or 1 °C).\n\n" +
+      "• **Formula:** $Q = m \\cdot c \\cdot \\Delta T$\n" +
+      "• **Unit:** $\\text{J}/(\\text{kg}\\cdot\\text{K})$. For example, water has a high specific heat ($4184\\text{ J}/\\text{kg}\\cdot\\text{K}$), meaning it resists rapid temperature swings.",
+    source: { title: "Lesson 5: Specific Heat Capacity", href: "/lessons/specific-heat-capacity" },
+  },
+  {
+    regex: /\b(?:what is|what are|define|meaning of|explain)\s+(?:the\s+)?(?:specific\s+)?latent heat\b/i,
+    answer:
+      "**Specific latent heat ($L$)** is the heat energy absorbed or released per kilogram of a substance during a constant-temperature phase change (melting, freezing, boiling, or condensing).\n\n" +
+      "• **Formula:** $Q = m \\cdot L$\n" +
+      "• **Types:** Latent heat of fusion ($L_f$) for melting/freezing, and latent heat of vaporization ($L_v$) for boiling/condensing.",
+    source: { title: "Lesson 8: Specific Latent Heat", href: "/lessons/latent-heat" },
+  },
+  {
+    regex: /\b(?:what is|what are|define|meaning of|explain)\s+(?:the\s+)?calorimetry\b/i,
+    answer:
+      "**Calorimetry** is the experimental technique of measuring heat transfer during physical or chemical processes in an insulated container called a calorimeter.\n\n" +
+      "• **Core principle:** In an isolated system, heat lost by warmer objects equals heat gained by cooler ones ($Q_{\\text{lost}} + Q_{\\text{gained}} = 0$).",
+    source: { title: "Lesson 6: Calorimetry and Thermal Equilibrium", href: "/lessons/calorimetry" },
+  },
+  {
+    regex: /\b(?:what is|what are|define|meaning of|explain)\s+(?:the\s+)?(?:ideal\s+)?gas laws?\b/i,
+    answer:
+      "**Gas laws** describe how the pressure ($P$), volume ($V$), and absolute temperature ($T$, in Kelvin) of a gas relate to one another, summarized in the **Ideal Gas Law**:\n\n" +
+      "• **Equation:** $PV = nRT$ (where $n$ is moles and $R = 8.314\\text{ J}/\\text{mol}\\cdot\\text{K}$).\n" +
+      "• **Key laws:** Boyle's Law ($P \\propto 1/V$), Charles's Law ($V \\propto T$), and Gay-Lussac's Law ($P \\propto T$).",
+    source: { title: "Lesson 9: Gas Laws and Temperature", href: "/lessons/gas-laws" },
+  },
+];
+
 export function resolveLocalAction(question) {
-  const q = normalize(question);
+  const rawQ = normalize(question);
+  const q = rawQ.replace(/^(?:hey|hi|hello)?\s*\b(?:cinder|calphy)\b[,:\s-]*/i, "").trim();
+
+  // Self-identity & what Cinder does
+  const isIdentityQuery =
+    /^(?:who (?:are you|r u|is cinder)|what(?:'s| is) your name|your name|what are you|what r u|what (?:do you|can you|can u) do|what is your (?:purpose|job|role)|what is cinder|tell me about yourself|introduce yourself|about yourself|who (?:made|created|built) you)\b/i.test(
+      q,
+    ) ||
+    (/^(?:who are you|who is cinder|what is your name|what do you do|what can you do|about you|cinder)\b/i.test(
+      rawQ,
+    ) && (q.length === 0 || /^(?:who are you|who is cinder|what is your name|what do you do|what can you do)\b/i.test(q)));
+
+  if (isIdentityQuery) {
+    return makeAnswer(
+      "I’m **Cinder**, the physics mascot and learning assistant for **Ignius**! I’m here to help you explore Temperature & Heat physics.\n\n" +
+      "Here is what I can do for you:\n" +
+      "• **Explain Concepts**: Ask me about heat, temperature, thermal energy, conduction, convection, radiation, specific heat, phase changes, or gas laws.\n" +
+      "• **Solve Calculations**: I can convert temperatures (°C, °F, K), calculate heat transfer ($Q = mc\\Delta T$), and compute latent heat ($Q = mL$).\n" +
+      "• **Guide Your Learning**: Ask me to open or preview any of the 9 lessons, 10 interactive simulations, quizzes, or formulas.\n\n" +
+      "What would you like to explore?",
+      {
+        links: [
+          { label: "Browse lessons", href: "/lessons" },
+          { label: "Interactive simulations", href: "/simulations" },
+          { label: "Formula sheet", href: "/formulas" },
+        ],
+      },
+    );
+  }
+
   if (
     /^(?:thanks|thank you|thank you so much|you(?:'re| are) (?:so )?(?:good|great|awesome|amazing|the best)|good bot|nice work|well done)\b/.test(
-      q,
+      q || rawQ,
     )
   ) {
     return makeAnswer("Thanks! I’m glad I could help. Let me know if you have another Temperature & Heat question.");
   }
-  if (/^(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(q)) {
+  if (!q || /^(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(rawQ)) {
     return makeAnswer(
-      "Hi! I can help with Temperature & Heat lessons, explain course topics, find a page, or work through a course calculation.",
+      "Hi! I’m Cinder. I can help with Temperature & Heat lessons, explain course topics, find a page, or work through a course calculation.",
       { links: [{ label: "Browse lessons", href: "/lessons" }] },
     );
   }
 
-  const lesson = findLesson(question);
+  // Core concept definitions ("what is heat?", "cinder, what is conduction?", etc.)
+  for (const concept of CORE_CONCEPTS) {
+    if (concept.regex.test(q || rawQ)) {
+      return makeAnswer(concept.answer, {
+        sources: [concept.source],
+        links: [{ label: `Open ${concept.source.title}`, href: concept.source.href }],
+      });
+    }
+  }
+
+  const lesson = findLesson(q || question);
   const navigationIntent =
     /\b(where|find|open|go to|link|take me|access|navigate)\b/.test(q);
   if (lesson && navigationIntent) {
@@ -335,11 +451,12 @@ export function resolveLocalAction(question) {
     });
   }
 
-  return calculationAnswer(question);
+  return calculationAnswer(q || question);
 }
 
 export function isCourseRelated(question, matches = findCourseMatches(question)) {
-  const q = normalize(question);
+  const clean = question.replace(/^(?:hey|hi|hello)?\s*\b(?:cinder|calphy)\b[,:\s-]*/i, "").trim();
+  const q = normalize(clean || question);
   return (
     matches.length > 0 ||
     /\blesson\s*\d+\b/.test(q) ||
