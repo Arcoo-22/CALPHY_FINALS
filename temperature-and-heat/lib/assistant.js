@@ -194,13 +194,87 @@ function findTemperatureChange(question) {
     : value;
 }
 
+function formatConversionAnswer(value, from, to, celsius, result) {
+  const scale = { c: "°C", f: "°F", k: "K" };
+  const names = { c: "Celsius (°C)", f: "Fahrenheit (°F)", k: "Kelvin (K)" };
+  const res = Number(result.toFixed(2));
+  const c = Number(celsius.toFixed(2));
+
+  if (from === to) {
+    return `Both values use the same scale (${scale[from]}): **${value} ${scale[from]} = ${value} ${scale[to]}**.`;
+  }
+
+  let steps = "";
+  if (from === "f" && to === "k") {
+    steps =
+      `1. **Convert Fahrenheit to Celsius:** °C = (°F − 32) ÷ 1.8 → (${value} − 32) ÷ 1.8 = **${c} °C**\n` +
+      `2. **Convert Celsius to Kelvin:** K = °C + 273.15 → ${c} + 273.15 = **${res} K**`;
+  } else if (from === "k" && to === "f") {
+    steps =
+      `1. **Convert Kelvin to Celsius:** °C = K − 273.15 → ${value} − 273.15 = **${c} °C**\n` +
+      `2. **Convert Celsius to Fahrenheit:** °F = (1.8 × °C) + 32 → (1.8 × ${c}) + 32 = **${res} °F**`;
+  } else if (from === "c" && to === "f") {
+    steps =
+      `• **Formula:** °F = (1.8 × °C) + 32\n` +
+      `• **Calculation:** (1.8 × ${value}) + 32 = **${res} °F**`;
+  } else if (from === "f" && to === "c") {
+    steps =
+      `• **Formula:** °C = (°F − 32) ÷ 1.8\n` +
+      `• **Calculation:** (${value} − 32) ÷ 1.8 = **${res} °C**`;
+  } else if (from === "c" && to === "k") {
+    steps =
+      `• **Formula:** K = °C + 273.15\n` +
+      `• **Calculation:** ${value} + 273.15 = **${res} K**`;
+  } else if (from === "k" && to === "c") {
+    steps =
+      `• **Formula:** °C = K − 273.15\n` +
+      `• **Calculation:** ${value} − 273.15 = **${res} °C**`;
+  }
+
+  return `To convert **${value} ${scale[from]}** to **${names[to]}**:\n\n${steps}\n\n**${value} ${scale[from]} = ${res} ${scale[to]}**.`;
+}
+
+function formatConversionFormula(from, to) {
+  const names = { c: "Celsius (°C)", f: "Fahrenheit (°F)", k: "Kelvin (K)" };
+  if (from === to) {
+    return `Both scales are the same (${names[from]}), so no conversion formula is needed.`;
+  }
+  if (from === "f" && to === "k") {
+    return (
+      `To convert from **Fahrenheit (°F)** to **Kelvin (K)**, convert to Celsius first:\n\n` +
+      `1. **Fahrenheit to Celsius:** °C = (°F − 32) ÷ 1.8\n` +
+      `2. **Celsius to Kelvin:** K = °C + 273.15`
+    );
+  }
+  if (from === "k" && to === "f") {
+    return (
+      `To convert from **Kelvin (K)** to **Fahrenheit (°F)**, convert to Celsius first:\n\n` +
+      `1. **Kelvin to Celsius:** °C = K − 273.15\n` +
+      `2. **Celsius to Fahrenheit:** °F = (1.8 × °C) + 32`
+    );
+  }
+  if (from === "c" && to === "f") {
+    return `To convert from **Celsius (°C)** to **Fahrenheit (°F)**:\n\n• **Formula:** °F = (1.8 × °C) + 32`;
+  }
+  if (from === "f" && to === "c") {
+    return `To convert from **Fahrenheit (°F)** to **Celsius (°C)**:\n\n• **Formula:** °C = (°F − 32) ÷ 1.8`;
+  }
+  if (from === "c" && to === "k") {
+    return `To convert from **Celsius (°C)** to **Kelvin (K)**:\n\n• **Formula:** K = °C + 273.15`;
+  }
+  if (from === "k" && to === "c") {
+    return `To convert from **Kelvin (K)** to **Celsius (°C)**:\n\n• **Formula:** °C = K − 273.15`;
+  }
+  return null;
+}
+
 function calculationAnswer(question) {
   const q = normalize(question);
   const calculateIntent =
     /\b(calculate|compute|work out|solve for|how much (?:heat|energy)|find (?:the )?(?:heat|energy|q))\b/.test(q) ||
     /\bq\s*=/.test(q);
   const conversion = q.match(
-    /(?:convert\s+)?(-?\d+(?:\.\d+)?)\s*°?\s*(c|celsius|f|fahrenheit|k|kelvin)\s+(?:to|in)\s*°?\s*(c|celsius|f|fahrenheit|k|kelvin)\b/,
+    /(?:convert\s+)?(?:from\s+)?(-?\d+(?:\.\d+)?)\s*(?:degrees?|deg\.?)?\s*°?\s*(c|celsius|f|fahrenheit|k|kelvin)s?\s+(?:to|in|into)\s*°?\s*(?:degrees?|deg\.?)?\s*(c|celsius|f|fahrenheit|k|kelvin)s?\b/,
   );
   if (conversion) {
     const value = Number(conversion[1]);
@@ -208,7 +282,6 @@ function calculationAnswer(question) {
     const to = conversion[3][0];
     const celsius = getTemperature(value, from);
     const result = to === "c" ? celsius : to === "f" ? celsius * 1.8 + 32 : celsius + 273.15;
-    const scale = { c: "°C", f: "°F", k: "K" };
     const lesson = LESSONS.find((item) => item.n === 1);
     if (celsius < -273.15) {
       return makeAnswer(
@@ -217,9 +290,22 @@ function calculationAnswer(question) {
       );
     }
     return makeAnswer(
-      `${value} ${scale[from]} = **${Number(result.toFixed(2))} ${scale[to]}**.`,
+      formatConversionAnswer(value, from, to, celsius, result),
       { sources: [sourceForLesson(lesson)] },
     );
+  }
+
+  const formulaQuery = q.match(
+    /\b(?:how (?:to|do (?:i|you|we))|formula (?:for|to)|explain (?:how to)?)\s*(?:convert\s+)?(?:from\s+)?(c|celsius|f|fahrenheit|k|kelvin)s?\s+(?:to|in|into)\s*(?:degrees?|deg\.?)?\s*(c|celsius|f|fahrenheit|k|kelvin)s?\b/,
+  );
+  if (formulaQuery) {
+    const from = formulaQuery[1][0];
+    const to = formulaQuery[2][0];
+    const formulaText = formatConversionFormula(from, to);
+    if (formulaText) {
+      const lesson = LESSONS.find((item) => item.n === 1);
+      return makeAnswer(formulaText, { sources: [sourceForLesson(lesson)] });
+    }
   }
 
   const specificHeatIntent =
