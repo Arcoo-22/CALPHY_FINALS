@@ -454,7 +454,8 @@ export default function HeatingCurveSim() {
     <>
       <div style={{ minWidth: 130, flex: 1 }}>
         <label className="form-label" htmlFor="hc-m">
-          Mass · <b>{fmt(mass, 2)} kg</b>
+          <span>Water mass</span>
+          <b>{fmt(mass, 2)} kg</b>
         </label>
         <input
           id="hc-m"
@@ -472,7 +473,8 @@ export default function HeatingCurveSim() {
       </div>
       <div style={{ minWidth: 130, flex: 1 }}>
         <label className="form-label" htmlFor="hc-p">
-          Heater power · <b>{power} W</b>
+          <span>Heater power</span>
+          <b>{power} W</b>
         </label>
         <input
           id="hc-p"

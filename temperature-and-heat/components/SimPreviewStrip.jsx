@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { SIM_GROUPS } from "@/lib/simulations";
 import SectionHead from "@/components/SectionHead";
+import ScrollFloat from "@/components/ScrollFloat";
 
 const SIMS = SIM_GROUPS.flatMap((g) => g.sims);
 
@@ -47,10 +48,14 @@ export default function SimPreviewStrip() {
         icon="bi-joystick"
         tag="Multimedia lab"
         title={
-          <>
-            Don&apos;t just read physics.{" "}
-            <span className="text-cool">Touch it.</span>
-          </>
+          <ScrollFloat
+            as="span"
+            effect="float"
+            distance={40}
+            animationDuration={0.8}
+          >
+            Don&apos;t just read physics. Touch it.
+          </ScrollFloat>
         }
         sub="Every lesson has a simulation that runs in your browser. Pick one to jump straight in."
         actions={

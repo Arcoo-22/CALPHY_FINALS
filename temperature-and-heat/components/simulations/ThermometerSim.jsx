@@ -276,7 +276,8 @@ export default function ThermometerSim() {
     <>
       <div className="flex-grow-1" style={{ minWidth: 220 }}>
         <label className="form-label" htmlFor="therm-range">
-          Temperature · <b style={{ color: "#c2410c" }}>{tempC} °C</b>
+          <span>Temperature</span>
+          <b style={{ color: "#c2410c" }}>{tempC} °C</b>
         </label>
         <input
           id="therm-range"

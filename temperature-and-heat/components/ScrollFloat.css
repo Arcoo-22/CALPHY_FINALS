@@ -1,0 +1,31 @@
+/* ScrollFloat - Bootstrap 5 integration */
+.scroll-float {
+  display: block;
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--bs-body-font-family, inherit);
+}
+
+.scroll-float--open {
+  overflow: visible;
+  overflow-x: clip;
+}
+
+.scroll-float-text {
+  display: inline-block;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  text-align: inherit;
+  color: inherit;
+}
+
+.scroll-float-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.scroll-float-char {
+  display: inline-block;
+  will-change: transform, opacity;
+}

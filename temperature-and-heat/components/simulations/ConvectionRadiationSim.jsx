@@ -537,7 +537,8 @@ export default function ConvectionRadiationSim() {
           <>
             <div style={{ minWidth: 220, flex: 1 }}>
               <label className="form-label" htmlFor="conv-power">
-                Burner power · <b style={{ color: "#c2410c" }}>{power}%</b>
+                <span>Burner power</span>
+                <b style={{ color: "#c2410c" }}>{power}%</b>
               </label>
               <input
                 id="conv-power"
@@ -597,7 +598,7 @@ export default function ConvectionRadiationSim() {
         <>
           <div style={{ minWidth: 190, flex: 1 }}>
             <label className="form-label" htmlFor="rad-t">
-              Emitter temperature ·{" "}
+              <span>Emitter temperature</span>
               <b style={{ color: "#c2410c" }}>{fmt(tempK, 0)} K</b>
             </label>
             <input
@@ -613,7 +614,8 @@ export default function ConvectionRadiationSim() {
           </div>
           <div style={{ minWidth: 150, flex: 1 }}>
             <label className="form-label" htmlFor="rad-ts">
-              Surroundings · <b>{fmt(surrK, 0)} K</b>
+              <span>Surroundings temp</span>
+              <b>{fmt(surrK, 0)} K</b>
             </label>
             <input
               id="rad-ts"

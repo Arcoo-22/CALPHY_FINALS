@@ -422,7 +422,8 @@ export default function SpecificHeatSim() {
       </div>
       <div style={{ minWidth: 130, flex: 1 }}>
         <label className="form-label" htmlFor="sh-m">
-          Mass (each) · <b>{fmt(mass, 2)} kg</b>
+          <span>Sample mass (each)</span>
+          <b>{fmt(mass, 2)} kg</b>
         </label>
         <input
           id="sh-m"
@@ -437,7 +438,8 @@ export default function SpecificHeatSim() {
       </div>
       <div style={{ minWidth: 130, flex: 1 }}>
         <label className="form-label" htmlFor="sh-p">
-          Burner power · <b>{power} W</b>
+          <span>Burner power</span>
+          <b>{power} W</b>
         </label>
         <input
           id="sh-p"

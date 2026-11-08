@@ -81,6 +81,19 @@ export default function CalphyChat() {
     return () => window.removeEventListener("calphy:open-chat", onOpen);
   });
 
+  // In mobile view, close the chat when navigating or clicking a reference so it does not block the redirected page
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth <= 768) {
+      setOpen(false);
+    }
+  }, [pathname]);
+
+  const handleLinkClick = () => {
+    if (typeof window !== "undefined" && window.innerWidth <= 768) {
+      setOpen(false);
+    }
+  };
+
   async function send(value = input) {
     const question = value.trim();
     if (!question || busy) return;
@@ -180,7 +193,7 @@ export default function CalphyChat() {
                   components={{
                     a: ({ href, children }) =>
                       href?.startsWith("/") && !href.startsWith("//") ? (
-                        <Link href={href}>{children}</Link>
+                        <Link href={href} onClick={handleLinkClick}>{children}</Link>
                       ) : (
                         <span>{children}</span>
                       ),
@@ -206,7 +219,7 @@ export default function CalphyChat() {
               {message.sources.map((source, sourceIndex) => (
                 <Fragment key={`${source.href}-${source.title}`}>
                   {sourceIndex > 0 && <span> · </span>}
-                  <Link href={source.href}>{source.title}</Link>
+                  <Link href={source.href} onClick={handleLinkClick}>{source.title}</Link>
                 </Fragment>
               ))}
             </div>}
@@ -219,7 +232,7 @@ export default function CalphyChat() {
               </div>
             </div>}
             {message.externalSearchUrl && <a className="assistant-external-search" href={message.externalSearchUrl} target="_blank" rel="noreferrer">Open web search<i className="bi bi-arrow-up-right ms-1" /></a>}
-            {!!message.links?.length && <div className="assistant-links">{message.links.slice(0, 3).map((link) => <Link key={`${link.href}-${link.label}`} href={link.href}>{link.label}<i className="bi bi-arrow-up-right ms-1" /></Link>)}</div>}
+            {!!message.links?.length && <div className="assistant-links">{message.links.slice(0, 3).map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} onClick={handleLinkClick}>{link.label}<i className="bi bi-arrow-up-right ms-1" /></Link>)}</div>}
           </div>)}
           {messages.length === 1 && <div className="assistant-suggestions">{suggestions.map((suggestion) => <button key={suggestion} type="button" onClick={() => send(suggestion)}>{suggestion}</button>)}</div>}
           {busy && <div className="mascot-msg bot"><span className="spinner-border spinner-border-sm me-2" />Looking through the course…</div>}

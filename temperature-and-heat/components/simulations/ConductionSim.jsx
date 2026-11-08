@@ -369,7 +369,8 @@ export default function ConductionSim() {
       </div>
       <div style={{ minWidth: 150, flex: 1 }}>
         <label className="form-label" htmlFor="cond-dt">
-          ΔT · <b style={{ color: "#c2410c" }}>{dT} K</b>
+          <span>Temperature diff (ΔT)</span>
+          <b style={{ color: "#c2410c" }}>{dT} K</b>
         </label>
         <input
           id="cond-dt"
@@ -383,7 +384,8 @@ export default function ConductionSim() {
       </div>
       <div style={{ minWidth: 130, flex: 1 }}>
         <label className="form-label" htmlFor="cond-l">
-          L · <b>{lenCm} cm</b>
+          <span>Length (L)</span>
+          <b>{lenCm} cm</b>
         </label>
         <input
           id="cond-l"
@@ -397,7 +399,8 @@ export default function ConductionSim() {
       </div>
       <div style={{ minWidth: 130, flex: 1 }}>
         <label className="form-label" htmlFor="cond-a">
-          A · <b>{areaE4} ×10⁻⁴ m²</b>
+          <span>Area (A)</span>
+          <b>{areaE4} ×10⁻⁴ m²</b>
         </label>
         <input
           id="cond-a"
