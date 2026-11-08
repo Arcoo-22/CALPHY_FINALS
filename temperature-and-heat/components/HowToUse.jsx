@@ -6,6 +6,7 @@
 import Link from "next/link";
 import { Container } from "react-bootstrap";
 import SectionHead from "@/components/SectionHead";
+import ScrollFloat from "@/components/ScrollFloat";
 
 const STEPS = [
   {
@@ -60,9 +61,17 @@ export default function HowToUse() {
           icon="bi-compass"
           tag="How to use"
           title={
-            <>
-              Four steps, <span className="text-cool">no setup.</span>
-            </>
+            <ScrollFloat
+              as="span"
+              effect="float"
+              scrollStart="top bottom-=15%"
+              scrollEnd="bottom center+=25%"
+              animationDuration={0.8}
+              stagger={0.025}
+              distance={60}
+            >
+              Four steps, no setup.
+            </ScrollFloat>
           }
         />
         <ol className="howto-steps">
