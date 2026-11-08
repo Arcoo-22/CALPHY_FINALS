@@ -89,7 +89,7 @@ export default function LearnHome() {
       {current ? (
         <Link
           href={`/lessons/${current.slug}`}
-          className="continue-card card-soft flat mb-4"
+          className="continue-card card-soft flat mb-3"
         >
           <span className="icon-tile" aria-hidden="true">
             <i className={`bi ${current.icon}`} />
@@ -103,7 +103,7 @@ export default function LearnHome() {
           <i className="bi bi-arrow-right continue-arrow" aria-hidden="true" />
         </Link>
       ) : (
-        <div className="continue-card card-soft flat mb-4">
+        <div className="continue-card card-soft flat mb-3">
           <span className="icon-tile" aria-hidden="true">
             <i className="bi bi-check2-all" />
           </span>

@@ -1530,12 +1530,19 @@ a,
 .continue-card {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
   border-color: var(--ember);
   background: var(--ember-tint);
   color: var(--ink);
   text-decoration: none;
+}
+
+.continue-card .icon-tile {
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: 1.1rem;
+  border-radius: var(--radius-small);
 }
 
 a.continue-card:hover {
@@ -1546,20 +1553,21 @@ a.continue-card:hover {
 .continue-label {
   display: block;
   color: var(--ember-text);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
+  line-height: 1.3;
 }
 
 .continue-title {
   display: block;
-  font-size: 1.15rem;
-  font-weight: 800;
+  font-size: 1rem;
+  font-weight: 700;
   line-height: 1.3;
 }
 
 .continue-arrow {
   color: var(--ember-text);
-  font-size: 1.3rem;
+  font-size: 1.15rem;
 }
 
 .min-w-0 {
