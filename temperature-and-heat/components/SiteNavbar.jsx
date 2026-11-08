@@ -71,8 +71,15 @@ export default function SiteNavbar() {
 
         <Navbar.Toggle
           aria-controls="main-nav"
-          className="border-0 shadow-none"
-        />
+          aria-expanded={expanded}
+          aria-label={expanded ? "Close navigation" : "Open navigation"}
+          className="calphy-toggler border-0 shadow-none"
+        >
+          <i
+            className={`bi ${expanded ? "bi-x-lg" : "bi-list"}`}
+            aria-hidden="true"
+          />
+        </Navbar.Toggle>
 
         <Navbar.Collapse id="main-nav">
           <Nav className="mx-auto align-items-xl-center" activeKey={activeHref}>
