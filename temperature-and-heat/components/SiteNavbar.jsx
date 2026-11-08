@@ -73,7 +73,7 @@ export default function SiteNavbar() {
           aria-controls="main-nav"
           aria-expanded={expanded}
           aria-label={expanded ? "Close navigation" : "Open navigation"}
-          className="calphy-toggler border-0 shadow-none"
+          className="calphy-toggler border-0 shadow-none d-xl-none"
         >
           <i
             className={`bi ${expanded ? "bi-x-lg" : "bi-list"}`}

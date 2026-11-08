@@ -564,7 +564,7 @@ a,
 
 .calphy-toggler,
 .navbar-toggler {
-  display: inline-flex !important;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 44px;
@@ -581,6 +581,13 @@ a,
   transition:
     background-color 150ms ease,
     border-color 150ms ease;
+}
+
+@media (min-width: 1200px) {
+  .calphy-toggler,
+  .navbar-toggler {
+    display: none !important;
+  }
 }
 
 .calphy-toggler:hover,
