@@ -1,12 +1,12 @@
 :root {
   color-scheme: light;
-  --bg: #f8fafc;
+  --bg: #f1f5f9;
   --surface: #ffffff;
-  --surface-2: #f1f5f9;
-  --line: #e2e8f0;
-  --ink: #0f172a;
-  --ink-soft: #334155;
-  --muted: #64748b;
+  --surface-2: #e2e8f0;
+  --line: #cbd5e1;
+  --ink: #090d16;
+  --ink-soft: #1e293b;
+  --muted: #475569;
   --ember: #ea580c;
   --ember-hover: #c2410c;
   --ember-text: #c2410c;
@@ -24,8 +24,8 @@
   --radius-card: 0.75rem;
   --radius-button: 0.5rem;
   --radius-small: 0.4rem;
-  --shadow-soft: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
-  --shadow-lift: 0 10px 25px -4px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.03);
+  --shadow-soft: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+  --shadow-lift: 0 10px 25px -4px rgba(15, 23, 42, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.06);
   --shadow-glow: 0 0 16px rgba(234, 88, 12, 0.2);
   /* Interaction Design - Timings & Easings */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);

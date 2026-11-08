@@ -16,5 +16,5 @@ CLAUDE.md
 *.log
 .agents/
 .skills-lock.json
-.playwright
+.playwright*/
 .playwright-mcp/
