@@ -29,7 +29,10 @@ export default function ProgressRing({
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={c - (pct / 100) * c}
-          style={{ transition: "stroke-dashoffset 0.8s ease" }}
+          style={{
+            transition:
+              "stroke-dashoffset 0.9s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1))",
+          }}
         />
       </svg>
       <div className="score-label">{children}</div>

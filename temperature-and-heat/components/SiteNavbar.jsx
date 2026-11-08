@@ -65,14 +65,21 @@ export default function SiteNavbar() {
     >
       <Container>
         <Navbar.Brand as={Link} href="/welcome" onClick={() => setExpanded(false)}>
-          <CalphyMascot size={36} />
+          <CalphyMascot size={28} />
           <span>Ignius</span>
         </Navbar.Brand>
 
         <Navbar.Toggle
           aria-controls="main-nav"
-          className="border-0 shadow-none"
-        />
+          aria-expanded={expanded}
+          aria-label={expanded ? "Close navigation" : "Open navigation"}
+          className="calphy-toggler border-0 shadow-none d-xl-none"
+        >
+          <i
+            className={`bi ${expanded ? "bi-x-lg" : "bi-list"}`}
+            aria-hidden="true"
+          />
+        </Navbar.Toggle>
 
         <Navbar.Collapse id="main-nav">
           <Nav className="mx-auto align-items-xl-center" activeKey={activeHref}>

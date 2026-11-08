@@ -315,7 +315,28 @@ function ResultSummary({ quiz, score, total, pct, passed, isLoggedIn, nextStep, 
           : { icon: "bi-book", text: "Time to re-read the lesson and play with the simulation. You've got this!", color: "var(--bad)" };
 
   return (
-    <div className="card-soft flat p-4 p-md-5 text-center mb-3">
+    <div className="card-soft flat p-4 p-md-5 text-center mb-3 position-relative overflow-hidden">
+      {passed &&
+        Array.from({ length: 24 }, (_, index) => (
+          <span
+            key={index}
+            className="confetti-piece"
+            aria-hidden="true"
+            style={{
+              left: `${(index * 23) % 100}%`,
+              width: `${6 + (index % 3) * 2}px`,
+              height: `${8 + (index % 4) * 2}px`,
+              backgroundColor: [
+                "var(--ember)",
+                "var(--flame-glow)",
+                "var(--good)",
+                "var(--cool)",
+              ][index % 4],
+              animationDuration: `${2.2 + (index % 4) * 0.15}s`,
+              animationDelay: `${(index % 6) * 0.08}s`,
+            }}
+          />
+        ))}
       <div className="d-flex justify-content-center mb-3">
         <ProgressRing value={pct} size={160}>
           <span className="score-num gradient-text">{pct}%</span>

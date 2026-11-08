@@ -61,7 +61,7 @@ export default function HowToUse() {
           tag="How to use"
           title={
             <>
-              Four steps, <span className="gradient-text">no setup.</span>
+              Four steps, <span className="text-cool">no setup.</span>
             </>
           }
         />

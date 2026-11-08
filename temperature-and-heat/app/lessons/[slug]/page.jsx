@@ -134,11 +134,11 @@ export default async function LessonPage({ params }) {
                 className="fw-bold mb-2"
                 style={{ fontSize: "clamp(1.9rem, 4vw, 3rem)" }}
               >
-                <span className="gradient-text">Lesson {lesson.n}.</span>{" "}
+                <span className="text-cool">Lesson {lesson.n}.</span>{" "}
                 {lesson.title}
               </h1>
               <p className="section-sub mb-3">{lesson.tagline}</p>
-              <MarkCompleteButton lessonKey={lesson.key} />
+              <MarkCompleteButton lessonKey={lesson.key} compact />
             </Col>
             <Col lg={4}>
               <nav className="card-soft flat p-3" aria-label="Trace the energy">

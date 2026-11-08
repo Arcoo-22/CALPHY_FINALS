@@ -16,17 +16,17 @@ export default function LandingActions({ stay = false }) {
   }, [router, stay]);
 
   return (
-    <div className="d-flex flex-wrap gap-2">
+    <div className="hero-actions d-flex flex-wrap gap-2">
       <Link
         href={MAIN_HREF}
-        className="btn btn-flame btn-lg px-4"
+        className="btn btn-flame"
         onClick={markVisited}
       >
         Start learning
       </Link>
       <Link
         href="/lessons/temperature-scales"
-        className="btn btn-outline-ink btn-lg px-4"
+        className="btn btn-outline-ink"
         onClick={markVisited}
       >
         Jump into Lesson 1

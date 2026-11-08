@@ -17,7 +17,8 @@ export default function Landing({ stay = false }) {
               <span className="eyebrow">Physics · Thermal physics</span>
               <h1 className="hero-title mb-3">
                 Learn{" "}
-                <span className="gradient-text">Temperature &amp; Heat</span>{" "}
+                <span className="text-cool">Temperature</span> &amp;{" "}
+                <span className="text-flame">Heat</span>{" "}
                 by playing with it.
               </h1>
               <p className="hero-sub mb-4">

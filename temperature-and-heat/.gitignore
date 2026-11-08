@@ -49,6 +49,7 @@ anti-slop/
 AGENTS.md
 DESIGN.md
 CLAUDE.md
+*mcp/
 
 # editor and OS files
 .vscode/
@@ -56,3 +57,4 @@ CLAUDE.md
 
 # logs
 *.log
+
