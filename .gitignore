@@ -15,3 +15,6 @@ CLAUDE.md
 # logs
 *.log
 .agents/
+.skills-lock.json
+.playwright
+.playwright-mcp/
