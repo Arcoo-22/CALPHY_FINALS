@@ -33,6 +33,7 @@
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --font-sans: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --bs-body-color: var(--ink-soft);
   --bs-body-bg: var(--bg);
   --bs-emphasis-color: var(--ink);
@@ -253,21 +254,31 @@ a,
   color: var(--cool);
 }
 
+.text-cool,
+.solid-cyan {
+  color: var(--cool) !important;
+}
+
+.text-flame,
+.solid-flame {
+  color: var(--ember) !important;
+}
+
 .gradient-text {
-  background: linear-gradient(120deg, #0284c7 0%, #f59e0b 50%, #ea580c 100%);
+  background: linear-gradient(135deg, var(--ember) 0%, #f59e0b 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
 }
 
 :root[data-theme="dark"] .gradient-text {
-  background: linear-gradient(120deg, #38bdf8 0%, #fbbf24 50%, #fb923c 100%);
+  background: linear-gradient(135deg, #fb923c 0%, #fcd34d 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .gradient-text-cool {
-  background: linear-gradient(120deg, #0284c7 0%, #06b6d4 100%);
+  background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
@@ -2257,9 +2268,10 @@ a.continue-card:hover {
   gap: 0.35rem;
   margin-bottom: 0.6rem;
   color: var(--ink);
-  font-family: "Cambria Math", "STIX Two Math", Georgia, serif;
+  font-family: var(--font-sans);
   font-size: clamp(1.05rem, 2.2vw, 1.35rem);
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .frac {
@@ -2351,10 +2363,12 @@ a.continue-card:hover {
 }
 
 .example-card .ex-step {
-  padding: 0.18rem 0;
+  padding: 0.22rem 0;
   color: var(--ink-soft);
-  font-family: "Cambria Math", Georgia, serif;
-  font-size: 0.9rem;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
 }
 
 .example-card .ex-answer {
@@ -2365,7 +2379,9 @@ a.continue-card:hover {
   border-radius: var(--radius-small);
   background: var(--good-tint);
   color: var(--good);
+  font-family: var(--font-sans);
   font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
 
 .example-card .ex-note {
@@ -3648,9 +3664,10 @@ a.check-dot.current:hover {
 .sheet-card .sheet-formula {
   margin: 0.35rem 0;
   color: var(--ink);
-  font-family: "Cambria Math", Georgia, serif;
+  font-family: var(--font-sans);
   font-size: 1.06rem;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .sheet-card .sheet-when {

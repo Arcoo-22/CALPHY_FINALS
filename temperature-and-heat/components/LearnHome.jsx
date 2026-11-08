@@ -53,7 +53,8 @@ export default function LearnHome() {
               : "Physics · Thermal physics"}
           </span>
           <h1 className="section-title learn-intro-title mb-2">
-            Temperature <span className="gradient-text">&amp; Heat</span>
+            <span className="text-cool">Temperature</span> &amp;{" "}
+            <span className="text-flame">Heat</span>
           </h1>
           <p className="learn-intro-sub mb-3">
             From thermometer scales to gas laws. Each lesson pairs a short read
@@ -124,7 +125,7 @@ export default function LearnHome() {
           title={
             <>
               {UNITS.length} units.{" "}
-              <span className="gradient-text">One warm story.</span>
+              <span className="text-flame">One warm story.</span>
             </>
           }
           sub="Each unit builds on the last: what temperature is, how heat moves, how to count it, and what gases do when they get hot."
@@ -150,7 +151,7 @@ export default function LearnHome() {
           tag="Check yourself"
           title={
             <>
-              Quizzes that <span className="gradient-text">save your score</span>
+              Quizzes that <span className="text-cool">save your score</span>
             </>
           }
           sub="See the explanation after every answer. Your best score per quiz is kept on your dashboard."
@@ -170,7 +171,7 @@ export default function LearnHome() {
           tag="Watch & learn"
           title={
             <>
-              See heat move in <span className="gradient-text">5 minutes</span>
+              See heat move in <span className="text-cool">5 minutes</span>
             </>
           }
           sub="A short visual intro to conduction, convection and radiation. Every lesson ends with its own video."
@@ -180,7 +181,7 @@ export default function LearnHome() {
             <div className="learn-mascot-body">
               <CalphyMascot size={104} />
               <h3 className="fw-bold h5 mb-1 mt-2">
-                Meet <span className="gradient-text">Cinder</span>
+                Meet <span className="text-flame">Cinder</span>
               </h3>
               <p className="mb-0">
                 Your flame study buddy. Cinder shows up in lessons and quizzes

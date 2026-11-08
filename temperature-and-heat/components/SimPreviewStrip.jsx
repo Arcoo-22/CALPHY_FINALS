@@ -49,7 +49,7 @@ export default function SimPreviewStrip() {
         title={
           <>
             Don&apos;t just read physics.{" "}
-            <span className="gradient-text">Touch it.</span>
+            <span className="text-cool">Touch it.</span>
           </>
         }
         sub="Every lesson has a simulation that runs in your browser. Pick one to jump straight in."
