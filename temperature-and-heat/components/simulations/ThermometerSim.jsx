@@ -5,7 +5,7 @@
 // • Drag the thermometer tube (or use the slider) to set T. Only the
 //   tube is a drag target, so swiping elsewhere still scrolls the page
 // • Liquid column + °C scale with reference markers
-// • Particle box shows kinetic model: speed ∝ √T(kelvin)
+// • Particle box shows kinetic model: hotter = faster (speed exaggerated)
 // ============================================================
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import SimFrame from "@/components/SimFrame";
@@ -222,7 +222,9 @@ export default function ThermometerSim() {
       );
 
       const kelvin = Math.max(1, cToK(T));
-      const speed = clamp(Math.sqrt(kelvin / 300), 0.05, 3) * 46; // px/s base
+      // True speed ∝ √K only varies ~1.5× from −90 to 150 °C, too little to
+      // see, so exaggerate: near-still when cold, ~45× faster when hot.
+      const speed = (0.2 + 9 * t01 * t01) * 80; // px/s base
       const caption = `Particles move ${T < 5 ? "slowly, close to the cold limit ❄" : kelvin > 350 ? "fast, high average KE 🔥" : "at moderate speed"}`;
       const capLines = wrapLines(ctx, caption, bw - 24, { size: 10.5 });
       const capH = capLines.length * 13;
