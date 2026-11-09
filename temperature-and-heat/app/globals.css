@@ -3455,3 +3455,72 @@ a.check-dot.current:hover {
     display: none;
   }
 }
+
+/* ---------- Proponents page ---------- */
+.proponent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr));
+  gap: 0.9rem;
+}
+
+.proponent-card {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  height: 100%;
+  padding: 1rem 1.1rem;
+  transition:
+    border-color 150ms ease,
+    transform 150ms ease;
+}
+
+.proponent-card:hover {
+  border-color: var(--ember-text);
+  transform: translateY(-2px);
+}
+
+.proponent-avatar {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+}
+
+.proponent-avatar.tone-ember {
+  background: var(--ember-tint);
+  color: var(--ember-text);
+}
+
+.proponent-avatar.tone-cool {
+  background: var(--cool-tint);
+  color: var(--cool);
+}
+
+.proponent-avatar.tone-good {
+  background: var(--good-tint);
+  color: var(--good);
+}
+
+.proponent-surname {
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+
+.proponent-given {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proponent-card:hover {
+    transform: none;
+  }
+}
