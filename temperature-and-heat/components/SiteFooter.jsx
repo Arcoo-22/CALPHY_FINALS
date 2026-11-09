@@ -72,6 +72,12 @@ export default function SiteFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/proponents">
+                  <i className="bi bi-people me-2" />
+                  Proponents
+                </Link>
+              </li>
+              <li>
                 <Link href="/login">
                   <i className="bi bi-person-circle me-2" />
                   Log in / Register
